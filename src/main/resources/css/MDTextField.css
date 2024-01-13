@@ -1,0 +1,15 @@
+.md-text-field {
+    -max-char-count: 10;
+}
+
+.md-text-field:max-char-count-enabled .count-label{
+    -fx-font-size: 30;
+}
+
+.md-text-field .label {
+    /* CSS properties for the label */
+}
+
+.md-text-field .text-field {
+    /* CSS properties for the TextField */
+}
