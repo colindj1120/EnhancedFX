@@ -1,6 +1,6 @@
 package io.github.colindj1120.materialdesignui.enums;
 
-public enum TextFieldType {
+public enum TextFieldMode {
     FILLED,
-    OUTLINED;
+    OUTLINED
 }

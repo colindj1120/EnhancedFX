@@ -8,6 +8,7 @@ import javafx.css.StyleableProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class StyleablePropertiesManager {
@@ -17,25 +18,86 @@ public class StyleablePropertiesManager {
         cssMetaDataList = new ArrayList<>(parentCssMetaData);
     }
 
-    public <T extends Styleable, V> CssMetaData<T, V> createCssMetaData(final String property, final StyleConverter<?, V> converter, final Function<T, Boolean> isSettableFunction,
-                                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
-        return createCssMetaData(property, converter, null, false, null, isSettableFunction, propertyGetter);
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
+        cssMetaDataList.add(createCssMetaData(property, converter, null, false, null, isSettableFunction, propertyGetter, null));
     }
 
-    public <T extends Styleable, V> CssMetaData<T, V> createCssMetaData(final String property, final StyleConverter<?, V> converter, final V initialValue,
-                                                                        final Function<T, Boolean> isSettableFunction, final Function<T, StyleableProperty<V>> propertyGetter) {
-        return createCssMetaData(property, converter, initialValue, false, null, isSettableFunction, propertyGetter);
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter,
+                                                        final Function<T, V> getInitialValueFunction) {
+        cssMetaDataList.add(createCssMetaData(property, converter, null, false, null, isSettableFunction, propertyGetter, getInitialValueFunction));
+
     }
 
-    public <T extends Styleable, V> CssMetaData<T, V> createCssMetaData(final String property, final StyleConverter<?, V> converter, final V initialValue, final boolean inherits,
-                                                                        final Function<T, Boolean> isSettableFunction, final Function<T, StyleableProperty<V>> propertyGetter) {
-        return createCssMetaData(property, converter, initialValue, inherits, null, isSettableFunction, propertyGetter);
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final V initialValue,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, false, null, isSettableFunction, propertyGetter, null));
+
     }
 
-    public <T extends Styleable, V> CssMetaData<T, V> createCssMetaData(final String property, final StyleConverter<?, V> converter, final V initialValue, final boolean inherits,
-                                                                        final List<CssMetaData<? extends Styleable, ?>> subProperties, final Function<T, Boolean> isSettableFunction,
-                                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
-        CssMetaData<T, V> cssMetaData = new CssMetaData<>(property, converter, initialValue, inherits, subProperties) {
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final V initialValue,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter,
+                                                        final Function<T, V> getInitialValueFunction) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, false, null, isSettableFunction, propertyGetter, getInitialValueFunction));
+    }
+
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final V initialValue,
+                                                        final boolean inherits,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, inherits, null, isSettableFunction, propertyGetter, null));
+    }
+
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final V initialValue,
+                                                        final boolean inherits,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter,
+                                                        final Function<T, V> getInitialValueFunction) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, inherits, null, isSettableFunction, propertyGetter, getInitialValueFunction));
+    }
+
+    public <T extends Styleable, V> void addCssMetaData(final String property,
+                                                        final StyleConverter<?, V> converter,
+                                                        final V initialValue,
+                                                        final boolean inherits,
+                                                        final List<CssMetaData<? extends Styleable, ?>> subProperties,
+                                                        final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, inherits, subProperties, isSettableFunction, propertyGetter, null));
+    }
+
+    public <T extends Styleable, V> void addCssMetaData(final String property, final StyleConverter<?, V> converter, final V initialValue, final boolean inherits,
+                                                        final List<CssMetaData<? extends Styleable, ?>> subProperties, final Function<T, Boolean> isSettableFunction,
+                                                        final Function<T, StyleableProperty<V>> propertyGetter, final Function<T, V> getInitialValueFunction) {
+        cssMetaDataList.add(createCssMetaData(property, converter, initialValue, inherits, subProperties, isSettableFunction, propertyGetter, getInitialValueFunction));
+    }
+
+    private <T extends Styleable, V> CssMetaData<T, V> createCssMetaData(final String property, final StyleConverter<?, V> converter, final V initialValue, final boolean inherits,
+                                                                         final List<CssMetaData<? extends Styleable, ?>> subProperties, final Function<T, Boolean> isSettableFunction,
+                                                                         final Function<T, StyleableProperty<V>> propertyGetter, final Function<T, V> getInitialValueFunction) {
+        return new CssMetaData<>(property, converter, initialValue, inherits, subProperties) {
+            @Override
+            public V getInitialValue(T styleable) {
+                return Optional.ofNullable(getInitialValueFunction)
+                               .map(f -> f.apply(styleable))
+                               .orElse(super.getInitialValue(styleable));
+            }
+
             @Override
             public boolean isSettable(T styleable) {
                 return isSettableFunction.apply(styleable);
@@ -46,8 +108,6 @@ public class StyleablePropertiesManager {
                 return propertyGetter.apply(styleable);
             }
         };
-        cssMetaDataList.add(cssMetaData);
-        return cssMetaData;
     }
 
     @SuppressWarnings("unchecked")

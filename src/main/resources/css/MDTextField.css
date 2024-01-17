@@ -1,15 +1,44 @@
 .md-text-field {
-    -max-char-count: 10;
+    /*-text-field-mode: filled;*/
+    -max-char-count-state: enabled;
+    -max-char-count: 100;
+    -float-mode: border;
+    -supporting-text-state: enabled;
 }
 
-.md-text-field:max-char-count-enabled .count-label{
-    -fx-font-size: 30;
+.md-text-field:outline-mode .text-field {
+    -fx-font-size: 20;
+    -fx-background-color: lightblue;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-border-style: solid
 }
 
-.md-text-field .label {
-    /* CSS properties for the label */
+.md-text-field:outline-mode .text-field:focused {
+    -fx-font-size: 20;
 }
 
-.md-text-field .text-field {
-    /* CSS properties for the TextField */
+.md-text-field:filled-mode .text-field {
+    -fx-font-size: 16;
+    -fx-background-color: lightblue, rgba(128, 128, 128, .3);
+    -fx-border-color: transparent transparent black transparent;
+    -fx-border-width: 1;
+    -fx-border-style: solid
+}
+
+.md-text-field .floating-label {
+    /*-fx-font-size: 12;*/
+    -fx-padding: 0 5 0 5;
+}
+
+.md-text-field:outlined-mode .floating-label {
+    -fx-border-color: transparent;
+}
+
+.md-text-field .supporting-text-label {
+    -fx-font-size: 9px;
+}
+
+.md-text-field .count-label {
+    -fx-font-size: 9px;
 }
