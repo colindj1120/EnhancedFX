@@ -1,38 +1,51 @@
+/*
+Base state is
+    -text-field-mode: outlined;
+    -max-char-count-state: disabled;
+    -float-mode: disabled;
+    -style-mode: light;
+
+Notes:
+    1. If float mode is not disabled animation state is defaulted to enabled.
+    2. To create a "Title" for the text field. Set float mode to above and animation state to disabled;
+    3. 3 built in Style modes. Light, Dark and Custom. light and dark mode are your standard modes and custom is setup by the developer
+    4. To make border mode work for float the float label background must be the same as the text field, the text field/pane should match the container background
+    5. When enabled max characters count default position is above the text field
+ */
+/*.md-text-field {*/
+/*    -fx-background-color: #FFFFFF;*/
+/*}*/
+
 .md-text-field {
-    /*-text-field-mode: filled;*/
+    -fx-background-color: #FFFFFF;
     -max-char-count-state: enabled;
-    -max-char-count: 100;
-    -float-mode: border;
+    -max-char-count: 10;
+    -max-char-count-pos: below;
+    -text-field-mode: filled;
     -supporting-text-state: enabled;
+    -float-mode: disabled;
+    /*-float-animation-state: disabled;*/
+    -style-mode: dark;
 }
 
-.md-text-field:outline-mode .text-field {
-    -fx-font-size: 20;
-    -fx-background-color: lightblue;
+.md-text-field .field {
+    -fx-font-size: 12;
     -fx-border-color: black;
     -fx-border-width: 1;
-    -fx-border-style: solid
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
 }
 
-.md-text-field:outline-mode .text-field:focused {
-    -fx-font-size: 20;
-}
-
-.md-text-field:filled-mode .text-field {
-    -fx-font-size: 16;
-    -fx-background-color: lightblue, rgba(128, 128, 128, .3);
+.md-text-field:filled-mode field {
+    -fx-font-size: 12;
+    -fx-background-color: #FFFFFF, rgba(128, 128, 128, .3);
     -fx-border-color: transparent transparent black transparent;
     -fx-border-width: 1;
     -fx-border-style: solid
 }
 
 .md-text-field .floating-label {
-    /*-fx-font-size: 12;*/
     -fx-padding: 0 5 0 5;
-}
-
-.md-text-field:outlined-mode .floating-label {
-    -fx-border-color: transparent;
 }
 
 .md-text-field .supporting-text-label {
@@ -41,4 +54,42 @@
 
 .md-text-field .count-label {
     -fx-font-size: 9px;
+}
+
+.md-text-field:style-mode-dark {
+    -fx-background-color: #3C3C46;
+    -text-fill: "#FFFFFF";
+}
+
+.md-text-field:style-mode-dark .field {
+    -fx-background-color: #3C3C46;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #FFFFFF;
+}
+
+.md-text-field:style-mode-dark  .floating-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.md-text-field:style-mode-dark  .supporting-text-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.md-text-field:style-mode-dark  .count-label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.md-text-field:filled-mode:style-mode-dark {
+
+}
+
+.md-text-field:filled-mode:style-mode-dark .field {
+    -fx-font-size: 12;
+    -fx-background-color: #3C3C46, rgba(255, 255, 255, .4);
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent transparent white transparent;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-border-radius: 0;
 }

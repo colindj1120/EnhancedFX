@@ -1,9 +1,8 @@
 package io.github.colindj1120.materialdesignui;
 
 import fr.brouillard.oss.cssfx.CSSFX;
-import io.github.colindj1120.database.DatabaseUtility;
-import io.github.colindj1120.materialdesignui.controls.CustomControl;
 import io.github.colindj1120.materialdesignui.controls.MDTextField;
+import io.github.colindj1120.materialdesignui.enums.EnabledStatus;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,12 +28,14 @@ public class HelloApplication extends Application {
         borderPane.setPadding(new Insets(10));
 //
         Button newButton = new Button("Test");
+//        newButton.setOnAction(e -> textField.setSupportingTextState(EnabledStatus.DISABLED));
 
+//        textField.setMaxCharacterCount(-1);
         VBox vBox = new VBox(10, borderPane, newButton);
         vBox.setStyle("-fx-background-color: lightblue");
         vBox.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(vBox, 300, 300);
+        Scene scene = new Scene(vBox, 600, 600);
         vBox.requestFocus();
         stage.setTitle("MDTextField Test");
         stage.setScene(scene);

@@ -5,10 +5,7 @@ import javafx.css.StyleConverter;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 public class StyleablePropertiesManager {
@@ -100,7 +97,7 @@ public class StyleablePropertiesManager {
 
             @Override
             public boolean isSettable(T styleable) {
-                return isSettableFunction.apply(styleable);
+                return Objects.nonNull(styleable) && isSettableFunction.apply(styleable);
             }
 
             @Override
