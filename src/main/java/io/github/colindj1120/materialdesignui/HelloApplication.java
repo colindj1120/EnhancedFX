@@ -15,22 +15,16 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    private static final String     JDBC_DRIVER = "org.apache.derby.jdbc.ClientDriver";
-    private static final String     connStr     = "jdbc:derby://localhost:1527/C:/Derby/WorkoutDB";
     @Override
-    public void start(Stage stage) throws IOException {
-        //DatabaseUtility.getInstance(JDBC_DRIVER, connStr); //Sets up the database utility
-
+    public void start(Stage stage) {
         CSSFX.start();
 
         MDTextField textField = new MDTextField();
         BorderPane borderPane = new BorderPane(textField);
         borderPane.setPadding(new Insets(10));
-//
-        Button newButton = new Button("Test");
-//        newButton.setOnAction(e -> textField.setSupportingTextState(EnabledStatus.DISABLED));
 
-//        textField.setMaxCharacterCount(-1);
+        Button newButton = new Button("Test");
+
         VBox vBox = new VBox(10, borderPane, newButton);
         vBox.setStyle("-fx-background-color: lightblue");
         vBox.setAlignment(Pos.CENTER);

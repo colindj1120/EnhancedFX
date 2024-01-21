@@ -10,5 +10,5 @@ module MaterialDesignUI {
     requires fr.brouillard.oss.cssfx;
 
     opens io.github.colindj1120.materialdesignui;
-    exports io.github.colindj1120.materialdesignui to javafx.graphics;
+    exports io.github.colindj1120.materialdesignui;
 }

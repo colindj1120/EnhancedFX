@@ -12,20 +12,10 @@ Notes:
     4. To make border mode work for float the float label background must be the same as the text field, the text field/pane should match the container background
     5. When enabled max characters count default position is above the text field
  */
-/*.md-text-field {*/
-/*    -fx-background-color: #FFFFFF;*/
-/*}*/
-
 .md-text-field {
     -fx-background-color: #FFFFFF;
-    -max-char-count-state: enabled;
-    -max-char-count: 10;
-    -max-char-count-pos: below;
-    -text-field-mode: filled;
-    -supporting-text-state: enabled;
-    -float-mode: disabled;
-    /*-float-animation-state: disabled;*/
-    -style-mode: dark;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
 
 .md-text-field .field {
@@ -34,11 +24,19 @@ Notes:
     -fx-border-width: 1;
     -fx-border-style: solid;
     -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.md-text-field:filled-mode {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
 }
 
 .md-text-field:filled-mode field {
     -fx-font-size: 12;
     -fx-background-color: #FFFFFF, rgba(128, 128, 128, .3);
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
     -fx-border-color: transparent transparent black transparent;
     -fx-border-width: 1;
     -fx-border-style: solid
@@ -77,10 +75,6 @@ Notes:
 
 .md-text-field:style-mode-dark  .count-label {
     -fx-text-fill: #FFFFFF;
-}
-
-.md-text-field:filled-mode:style-mode-dark {
-
 }
 
 .md-text-field:filled-mode:style-mode-dark .field {

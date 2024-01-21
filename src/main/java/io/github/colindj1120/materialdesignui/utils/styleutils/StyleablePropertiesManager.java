@@ -8,6 +8,7 @@ import javafx.css.StyleableProperty;
 import java.util.*;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class StyleablePropertiesManager {
     private final List<CssMetaData<? extends Styleable, ?>> cssMetaDataList;
 
