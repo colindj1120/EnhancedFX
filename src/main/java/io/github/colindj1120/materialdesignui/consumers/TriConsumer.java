@@ -1,4 +1,4 @@
-package io.github.colindj1120.materialdesignui.utils.consumers;
+package io.github.colindj1120.materialdesignui.consumers;
 
 @FunctionalInterface
 public interface TriConsumer<T, U, V> {

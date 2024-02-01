@@ -12,72 +12,64 @@ Notes:
     4. To make border mode work for float the float label background must be the same as the text field, the text field/pane should match the container background
     5. When enabled max characters count default position is above the text field
  */
-.md-text-field {
+
+.enhanced-text-field {
     -fx-background-color: #FFFFFF;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
-}
-
-.md-text-field .field {
     -fx-font-size: 12;
-    -fx-border-color: black;
+    -fx-border-color: #000000;
     -fx-border-width: 1;
+    -fx-border-insets: -1;
     -fx-border-style: solid;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -style-mode: dark;
+    -leading-icon-fill: blue;
 }
 
-.md-text-field:filled-mode {
+.enhanced-text-field:filled-mode {
     -fx-background-radius: 0;
+    -fx-border-radius: 0;
     -fx-background-insets: 0;
-}
-
-.md-text-field:filled-mode field {
-    -fx-font-size: 12;
     -fx-background-color: #FFFFFF, rgba(128, 128, 128, .3);
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
     -fx-border-color: transparent transparent black transparent;
     -fx-border-width: 1;
-    -fx-border-style: solid
+    -fx-border-insets: -1;
+    -fx-border-style: solid;
+    -fx-font-size: 12;
 }
 
-.md-text-field .floating-label {
+.enhanced-text-field .floating-label {
     -fx-padding: 0 5 0 5;
 }
 
-.md-text-field .supporting-text-label {
+.enhanced-text-field .supporting-text-label {
     -fx-font-size: 9px;
 }
 
-.md-text-field .count-label {
+.enhanced-text-field .count-label {
     -fx-font-size: 9px;
 }
 
-.md-text-field:style-mode-dark {
-    -fx-background-color: #3C3C46;
-    -text-fill: "#FFFFFF";
-}
-
-.md-text-field:style-mode-dark .field {
+.enhanced-text-field:style-mode-dark {
     -fx-background-color: #3C3C46;
     -fx-text-fill: #FFFFFF;
     -fx-border-color: #FFFFFF;
+    -fx-prompt-text-fill: #FFFFFFB4;
 }
 
-.md-text-field:style-mode-dark  .floating-label {
+.enhanced-text-field:style-mode-dark  .floating-label {
     -fx-text-fill: #FFFFFF;
 }
 
-.md-text-field:style-mode-dark  .supporting-text-label {
+.enhanced-text-field:style-mode-dark  .supporting-text-label {
     -fx-text-fill: #FFFFFF;
 }
 
-.md-text-field:style-mode-dark  .count-label {
+.enhanced-text-field:style-mode-dark  .count-label {
     -fx-text-fill: #FFFFFF;
 }
 
-.md-text-field:filled-mode:style-mode-dark .field {
+.enhanced-text-field:filled-mode:style-mode-dark {
     -fx-font-size: 12;
     -fx-background-color: #3C3C46, rgba(255, 255, 255, .4);
     -fx-background-radius: 0;
