@@ -37,14 +37,23 @@ module MaterialDesignUI {
     opens io.github.colindj1120.materialdesignui.binding;
     exports io.github.colindj1120.materialdesignui.binding;
 
+    opens io.github.colindj1120.materialdesignui.collections;
+    exports io.github.colindj1120.materialdesignui.collections;
+
+    opens io.github.colindj1120.materialdesignui.collections.base;
+    exports io.github.colindj1120.materialdesignui.collections.base;
+
     opens io.github.colindj1120.materialdesignui.consumers;
     exports io.github.colindj1120.materialdesignui.consumers;
 
     opens io.github.colindj1120.materialdesignui.controls;
     exports io.github.colindj1120.materialdesignui.controls;
 
-    opens io.github.colindj1120.materialdesignui.controls.base;
-    exports io.github.colindj1120.materialdesignui.controls.base;
+    opens io.github.colindj1120.materialdesignui.controls.base.effects;
+    exports io.github.colindj1120.materialdesignui.controls.base.effects;
+
+    opens io.github.colindj1120.materialdesignui.controls.base.innertext;
+    exports io.github.colindj1120.materialdesignui.controls.base.innertext;
 
     opens io.github.colindj1120.materialdesignui.converters;
     exports io.github.colindj1120.materialdesignui.converters;
@@ -52,8 +61,38 @@ module MaterialDesignUI {
     opens io.github.colindj1120.materialdesignui.css;
     exports io.github.colindj1120.materialdesignui.css;
 
+    exports io.github.colindj1120.materialdesignui.effects.base;
+    opens io.github.colindj1120.materialdesignui.effects.base;
+
+    exports io.github.colindj1120.materialdesignui.effects.ripple;
+    opens io.github.colindj1120.materialdesignui.effects.ripple;
+
     opens io.github.colindj1120.materialdesignui.enums;
     exports io.github.colindj1120.materialdesignui.enums;
+
+    exports io.github.colindj1120.materialdesignui.enums.collections;
+    opens io.github.colindj1120.materialdesignui.enums.collections;
+
+    exports io.github.colindj1120.materialdesignui.enums.controls;
+    opens io.github.colindj1120.materialdesignui.enums.controls;
+
+    exports io.github.colindj1120.materialdesignui.enums.controls.enhancedtextfield;
+    opens io.github.colindj1120.materialdesignui.enums.controls.enhancedtextfield;
+
+    exports io.github.colindj1120.materialdesignui.enums.effects;
+    opens io.github.colindj1120.materialdesignui.enums.effects;
+
+    opens io.github.colindj1120.materialdesignui.exceptions;
+    exports io.github.colindj1120.materialdesignui.exceptions;
+
+    exports io.github.colindj1120.materialdesignui.factories.effects;
+    opens io.github.colindj1120.materialdesignui.factories.effects;
+
+    exports io.github.colindj1120.materialdesignui.factories.styling;
+    opens io.github.colindj1120.materialdesignui.factories.styling;
+
+    exports io.github.colindj1120.materialdesignui.skins;
+    opens io.github.colindj1120.materialdesignui.skins;
 
     opens io.github.colindj1120.materialdesignui.styling;
     exports io.github.colindj1120.materialdesignui.styling;

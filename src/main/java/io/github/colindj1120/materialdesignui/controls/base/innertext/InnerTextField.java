@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.colindj1120.materialdesignui.controls.base;
+package io.github.colindj1120.materialdesignui.controls.base.innertext;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -64,20 +64,20 @@ import javafx.scene.control.TextField;
  * @see TextField
  * @see InnerTextInputControl
  */
-public interface InnerTextField extends InnerTextInputControl<TextField> {
+public  interface  InnerTextField<T extends TextField> extends InnerTextInputControl<T> {
     /**
      * Returns the property for the preferred column count of the text field.
      *
      * @return the property for the preferred column count
      */
-    default IntegerProperty prefColumnCountProperty() {return getField().prefColumnCountProperty();}
+    default IntegerProperty prefColumnCountProperty() {return getTextField().prefColumnCountProperty();}
 
     /**
      * Returns the preferred number of columns for the text field.
      *
      * @return The preferred number of columns for the text field.
      */
-    default int getPrefColumnCount() {return getField().getPrefColumnCount();}
+    default int getPrefColumnCount() {return getTextField().getPrefColumnCount();}
 
     /**
      * Sets the preferred column count for the text field.
@@ -85,21 +85,21 @@ public interface InnerTextField extends InnerTextInputControl<TextField> {
      * @param value
      *         the number of columns to set
      */
-    default void setPrefColumnCount(int value) {getField().setPrefColumnCount(value);}
+    default void setPrefColumnCount(int value) {getTextField().setPrefColumnCount(value);}
 
     /**
      * Returns the property for the onAction event handler.
      *
      * @return The ObjectProperty for the onAction event handler.
      */
-    default ObjectProperty<EventHandler<ActionEvent>> onActionProperty() {return getField().onActionProperty();}
+    default ObjectProperty<EventHandler<ActionEvent>> onActionProperty() {return getTextField().onActionProperty();}
 
     /**
      * Returns the event handler for the "onAction" event.
      *
      * @return the event handler for the "onAction" event
      */
-    default EventHandler<ActionEvent> getOnAction() {return getField().getOnAction();}
+    default EventHandler<ActionEvent> getOnAction() {return getTextField().getOnAction();}
 
     /**
      * Sets the handler to be invoked when the text field's action event occurs.
@@ -107,14 +107,14 @@ public interface InnerTextField extends InnerTextInputControl<TextField> {
      * @param value
      *         the event handler
      */
-    default void setOnAction(EventHandler<ActionEvent> value) {getField().setOnAction(value);}
+    default void setOnAction(EventHandler<ActionEvent> value) {getTextField().setOnAction(value);}
 
     /**
      * Returns the property representing the alignment of the text in the MDTextField.
      *
      * @return the property representing the alignment of the text
      */
-    default ObjectProperty<Pos> textFieldAlignmentProperty() {return getField().alignmentProperty();}
+    default ObjectProperty<Pos> textFieldAlignmentProperty() {return getTextField().alignmentProperty();}
 
     /**
      * Sets the alignment of the text within the MDTextField.
@@ -122,12 +122,12 @@ public interface InnerTextField extends InnerTextInputControl<TextField> {
      * @param value
      *         the alignment to set for the text
      */
-    default void setTextFieldAlignment(Pos value) {getField().setAlignment(value);}
+    default void setTextFieldAlignment(Pos value) {getTextField().setAlignment(value);}
 
     /**
      * Returns the alignment property of the text field.
      *
      * @return the alignment property of the text field
      */
-    default Pos getTextFieldAlignment() {return getField().getAlignment();}
+    default Pos getTextFieldAlignment() {return getTextField().getAlignment();}
 }

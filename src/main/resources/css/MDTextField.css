@@ -22,8 +22,6 @@ Notes:
     -fx-border-width: 1;
     -fx-border-insets: -1;
     -fx-border-style: solid;
-    -style-mode: dark;
-    -leading-icon-fill: blue;
 }
 
 .enhanced-text-field:filled-mode {
@@ -57,7 +55,7 @@ Notes:
     -fx-prompt-text-fill: #FFFFFFB4;
 }
 
-.enhanced-text-field:style-mode-dark  .floating-label {
+.enhanced-text-field:style-mode-dark  .floating-text-label {
     -fx-text-fill: #FFFFFF;
 }
 

@@ -1,8 +1,10 @@
 package io.github.colindj1120.materialdesignui;
 
 import fr.brouillard.oss.cssfx.CSSFX;
+import io.github.colindj1120.materialdesignui.controls.ToggleNavigationBar;
 import io.github.colindj1120.materialdesignui.controls.EnhancedTextField;
 import io.github.colindj1120.materialdesignui.testing.controllers.EnhancedTextFieldControlsController;
+import io.github.colindj1120.materialdesignui.testing.controllers.ToggleNavigationBarControlsController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -11,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -20,6 +23,38 @@ public class HelloApplication extends Application {
     public void start(Stage stage) {
         CSSFX.start();
 
+        VBox  vBox  = getMDToggleNavigationBarVBox();
+//        VBox  vBox  = getCustomTextFieldVBox();
+        Scene scene = new Scene(vBox, 800, 600);
+
+
+        vBox.requestFocus();
+        stage.setTitle("MDTextField Test");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private VBox getMDToggleNavigationBarVBox() {
+        ToggleNavigationBar toggleNavigationBar = new ToggleNavigationBar();
+        toggleNavigationBar.addToggleButton("LADfadfadf", isSelected -> {});
+
+        HBox hBox = new HBox(toggleNavigationBar);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setMaxWidth(600);
+
+        GridPane toggleNavigationBarControls = createToggleNavigationBarControls(toggleNavigationBar);
+        toggleNavigationBarControls.setStyle("-fx-background-color: blue");
+        toggleNavigationBarControls.setAlignment(Pos.CENTER);
+
+        VBox vBox = new VBox(20, hBox, toggleNavigationBarControls);
+        vBox.setStyle("-fx-background-color: lightblue");
+        vBox.setAlignment(Pos.CENTER);
+        return vBox;
+
+    }
+
+    @NotNull
+    private VBox getCustomTextFieldVBox() {
         EnhancedTextField textField = new EnhancedTextField();
 
         HBox hBox = new HBox(textField);
@@ -33,11 +68,7 @@ public class HelloApplication extends Application {
         VBox vBox = new VBox(20, hBox, textFieldControls);
         vBox.setStyle("-fx-background-color: lightblue");
         vBox.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(vBox, 800, 600);
-        vBox.requestFocus();
-        stage.setTitle("MDTextField Test");
-        stage.setScene(scene);
-        stage.show();
+        return vBox;
     }
 
     @SuppressWarnings("ThrowablePrintedToSystemOut")
@@ -50,6 +81,22 @@ public class HelloApplication extends Application {
             controller.setEnhancedTextField(textField);
 
             return controller.getTextFieldControls();
+        } catch (IOException e) {
+            System.out.println(e);
+            return new GridPane();
+        }
+    }
+
+    @SuppressWarnings("ThrowablePrintedToSystemOut")
+    private GridPane createToggleNavigationBarControls(ToggleNavigationBar toggleNavigationBar) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/testing/fxml/ToggleNavigationBarControls.fxml"));
+            loader.load();
+
+            ToggleNavigationBarControlsController controller = loader.getController();
+            controller.setToggleNavigationBar(toggleNavigationBar);
+
+            return controller.getToggleNavigationBarControls();
         } catch (IOException e) {
             System.out.println(e);
             return new GridPane();
