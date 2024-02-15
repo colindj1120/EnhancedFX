@@ -17,19 +17,18 @@
  */
 package io.github.colindj1120.materialdesignui.styling;
 
+import io.github.colindj1120.materialdesignui.factories.styling.CssFactory;
 import javafx.css.CssMetaData;
-import javafx.css.StyleConverter;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Manages the CSS metadata properties for Styleable objects within a JavaFX application. This class acts as a central repository for CSS property metadata, allowing for dynamic addition, retrieval,
  * and management of {@link CssMetaData} instances.
  * <p>
- * The {@code StyleablePropertiesManager} is initialized with a list of existing CSS metadata from a parent styleable object. It provides methods to add new CSS metadata via a {@link CssBuilder},
+ * The {@code StyleablePropertiesManager} is initialized with a list of existing CSS metadata from a parent styleable object. It provides methods to add new CSS metadata via a {@link CssFactory},
  * retrieve metadata based on property names, and obtain an immutable list of all managed CSS metadata.
  * </p>
  * <p>
@@ -61,9 +60,16 @@ import java.util.function.Function;
  * @see Styleable
  * @see StyleableProperty
  */
-@SuppressWarnings("unused")
 public class StyleablePropertiesManager {
     private final List<CssMetaData<? extends Styleable, ?>> cssMetaDataList;
+
+    /**
+     * Constructs a new {@code StyleablePropertiesManager} with an initial list of CSS metadata. This constructor initializes
+     * the manager with an empty list of {@link CssMetaData} instances.
+     */
+    public StyleablePropertiesManager() {
+        cssMetaDataList = new ArrayList<>();
+    }
 
     /**
      * Constructs a new {@code StyleablePropertiesManager} with an initial list of CSS metadata. This constructor initializes the manager with a given list of {@link CssMetaData} instances, typically
@@ -77,7 +83,7 @@ public class StyleablePropertiesManager {
     }
 
     /**
-     * Adds a new CSS metadata item to the manager. This method accepts a {@link CssBuilder} instance, builds the CSS metadata, and adds it to the manager's internal list. This is useful for
+     * Adds a new CSS metadata item to the manager. This method accepts a {@link CssFactory} instance, builds the CSS metadata, and adds it to the manager's internal list. This is useful for
      * dynamically adding new styleable properties to a JavaFX component.
      *
      * @param <T>
@@ -87,7 +93,7 @@ public class StyleablePropertiesManager {
      * @param builder
      *         The builder used to create the CSS metadata item.
      */
-    public <T extends Styleable, V> void addCssMetaData(CssBuilder<T, V> builder) {
+    public <T extends Styleable, V> void addCssMetaData(CssFactory<T, V> builder) {
         cssMetaDataList.add(builder.build());
     }
 
@@ -123,6 +129,19 @@ public class StyleablePropertiesManager {
     }
 
     /**
+     * Retrieves the CSS metadata at the specified index.
+     *
+     * @param index The index of the CSS metadata.
+     * @param <S>   The type of the styleable object associated with the CSS metadata.
+     * @param <V>   The type of the value represented by the CSS metadata.
+     * @return The CSS metadata at the specified index.
+     */
+    @SuppressWarnings("unchecked")
+    public <S extends Styleable, V> CssMetaData<S, V> getCssMetaData(int index) {
+        return (CssMetaData<S, V>) cssMetaDataList.get(index);
+    }
+
+    /**
      * Provides an unmodifiable view of the CSS metadata list managed by this instance. This method returns a list of all {@link CssMetaData} instances currently managed, ensuring that the returned
      * list cannot be modified directly.
      *
@@ -130,211 +149,5 @@ public class StyleablePropertiesManager {
      */
     public List<CssMetaData<? extends Styleable, ?>> getCssMetaDataList() {
         return Collections.unmodifiableList(cssMetaDataList);
-    }
-
-    /**
-     * A builder class for creating {@link CssMetaData} instances for JavaFX styleable objects. This class provides a fluent API to define various aspects of CSS metadata, including the property name,
-     * converter, initial value, inheritance behavior, and associated sub-properties. It also allows for the specification of custom functions to determine if a property is settable, to get the
-     * property value, and to obtain the initial value of the property.
-     * <p>
-     * The builder is designed to be used in scenarios where custom CSS properties need to be created for JavaFX components, enabling developers to define these properties in a structured and flexible
-     * manner. This approach ensures that all necessary aspects of a CSS property are accounted for and can be easily integrated into the JavaFX styling system.
-     * </p>
-     * <p>
-     * Example Usage:
-     * <pre>
-     * {@code
-     * CssBuilder<Styleable, Color> colorCssBuilder = new CssBuilder<Styleable, Color>()
-     *     .property("-custom-color")
-     *     .converter(StyleConverter.getColorConverter())
-     *     .initialValue(Color.BLACK)
-     *     .inherits(true)
-     *     .isSettableFunction(styleable -> true)
-     *     .propertyGetterFunction(styleable -> styleable.styleableProperty())
-     *     .build();
-     * }
-     * </pre>
-     * </p>
-     *
-     * @param <S>
-     *         The type of the styleable object that the CSS metadata is associated with.
-     * @param <V>
-     *         The type of the value that the CSS metadata represents.
-     *
-     * @see CssMetaData
-     * @see Styleable
-     * @see StyleConverter
-     * @see StyleableProperty
-     */
-    public static class CssBuilder<S extends Styleable, V> {
-        private String                                    property                = null;
-        private StyleConverter<?, V>                      converter               = null;
-        private V                                         initialValue            = null;
-        private boolean                                   inherits                = false;
-        private List<CssMetaData<? extends Styleable, ?>> subProperties           = null;
-        private Function<S, Boolean>                      isSettableFunction      = null;
-        private Function<S, StyleableProperty<V>>         propertyGetterFunction  = null;
-        private Function<S, V>                            getInitialValueFunction = null;
-
-        /**
-         * Sets the CSS property for the builder.
-         *
-         * @param property
-         *         the CSS property to be set
-         *
-         * @return the CssBuilder instance
-         */
-        public CssBuilder<S, V> property(String property) {
-            this.property = property;
-            return this;
-        }
-
-        /**
-         * Sets the converter for parsing and formatting the CSS property value.
-         *
-         * @param converter
-         *         The converter to be set.
-         *
-         * @return The CssBuilder instance with the converter set.
-         */
-        public CssBuilder<S, V> converter(StyleConverter<?, V> converter) {
-            this.converter = converter;
-            return this;
-        }
-
-        /**
-         * Sets the initial value for the CssBuilder.
-         *
-         * @param initialValue
-         *         the initial value to set
-         *
-         * @return the CssBuilder instance
-         */
-        public CssBuilder<S, V> initialValue(V initialValue) {
-            this.initialValue = initialValue;
-            return this;
-        }
-
-        /**
-         * Sets whether the CSS property should be inherited by child elements or not.
-         *
-         * @param inherits
-         *         a boolean value indicating whether the property should be inherited
-         *
-         * @return the CssBuilder instance with the updated 'inherits' value
-         */
-        public CssBuilder<S, V> inherits(boolean inherits) {
-            this.inherits = inherits;
-            return this;
-        }
-
-        /**
-         * Sets the subProperties for the CSS builder.
-         *
-         * @param subProperties
-         *         the list of sub-properties to be set
-         *
-         * @return the modified CSS builder with the updated subProperties
-         */
-        public CssBuilder<S, V> subProperties(List<CssMetaData<? extends Styleable, ?>> subProperties) {
-            this.subProperties = subProperties;
-            return this;
-        }
-
-        /**
-         * Sets the function that determines if the property is settable for a given target object.
-         *
-         * @param isSettableFunction
-         *         the function that determines if the property is settable. The function takes a target object of type T as parameter and returns a boolean value. Return true if the property is
-         *         settable for the given target object, otherwise false.
-         *
-         * @return the CssBuilder instance with the updated isSettableFunction.
-         */
-        public CssBuilder<S, V> isSettableFunction(Function<S, Boolean> isSettableFunction) {
-            this.isSettableFunction = isSettableFunction;
-            return this;
-        }
-
-        /**
-         * Sets the property getter function for the CssBuilder.
-         *
-         * @param propertyGetterFunction
-         *         the function that retrieves the StyleableProperty for the given object
-         *
-         * @return the CssBuilder instance
-         */
-        public CssBuilder<S, V> propertyGetterFunction(Function<S, StyleableProperty<V>> propertyGetterFunction) {
-            this.propertyGetterFunction = propertyGetterFunction;
-            return this;
-        }
-
-        /**
-         * Sets the function used to retrieve the initial value for the CSS property.
-         *
-         * @param getInitialValueFunction
-         *         the function used to retrieve the initial value
-         *
-         * @return the CssBuilder instance
-         */
-        public CssBuilder<S, V> getInitialValueFunction(Function<S, V> getInitialValueFunction) {
-            this.getInitialValueFunction = getInitialValueFunction;
-            return this;
-        }
-
-        /**
-         * Builds and returns a {@link CssMetaData} object based on the parameters set in the builder. This method finalizes the construction of the CSS metadata by using the provided property name,
-         * converter, initial value, inheritance behavior, sub-properties, and custom functions for property handling in JavaFX styleable objects.
-         * <p>
-         * Before building, the method checks for the non-nullness of essential fields like property, converter, isSettable function, and propertyGetter function. If any of these are null, an
-         * IllegalArgumentException is thrown, ensuring that all necessary data is provided to create a valid {@code CssMetaData} instance.
-         * <p>
-         * The resulting {@code CssMetaData} object is tailored to the specific needs of the styleable property, incorporating custom behavior as defined by the builder's methods.
-         *
-         * @return A fully constructed {@code CssMetaData} object.
-         *
-         * @throws IllegalArgumentException
-         *         if any required field (property, converter, isSettableFunction, or propertyGetterFunction) is null.
-         * @see CssMetaData
-         * @see Styleable
-         * @see StyleConverter
-         * @see StyleableProperty
-         */
-        public CssMetaData<S, V> build() {
-            if (Objects.isNull(property)) {
-                throw new IllegalArgumentException("Property cannot be null in the CssBuilder");
-            }
-
-            if (Objects.isNull(converter)) {
-                throw new IllegalArgumentException("Converter cannot be null in the CssBuilder");
-
-            }
-
-            if (Objects.isNull(isSettableFunction)) {
-                throw new IllegalArgumentException("IsSettable function cannot be null in the CssBuilder");
-            }
-
-            if (Objects.isNull(propertyGetterFunction)) {
-                throw new IllegalArgumentException("PropertyGetter function cannot be null in the CssBuilder");
-            }
-
-            return new CssMetaData<>(property, converter, initialValue, inherits, subProperties) {
-                @Override
-                public V getInitialValue(S styleable) {
-                    return Optional.ofNullable(getInitialValueFunction)
-                                   .map(f -> f.apply(styleable))
-                                   .orElse(super.getInitialValue(styleable));
-                }
-
-                @Override
-                public boolean isSettable(S styleable) {
-                    return Objects.nonNull(styleable) && isSettableFunction.apply(styleable);
-                }
-
-                @Override
-                public StyleableProperty<V> getStyleableProperty(S styleable) {
-                    return propertyGetterFunction.apply(styleable);
-                }
-            };
-        }
     }
 }

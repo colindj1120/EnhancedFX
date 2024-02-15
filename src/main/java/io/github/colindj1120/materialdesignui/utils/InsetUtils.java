@@ -18,6 +18,7 @@
 package io.github.colindj1120.materialdesignui.utils;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Control;
 
 /**
  * This utility class provides a collection of static methods to create {@link Insets} objects for JavaFX UI components. The class simplifies the process of defining padding for UI components by
@@ -33,6 +34,9 @@ import javafx.geometry.Insets;
  *   <li>Combined padding for adjacent sides (e.g., top and right)</li>
  *   <li>Horizontal and vertical padding</li>
  *   <li>Method to return an empty {@link Insets} object</li>
+ *   <li>Separate methods to return the top, bottom, left, and right insets of a {@link Control}</li>
+ *   <li>Separate methods to return the borders top, bottom, left, and right insets of a {@link Control}</li>
+ *   <li>Separate methods to return the top, bottom, left and right insets including the borders or a {@link Control}</li>
  * </ul>
  *
  * <p>This class is part of a suite of utility classes in the Material Design UI package and is designed
@@ -292,5 +296,125 @@ public class InsetUtils {
      */
     public static Insets verticalHorizontal(double vertical, double horizontal) {
         return new Insets(vertical, horizontal, vertical, horizontal);
+    }
+
+    /**
+     * Returns the top inset of the specified {@code Control} node.
+     *
+     * @param node The {@code Control} node to retrieve the top inset from.
+     * @return The top inset of the {@code Control} node.
+     */
+    public static double getTopInset(Control node) {
+        return node.getPadding().getTop();
+    }
+
+    /**
+     * Returns the bottom inset of the specified Control node.
+     *
+     * @param node The Control node to retrieve the bottom inset from.
+     * @return The bottom inset of the Control node.
+     */
+    public static double getBottomInset(Control node) {
+        return node.getPadding().getBottom();
+    }
+
+    /**
+     * Returns the left inset value of the specified Control node.
+     *
+     * @param node The Control node to retrieve the left inset value from.
+     * @return The left inset value of the Control node.
+     */
+    public static double getLeftInset(Control node) {
+        return node.getPadding().getLeft();
+    }
+
+    /**
+     * Returns the right inset value of the specified Control node.
+     *
+     * @param node The Control node to retrieve the right inset from.
+     * @return The right inset value of the Control node.
+     */
+    public static double getRightInset(Control node) {
+        return node.getPadding().getRight();
+    }
+
+    /**
+     * Returns the top border inset of the specified Control node.
+     *
+     * @param node The Control node to retrieve the top border inset from.
+     * @return The top border inset of the Control node.
+     */
+    public static double getTopBorderInset(Control node) {
+        return node.getBorder().getInsets().getTop();
+    }
+
+    /**
+     * Returns the bottom border inset of the specified {@code Control} node.
+     *
+     * @param node The {@code Control} node to retrieve the bottom border inset from.
+     * @return The bottom border inset of the {@code Control} node.
+     */
+    public static double getBottomBorderInset(Control node) {
+        return node.getBorder().getInsets().getBottom();
+    }
+
+    /**
+     * Returns the inset value for the left border of a control.
+     *
+     * @param node The control for which to get the left border inset.
+     * @return The inset value for the left border.
+     */
+    public static double getLeftBorderInset(Control node) {
+        return node.getBorder().getInsets().getLeft();
+    }
+
+    /**
+     * Returns the right border inset of the specified control node.
+     *
+     * @param node The control node for which to get the right border inset.
+     * @return The right border inset of the control node.
+     */
+    public static double getRightBorderInset(Control node) {
+        return node.getBorder().getInsets().getRight();
+    }
+
+    /**
+     * Calculates the top inset of a given {@code Control} node, including the border.
+     *
+     * @param node The {@code Control} node to calculate the top inset with border for.
+     * @return The top inset of the {@code Control} node, including the border.
+     */
+    public static double getTopInsetWithBorder(Control node) {
+        return getTopInset(node) + getTopBorderInset(node);
+    }
+
+    /**
+     * Returns the bottom inset value of the specified Control node, including any bottom border insets.
+     *
+     * @param node The Control node to retrieve the bottom inset value from.
+     * @return The bottom inset value of the Control node, including any bottom border insets.
+     */
+    public static double getBottomInsetWithBorder(Control node) {
+        return getBottomInset(node) + getBottomBorderInset(node);
+    }
+
+    /**
+     * Calculates the left inset of the specified Control node, including the left border inset.
+     *
+     * @param node The Control node to retrieve the left inset from.
+     * @return The left inset of the Control node including the left border inset.
+     */
+    public static double getLeftInsetWithBorder(Control node) {
+        return getLeftInset(node) + getLeftBorderInset(node);
+    }
+
+    /**
+     * Returns the right inset of the specified {@code Control} node, including any border.
+     *
+     * @param node The {@code Control} node to retrieve the right inset from.
+     * @return The right inset of the {@code Control} node.
+     */
+    public static double getRightInsetWithBorder(Control node) {
+        return getRightInset(node) + getRightBorderInset(node);
     }
 }

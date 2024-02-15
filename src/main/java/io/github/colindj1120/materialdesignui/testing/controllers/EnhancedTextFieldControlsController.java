@@ -1,7 +1,11 @@
 package io.github.colindj1120.materialdesignui.testing.controllers;
 
 import io.github.colindj1120.materialdesignui.controls.EnhancedTextField;
-import io.github.colindj1120.materialdesignui.enums.*;
+import io.github.colindj1120.materialdesignui.enums.Status;
+import io.github.colindj1120.materialdesignui.enums.controls.StyleMode;
+import io.github.colindj1120.materialdesignui.enums.controls.enhancedtextfield.FloatMode;
+import io.github.colindj1120.materialdesignui.enums.controls.enhancedtextfield.MaxCharacterCountPosition;
+import io.github.colindj1120.materialdesignui.enums.controls.enhancedtextfield.TextFieldMode;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -34,7 +38,7 @@ public class EnhancedTextFieldControlsController {
     @FXML
     protected void handleRemoveLeadingIcon() {
         checkEnhancedTextFieldLoaded();
-        textField.removeLeadingIcon();
+        textField.setLeadingIcon(null);
     }
 
     @FXML
@@ -46,7 +50,7 @@ public class EnhancedTextFieldControlsController {
     @FXML
     protected void handleRemoveTrailingIcon() {
         checkEnhancedTextFieldLoaded();
-        textField.removeTrailingIcon();
+        textField.setTrailingIcon(null);
     }
 
     @FXML
@@ -65,18 +69,20 @@ public class EnhancedTextFieldControlsController {
     protected void handleSetWidthTo225() {
         checkEnhancedTextFieldLoaded();
         textField.setPrefWidth(225);
+        textField.setMaxWidth(225);
     }
 
     @FXML
     protected void handleSetWidthToDefault() {
         checkEnhancedTextFieldLoaded();
         textField.setPrefWidth(180);
+        textField.setMaxWidth(180);
     }
 
     @FXML
     protected void handleSetHeightTo225() {
         checkEnhancedTextFieldLoaded();
-        textField.setPrefHeight(225);
+        textField.setPrefHeight(50);
     }
 
     @FXML
@@ -116,27 +122,27 @@ public class EnhancedTextFieldControlsController {
     @FXML
     protected void handleEnableSupportingText() {
         checkEnhancedTextFieldLoaded();
-        textField.setSupportingTextState(EnabledStatus.ENABLED);
+        textField.setSupportingTextState(Status.ENABLED);
         textField.setSupportingText("Supporting Text");
     }
 
     @FXML
     protected void handleDisableSupportingText() {
         checkEnhancedTextFieldLoaded();
-        textField.setSupportingTextState(EnabledStatus.DISABLED);
+        textField.setSupportingTextState(Status.DISABLED);
         textField.setSupportingText("");
     }
 
     @FXML
     protected void handleEnableMaxChar() {
         checkEnhancedTextFieldLoaded();
-        textField.setMaxCharCountState(EnabledStatus.ENABLED);
+        textField.setMaxCharCountState(Status.ENABLED);
     }
 
     @FXML
     protected void handleDisableMaxChar() {
         checkEnhancedTextFieldLoaded();
-        textField.setMaxCharCountState(EnabledStatus.DISABLED);
+        textField.setMaxCharCountState(Status.DISABLED);
     }
 
     @FXML
