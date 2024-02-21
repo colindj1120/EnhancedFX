@@ -292,22 +292,49 @@ public class EnhancedTextField extends EnhancedTextBase implements InnerTextFiel
         return leadingIcon.get();
     }
 
+    /**
+     * Retrieves the leading icon property.
+     *
+     * @return The object property representing the leading icon.
+     */
     public ObjectProperty<Node> leadingIconProperty() {
         return leadingIcon;
     }
 
+    /**
+     * Sets the leading icon for this component.
+     *
+     * @param leadingIcon
+     *         the node representing the leading icon
+     */
     public void setLeadingIcon(Node leadingIcon) {
         this.leadingIcon.set(leadingIcon);
     }
 
+    /**
+     * Returns the trailing icon of the Node.
+     *
+     * @return the trailing icon of the Node
+     */
     public Node getTrailingIcon() {
         return trailingIcon.get();
     }
 
+    /**
+     * Retrieves the ObjectProperty representing the trailing icon of this element.
+     *
+     * @return the ObjectProperty representing the trailing icon
+     */
     public ObjectProperty<Node> trailingIconProperty() {
         return trailingIcon;
     }
 
+    /**
+     * Sets the trailing icon for this component. The trailing icon is the icon displayed at the end of the component.
+     *
+     * @param trailingIcon
+     *         the trailing icon to be set
+     */
     public void setTrailingIcon(Node trailingIcon) {
         this.trailingIcon.set(trailingIcon);
     }

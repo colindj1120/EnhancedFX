@@ -341,6 +341,15 @@ public class ToggleNavigationBar extends Control {
     }
 
     /**
+     * Retrieves the ToggleGroup associated with the ToggleNavigationBar.
+     *
+     * @return the ToggleGroup associated with the ToggleNavigationBar
+     */
+    public ToggleGroup getToggleGroup() {
+        return toggleGroup;
+    }
+
+    /**
      * Returns the read-only boolean property that represents whether the ToggleNavigationBar is in horizontal orientation.
      *
      * @return the read-only boolean property for horizontal orientation

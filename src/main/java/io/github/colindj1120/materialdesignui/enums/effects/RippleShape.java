@@ -29,7 +29,8 @@ package io.github.colindj1120.materialdesignui.enums.effects;
  */
 public enum RippleShape {
     RECTANGLE,
-    ROUNDED_RECTANGLE,
+    UNIFORM_ROUNDED_RECTANGLE,
+    ASYMMETRIC_ROUNDED_RECTANGLE,
     CIRCLE,
     VERTICAL_ELLIPSE,
     HORIZONTAL_ELLIPSE

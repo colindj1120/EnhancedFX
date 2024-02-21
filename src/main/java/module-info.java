@@ -1,12 +1,7 @@
 module MaterialDesignUI {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.web;
     requires org.jetbrains.annotations;
-    requires com.hyperion;
-    requires java.sql;
-    requires java.sql.rowset;
-    requires DatabaseUtility;
     requires fr.brouillard.oss.cssfx;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome5;
@@ -90,6 +85,9 @@ module MaterialDesignUI {
 
     exports io.github.colindj1120.materialdesignui.factories.styling;
     opens io.github.colindj1120.materialdesignui.factories.styling;
+
+    opens io.github.colindj1120.materialdesignui.shapes;
+    exports io.github.colindj1120.materialdesignui.shapes;
 
     exports io.github.colindj1120.materialdesignui.skins;
     opens io.github.colindj1120.materialdesignui.skins;

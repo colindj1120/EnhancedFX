@@ -18,7 +18,6 @@
 package io.github.colindj1120.materialdesignui.effects.ripple;
 
 import io.github.colindj1120.materialdesignui.animation.AnimationManager;
-import io.github.colindj1120.materialdesignui.controls.EnhancedToggleButton;
 import io.github.colindj1120.materialdesignui.converters.InterpolatorStyleConverter;
 import io.github.colindj1120.materialdesignui.enums.Status;
 import io.github.colindj1120.materialdesignui.enums.effects.RippleDirection;
@@ -27,6 +26,7 @@ import io.github.colindj1120.materialdesignui.exceptions.RippleEffectException;
 import io.github.colindj1120.materialdesignui.factories.styling.CssFactory;
 import io.github.colindj1120.materialdesignui.factories.styling.StyleableDoublePropertyFactory;
 import io.github.colindj1120.materialdesignui.factories.styling.StyleableObjectPropertyFactory;
+import io.github.colindj1120.materialdesignui.shapes.AsymmetricRoundedRectangle;
 import io.github.colindj1120.materialdesignui.styling.StyleablePropertiesManager;
 import io.github.colindj1120.materialdesignui.utils.PropertyUtils;
 import javafx.animation.Interpolator;
@@ -104,7 +104,7 @@ import static io.github.colindj1120.materialdesignui.utils.AnimationUtils.*;
  */
 public class RippleEffect extends Region {
     private static final String                     RIPPLE_STYLE     = "ripple-effect";
-    private final AnimationManager           animationManager = new AnimationManager();
+    private final        AnimationManager           animationManager = new AnimationManager();
     private static final StyleablePropertiesManager stylesManager    = new StyleablePropertiesManager(Region.getClassCssMetaData());
 
     private StyleableObjectProperty<Status>          rippleState;
@@ -292,8 +292,8 @@ public class RippleEffect extends Region {
 
     /**
      * Constructs a {@link Shape} to be used as a clipping mask based on the current {@code rippleShape} configuration. This method determines the appropriate clipping shape to match the ripple effect
-     * shape, ensuring the visual boundaries of the ripple effect are consistent with the intended design. The method supports various shapes such as rectangles, rounded rectangles, circles, and
-     * ellipses. It utilizes {@link Optional} to gracefully handle potential null values and enforce the requirement that a valid shape configuration is provided.
+     * shape, ensuring the visual boundaries of the ripple effect are consistent with the intended design. The method supports various shapes such as rectangles, uniform rounded rectangles, asymmetric
+     * rounded rectangles, circles, and ellipses. It utilizes {@link Optional} to gracefully handle potential null values and enforce the requirement that a valid shape configuration is provided.
      *
      * @return A {@link Shape} object that serves as a clipping mask for the ripple effect.
      *
@@ -304,7 +304,8 @@ public class RippleEffect extends Region {
         return Optional.ofNullable(rippleClipShape.get())
                        .map(shape -> switch (shape) {
                            case RECTANGLE -> createRectangleClip();
-                           case ROUNDED_RECTANGLE -> createRoundedRectangleClip();
+                           case UNIFORM_ROUNDED_RECTANGLE -> createRoundedRectangleClip();
+                           case ASYMMETRIC_ROUNDED_RECTANGLE -> createAsymmetricRoundedRectangle();
                            case CIRCLE -> createCircleClip();
                            case VERTICAL_ELLIPSE, HORIZONTAL_ELLIPSE -> createEllipseClip();
                        })
@@ -338,6 +339,15 @@ public class RippleEffect extends Region {
         clip.setArcHeight(radii.getTopLeftVerticalRadius() * 2);
 
         return clip;
+    }
+
+    /**
+     * Creates a new instance of {@link AsymmetricRoundedRectangle} with the dimensions and corner radii of the targetNode.
+     *
+     * @return a new instance of {@link AsymmetricRoundedRectangle} with the dimensions and corner radii of the targetNode.
+     */
+    private AsymmetricRoundedRectangle createAsymmetricRoundedRectangle() {
+        return new AsymmetricRoundedRectangle(targetNode.getWidth(), targetNode.getHeight(), getCornerRadii(targetNode));
     }
 
     /**
@@ -459,7 +469,8 @@ public class RippleEffect extends Region {
     private Shape createRippleEffect(MouseEvent event) {
         return Optional.ofNullable(rippleShape.get())
                        .map(shape -> switch (shape) {
-                           case ROUNDED_RECTANGLE -> createRoundedRectangleRipple(event);
+                           case UNIFORM_ROUNDED_RECTANGLE -> createRoundedRectangleRipple(event);
+                           case ASYMMETRIC_ROUNDED_RECTANGLE -> createAsymmetricRoundedRectangleRipple(event);
                            case RECTANGLE -> createRectangleRipple(event);
                            case CIRCLE -> createCircleRipple(event);
                            case HORIZONTAL_ELLIPSE -> createHorizontalEllipseRipple(event);
@@ -493,6 +504,52 @@ public class RippleEffect extends Region {
         applyRippleEffectProperties(ripple);
 
         return ripple;
+    }
+
+    /**
+     * Creates an asymmetric rounded rectangle ripple based on the mouse event.
+     *
+     * @param event
+     *         the mouse event from which the coordinates are retrieved
+     *
+     * @return the created asymmetric rounded rectangle ripple
+     */
+    @NotNull
+    private AsymmetricRoundedRectangle createAsymmetricRoundedRectangleRipple(MouseEvent event) {
+        CornerRadii radii         = getCornerRadii(targetNode);
+        CornerRadii adjustedRadii = getAdjustedRadii(radii);
+        double      rippleRadius  = getRippleRadius();
+        double      width         = rippleRadius * 2;
+        double      height        = rippleRadius * 2;
+
+        AsymmetricRoundedRectangle ripple = new AsymmetricRoundedRectangle(event.getX() - rippleRadius, event.getY() - rippleRadius, width, height, adjustedRadii);
+
+        applyRippleEffectProperties(ripple);
+
+        return ripple;
+    }
+
+    /**
+     * Adjusts the given CornerRadii by multiplying each radius value by a specified multiplier.
+     *
+     * @param originalRadii
+     *         the original CornerRadii object to be adjusted
+     *
+     * @return a new CornerRadii object with each radius adjusted by the multiplier
+     */
+    private CornerRadii getAdjustedRadii(CornerRadii originalRadii) {
+        //@formatter:off
+        double multiplier = getRippleRadius()/100.0;
+        return new CornerRadii(originalRadii.getTopLeftHorizontalRadius() * multiplier,
+                               originalRadii.getTopLeftVerticalRadius() * multiplier,
+                               originalRadii.getTopRightVerticalRadius() * multiplier,
+                               originalRadii.getTopRightHorizontalRadius() * multiplier,
+                               originalRadii.getBottomLeftHorizontalRadius() * multiplier,
+                               originalRadii.getBottomLeftVerticalRadius() * multiplier,
+                               originalRadii.getBottomRightVerticalRadius() * multiplier,
+                               originalRadii.getBottomRightHorizontalRadius() * multiplier,
+                               false, false, false, false, false, false, false, false);
+        //@formatter:on
     }
 
     /**

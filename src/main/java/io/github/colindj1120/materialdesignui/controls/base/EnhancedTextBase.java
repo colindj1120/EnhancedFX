@@ -325,7 +325,8 @@ public abstract class EnhancedTextBase extends Control {
     /**
      * Sets the style mode for the object.
      *
-     * @param styleMode the style mode to set
+     * @param styleMode
+     *         the style mode to set
      */
     public void setStyleMode(StyleMode styleMode) {
         this.styleMode.set(styleMode);
@@ -370,7 +371,8 @@ public abstract class EnhancedTextBase extends Control {
     /**
      * Sets the state of the supporting text.
      *
-     * @param supportingTextState the state of the supporting text
+     * @param supportingTextState
+     *         the state of the supporting text
      */
     public void setSupportingTextState(Status supportingTextState) {
         this.supportingTextState.set(supportingTextState);
@@ -461,7 +463,8 @@ public abstract class EnhancedTextBase extends Control {
     /**
      * Sets the maximum character count.
      *
-     * @param maxCharacterCount the maximum character count to be set
+     * @param maxCharacterCount
+     *         the maximum character count to be set
      */
     public void setMaxCharacterCount(int maxCharacterCount) {
         this.maxCharacterCount.set(maxCharacterCount);
@@ -488,7 +491,8 @@ public abstract class EnhancedTextBase extends Control {
     /**
      * Sets the state of the maximum character count.
      *
-     * @param maxCharCountState the state of the maximum character count
+     * @param maxCharCountState
+     *         the state of the maximum character count
      */
     public void setMaxCharCountState(Status maxCharCountState) {
         this.maxCharCountState.set(maxCharCountState);
@@ -515,7 +519,8 @@ public abstract class EnhancedTextBase extends Control {
     /**
      * Sets the position of the maximum character count.
      *
-     * @param maxCharacterCountPosition the position of the maximum character count
+     * @param maxCharacterCountPosition
+     *         the position of the maximum character count
      */
     public void setMaxCharacterCountPosition(MaxCharacterCountPosition maxCharacterCountPosition) {
         this.maxCharacterCountPosition.set(maxCharacterCountPosition);
@@ -606,6 +611,9 @@ public abstract class EnhancedTextBase extends Control {
         pseudoClassStateChanged(SUPPORTING_TEXT_ENABLED_PSEUDO_CLASS, isSupportingTextEnabled.get());
     }
 
+    /**
+     * Initializes the styleable properties of the class. This method creates and sets the initial values of the styleable properties used for styling the class.
+     */
     private void initializeStyleableProperties() {
         supportingTextState = StyleableObjectPropertyFactory.<Status>builder()
                                                             .bean(this)
@@ -696,6 +704,16 @@ public abstract class EnhancedTextBase extends Control {
         oldValueSetter.accept(prop.get());
     }
 
+    /**
+     * Invalidates the maximum character count property and handles the necessary logic.
+     *
+     * @param prop
+     *         the StyleableIntegerProperty that was invalidated
+     * @param oldValue
+     *         the previous value of the property
+     * @param oldValueSetter
+     *         a Consumer to update the old value
+     */
     protected void maxCharacterCountInvalidated(StyleableIntegerProperty prop, Integer oldValue, Consumer<Integer> oldValueSetter) {
         int value = prop.get();
         if (value < 0 || !isMaxCharacterCountEnabled()) {
@@ -711,6 +729,12 @@ public abstract class EnhancedTextBase extends Control {
         oldValueSetter.accept(value);  // update the old value
     }
 
+    /**
+     * Invalidates the style mode of the given property.
+     *
+     * @param prop
+     *         the style mode property to be invalidated
+     */
     protected void styleModeInvalidated(StyleableObjectProperty<StyleMode> prop) {
         StyleMode mode = prop.get();
 
@@ -718,6 +742,11 @@ public abstract class EnhancedTextBase extends Control {
         pseudoClassStateChanged(STYLE_MODE_CUSTOM_PSEUDO_CLASS, mode == StyleMode.CUSTOM);
     }
 
+    /**
+     * Returns the list of CSS metadata for the class.
+     *
+     * @return The list of CSS metadata for the class.
+     */
     public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {
         return STYLES_MANAGER.getCssMetaDataList();
     }

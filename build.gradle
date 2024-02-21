@@ -4,10 +4,12 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.beryx.jlink' version '3.0.1'
+    id 'signing'
+    id 'maven-publish'
 }
 
-group 'io.github.colindj1120'
-version '1.0-SNAPSHOT'
+group = "${projectGroup}"
+version = "${projectVersion}"
 
 repositories {
     mavenCentral()
@@ -22,34 +24,110 @@ java {
     targetCompatibility = '21'
 }
 
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.windowTitle = "${javadocTitle}"
+    options.docTitle = "${javadocTitle}"
+    options.header = "${javadocTitle}"
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-Xlint:unchecked'
 }
 
 application {
-    mainModule = 'io.github.colindj1120.materialdesignui'
-    mainClass = 'io.github.colindj1120.materialdesignui.HelloApplication'
+    mainModule = '${mainModule}'
+    mainClass = '${mainClass}'
 }
 
 javafx {
     version = '21.0.2'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+tasks.register('javadocJar', Jar) {
+    archiveClassifier.set('javadoc')
+    from javadoc
+}
+
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "${projectGroup}"
+            artifactId = "${projectArtifactId}"
+            version = "${projectVersion}"
+
+            from components.java
+            artifact tasks.javadocJar
+            artifact tasks.sourcesJar
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = "${projectName}"
+                description = """
+                              An extension on the JavaFX library providing enhanced controls, effects, collections, effects and more. 
+                              The controls in this project follow Material Design principles.
+                              """
+                url = "${githubUrl}"
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'colindj1120'
+                        name = 'Colin Jokisch'
+                        email = 'colindj1120@gmail.com'
+                    }
+                }
+                scm {
+                    connection = "${scmConnection}"
+                    developerConnection = "${scmConnection}"
+                    url = "${githubUrl}"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = System.getenv('MAVEN_CENTRAL_USERNAME')
+                password = System.getenv('MAVEN_CENTRAL_PASSWORD')
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications.mavenJava)
 }
 
 dependencies {
-    implementation 'org.openjfx:javafx-web:21.0.1'
-
     implementation 'org.jetbrains:annotations:24.0.0'
-
-    // Database
-    implementation 'io.github.colindj1120:database-utility:0.1.2'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-
-    //Sql String Builder Utility
-    implementation files('/libs/SqlBuilder-0.1.0.jar')
 
     // Ikonli Core
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
@@ -58,9 +136,6 @@ dependencies {
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-coreui-pack:12.3.1'
 
-    // https://mvnrepository.com/artifact/org.controlsfx/controlsfx
-    implementation 'org.controlsfx:controlsfx:11.2.0'
-
     implementation "fr.brouillard.oss:cssfx:11.4.0"
 }
 
@@ -68,14 +143,17 @@ test {
     useJUnitPlatform()
 }
 
-jlink {
-    imageZip = project.layout.buildDirectory.file("distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-        name = 'app'
-    }
-}
+// Compatible with a number of Gradle APIs that accept a java.io.File
+Provider<Directory> buildDir = layout.buildDirectory.dir("libs")
 
-jlinkZip {
-    group = 'distribution'
+// Configure the main jar task
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': "${projectName}",
+                'Implementation-Version': "${projectVersion}",
+                'Main-Class': "${mainClass}",
+                'Automatic-Module-Name': "${projectAutomaticModuleName}",
+        )
+    }
 }

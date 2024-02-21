@@ -17,16 +17,28 @@
  */
 package io.github.colindj1120.materialdesignui.collections;
 
-import io.github.colindj1120.materialdesignui.utils.MapUtils;
+import io.github.colindj1120.materialdesignui.collections.base.MapChangeItem;
+import io.github.colindj1120.materialdesignui.enums.collections.UpdateActions;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * An extension of {@link LinkedHashMap} that allows observers to listen to changes in the map. This class notifies registered listeners of any put, remove, or update operations performed on the map.
+ * ObservableLinkedHashMap is an extension of {@link LinkedHashMap} that supports notifying registered listeners about changes to the map. This functionality allows for a reactive programming style,
+ * where changes to the map's contents can trigger updates elsewhere in an application, such as refreshing user interface components or triggering further data processing.
+ *
+ * <p>
+ * This map implementation is ideal for scenarios where it is important to track how the map changes over time, not just its current state. Each change (addition, removal, update of entries) can be
+ * observed by registering a {@link Consumer} that accepts {@link MapChangeItem} instances, which describe the change that occurred.
+ * </p>
+ *
+ * <p>
+ * Usage of this class is particularly beneficial in applications with complex data flows, where changes to data structures need to be propagated efficiently to various parts of the application,
+ * ensuring data consistency and enabling dynamic response to data mutations.
+ * </p>
  *
  * @param <K>
  *         the type of keys maintained by this map
@@ -35,11 +47,13 @@ import java.util.function.Function;
  *
  * @author Colin Jokisch
  * @version 1.0.0
+ * @see LinkedHashMap
+ * @see Consumer
+ * @see MapChangeItem
+ * @see UpdateActions
  */
 public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
-    private final List<BiConsumer<Map.Entry<K, V>, Map.Entry<K, V>>> onChangeListeners = new ArrayList<>();
-    private final List<BiConsumer<Map<K, V>, Map<K, V>>> bulkChangeListeners = new ArrayList<>();
-
+    private final List<Consumer<MapChangeItem<K, V>>> onChangeListeners = new ArrayList<>();
 
     /**
      * Constructs an empty {@code ObservableLinkedHashMap} instance with default initial capacity and load factor.
@@ -95,80 +109,34 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     }
 
     /**
-     * Adds a change listener that will be notified whenever the map is updated.
+     * Registers a listener that will be notified of changes to the map. The listener is a {@link Consumer} of {@link MapChangeItem}, which contains details about the change.
      *
      * @param onChange
-     *         the change listener to add
+     *         the listener to be notified of changes
      */
-    public void addChangeListener(BiConsumer<Map.Entry<K, V>, Map.Entry<K, V>> onChange) {
+    public void addChangeListener(Consumer<MapChangeItem<K, V>> onChange) {
         onChangeListeners.add(onChange);
     }
 
     /**
-     * Removes the specified change listener so that it no longer receives change notifications.
+     * Removes a previously registered change listener.
      *
      * @param onChange
-     *         the change listener to remove
+     *         the listener to remove
      */
-    public void removeChangeListener(BiConsumer<Map.Entry<K, V>, Map.Entry<K, V>> onChange) {
+    public void removeChangeListener(Consumer<MapChangeItem<K, V>> onChange) {
         onChangeListeners.remove(onChange);
     }
 
     /**
-     * Adds a bulk change listener that will be notified with snapshots of the map's state
-     * before and after a bulk operation. This allows observers to analyze the overall impact of operations
-     * that modify the map on a larger scale.
+     * Notifies all registered change listeners about a change in the map. The method constructs a {@link MapChangeItem} describing the change and passes it to each listener.
      *
-     * @param listener the bulk change listener to add, receiving a snapshot of the map before and after the bulk operation
+     * @param mapChangeItem
+     *         the {@link MapChangeItem} describing the change
      */
-    public void addBulkChangeListener(BiConsumer<Map<K, V>, Map<K, V>> listener) {
-        bulkChangeListeners.add(listener);
+    private void notifyChangeListeners(MapChangeItem<K, V> mapChangeItem) {
+        onChangeListeners.forEach(listener -> listener.accept(mapChangeItem));
     }
-
-    /**
-     * Removes the specified bulk change listener so that it no longer receives bulk change notifications.
-     *
-     * @param listener the bulk change listener to remove
-     */
-    public void removeBulkChangeListener(BiConsumer<Map<K, V>, Map<K, V>> listener) {
-        bulkChangeListeners.remove(listener);
-    }
-
-
-    /**
-     * Notifies all registered change listeners of a change.
-     *
-     * @param key
-     *         the key that was changed
-     * @param oldValue
-     *         the previous value associated with {@code key}, or {@code null} if there was no mapping for {@code key}
-     * @param newValue
-     *         the new value associated with {@code key}, or {@code null} if the mapping has been removed
-     */
-    private void notifyChangeListeners(K key, V oldValue, V newValue) {
-        if (!Objects.equals(oldValue, newValue)) {
-            Map.Entry<K, V> oldEntry = oldValue != null ? MapUtils.simpleEntry(key, oldValue) : null;
-            Map.Entry<K, V> newEntry = newValue != null ? MapUtils.simpleEntry(key, newValue) : null;
-            onChangeListeners.forEach(listener -> listener.accept(oldEntry, newEntry));
-        }
-    }
-
-    /**
-     * Notifies all registered bulk change listeners of a change before and after bulk operations. This method should
-     * be called with snapshots of the map's state before and after a bulk operation, such as {@code putAll}, {@code clear},
-     * or any other method that results in multiple modifications to the map.
-     *
-     * <p>This is a conceptual method documentation, as the actual implementation details and method signatures
-     * for invoking bulk operations and capturing map states would depend on specific bulk operation implementations
-     * within this class.</p>
-     *
-     * @param beforeState the state of the map before the bulk operation, captured as an immutable snapshot
-     * @param afterState the state of the map after the bulk operation, captured as an immutable snapshot
-     */
-    private void notifyBulkChangeListeners(Map<K, V> beforeState, Map<K, V> afterState) {
-        bulkChangeListeners.forEach(listener -> listener.accept(beforeState, afterState));
-    }
-
 
     /**
      * Inserts the specified key-value pair into the map. If the map previously contained a mapping for the key, the old value is replaced. After the insertion, all registered change listeners are
@@ -184,7 +152,7 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     @Override
     public V put(K key, V value) {
         V oldValue = super.put(key, value);
-        notifyChangeListeners(key, oldValue, value);
+        notifyChangeListeners(new MapChangeItem<>(UpdateActions.ADDED, key, oldValue, value));
         return oldValue;
     }
 
@@ -199,62 +167,43 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     @SuppressWarnings("unchecked")
     @Override
     public V remove(Object key) {
-        V oldValue = super.remove(key);
-        notifyChangeListeners((K) key, oldValue, null);
+        boolean containsKey = super.containsKey(key);
+        V       oldValue    = super.remove(key);
+        if (containsKey) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REMOVED, (K) key, oldValue, null));
+        }
         return oldValue;
     }
 
     /**
-     * Determines whether the eldest entry should be removed or not. If the eldest entry is removed, all registered change listeners are notified of this removal.
-     *
-     * @param eldest
-     *         the least recently accessed entry
-     *
-     * @return {@code true} if the eldest entry should be removed from the map; {@code false} if it should be retained.
-     */
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-        boolean shouldRemove = super.removeEldestEntry(eldest);
-        if (shouldRemove) {
-            notifyChangeListeners(eldest.getKey(), eldest.getValue(), null);
-        }
-        return shouldRemove;
-    }
-
-    /**
-     * Copies all the mappings from the specified map to this map. The effect of this call is equivalent to that of calling {@code put(k, v)} on this map once for each mapping from key {@code k} to
-     * value {@code v} in the specified map. All registered change listeners are notified for each insertion.
+     * Adds all the key-value mappings from a given map to this map.
      *
      * @param m
-     *         mappings to be stored in this map
+     *         the map containing the key-value mappings to be added to this map
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        Map<K, V> beforeState = bulkChangeListeners.isEmpty() ? null : new LinkedHashMap<>(this);
-        m.forEach(this::put);
-        if (!bulkChangeListeners.isEmpty()) {
-            notifyBulkChangeListeners(beforeState, this);
-        }
+        Map<K, V> beforeState = getBeforeState();
+        super.putAll(m);
+        notifyChangeListeners(new MapChangeItem<>(UpdateActions.BULK_ADD, beforeState, this));
     }
 
     /**
-     * Associates the specified value with the specified key in this map, if not already present. If the map previously did not contain a mapping for the key, the value is inserted and all registered
-     * change listeners are notified of the new insertion. If the map already contained a mapping for the key, the existing value is retained, and no change listeners are notified.
+     * Associates the specified value with the specified key in this map if the key is not already associated with a value.
      *
      * @param key
-     *         key with which the specified value is to be associated
+     *         the key with which the specified value is to be associated
      * @param value
-     *         value to be associated with the specified key
+     *         the value to be associated with the specified key
      *
-     * @return the previous value associated with the specified key, or {@code null} if there was no mapping for the key. A {@code null} return can also indicate that the map previously associated
-     *         {@code null} with the key, if the implementation supports {@code null} values.
+     * @return the previous value associated with the specified key, or {@code null} if there was no mapping for the key.
      */
     @Override
     public V putIfAbsent(K key, V value) {
         V oldValue    = super.get(key);
         V returnValue = super.putIfAbsent(key, value);
-        if (returnValue == null) { // A null return indicates the value was absent and is now added.
-            notifyChangeListeners(key, oldValue, value);
+        if (returnValue == null && super.containsKey(key) && super.containsValue(value)) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.ADDED, key, oldValue, value));
         }
         return returnValue;
     }
@@ -266,13 +215,9 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     @Override
     public void clear() {
         if (!isEmpty()) {
-            Map<K, V> beforeState = bulkChangeListeners.isEmpty() ? null : new LinkedHashMap<>(this);
+            Map<K, V> beforeState = getBeforeState();
             super.clear();
-            // Notify that the map is being cleared by passing null for both old and new states.
-            notifyChangeListeners(null, null, null);
-            if (!bulkChangeListeners.isEmpty()) {
-                notifyBulkChangeListeners(beforeState, this);
-            }
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.CLEARED, beforeState, this));
         }
     }
 
@@ -293,27 +238,27 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         boolean replaced = super.replace(key, oldValue, newValue);
         if (replaced) {
             // Notify change listeners if the value was successfully replaced.
-            notifyChangeListeners(key, oldValue, newValue);
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REPLACED, key, oldValue, newValue));
         }
         return replaced;
     }
 
     /**
-     * Replaces the entry for the specified key only if it is currently mapped to some value.
+     * Replaces the value associated with the specified key in this map with the specified value. Notifies change listeners if the old value is successfully replaced.
      *
      * @param key
-     *         key with which the specified value is associated
+     *         the key whose value is to be replaced
      * @param value
-     *         value to be associated with the specified key
+     *         the value to replace the old value with
      *
-     * @return the previous value associated with the specified key, or {@code null} if there was no mapping for the key
+     * @return the previous value associated with the specified key, or null if there was no mapping for the key
      */
     @Override
     public V replace(K key, V value) {
         V oldValue = super.replace(key, value);
-        if (oldValue != null) {
-            // Notify change listeners if the old value was successfully replaced.
-            notifyChangeListeners(key, oldValue, value);
+        // Notify change listeners if the old value was successfully replaced.
+        if (super.containsKey(key) && super.containsValue(value)) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REPLACED, key, oldValue, value));
         }
         return oldValue;
     }
@@ -326,21 +271,9 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      */
     @Override
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
-        Map<K, V> beforeState = bulkChangeListeners.isEmpty() ? null : new LinkedHashMap<>(this);
-        AtomicBoolean updated = new AtomicBoolean(false);
-        super.replaceAll((k, v) -> {
-            V newValue = function.apply(k, v);
-            if (!Objects.equals(v, newValue)) { // Only notify if the value actually changes
-                updated.set(true);
-                notifyChangeListeners(k, v, newValue);
-            }
-
-            return newValue;
-        });
-
-        if (!bulkChangeListeners.isEmpty() && updated.get()) {
-            notifyBulkChangeListeners(beforeState, this);
-        }
+        Map<K, V> beforeState = getBeforeState();
+        super.replaceAll(function);
+        notifyChangeListeners(new MapChangeItem<>(UpdateActions.BULK_REPLACED, beforeState, this));
     }
 
     /**
@@ -355,9 +288,8 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      */
     @Override
     public V putFirst(K key, V value) {
-        V oldValue = super.get(key);
-        super.putFirst(key, value);
-        notifyChangeListeners(key, oldValue, value);
+        V oldValue = super.putFirst(key, value);
+        notifyChangeListeners(new MapChangeItem<>(UpdateActions.ADDED, key, oldValue, value));
         return oldValue;
     }
 
@@ -373,9 +305,8 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      */
     @Override
     public V putLast(K key, V value) {
-        V oldValue = super.get(key);
-        super.putLast(key, value);
-        notifyChangeListeners(key, oldValue, value);
+        V oldValue = super.putLast(key, value);
+        notifyChangeListeners(new MapChangeItem<>(UpdateActions.ADDED, key, oldValue, value));
         return oldValue;
     }
 
@@ -396,7 +327,7 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         V oldValue = super.get(key); // Capture old value before merge
         V newValue = super.merge(key, value, remappingFunction);
         if (!Objects.equals(oldValue, newValue)) { // Notify only if there's an actual change
-            notifyChangeListeners(key, oldValue, newValue);
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REPLACED, key, oldValue, newValue));
         }
         return newValue;
     }
@@ -421,30 +352,39 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         V oldValue = super.get(key); // Capture old value for comparison
         V newValue = super.compute(key, remappingFunction); // Compute new value
         // Notify change listeners of the update
-        notifyChangeListeners(key, oldValue, newValue);
+        if (!Objects.equals(oldValue, newValue)) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REPLACED, key, oldValue, newValue));
+        }
         return newValue; // Return the newly computed value
     }
 
     /**
-     * Attempts to compute a value for the specified key if it is not already associated with a value (or is mapped to {@code null}), and enters it into this map unless {@code null}. If the function
-     * returns a non-null value, the map is updated and all registered change listeners are notified of the new or updated mapping.
+     * Computes and returns the value to which the specified key is mapped if the key is not already associated with a value (or is mapped to null), using the provided mapping function.
+     *
+     * <p>If the specified key is not already associated with a value (or is mapped to null), attempts to compute its value using the given mapping function and enters it into this map unless
+     * null.</p>
+     *
+     * <p>This method initiates the process of computing a new value for the specified key, using the given mapping function, if the key is not already associated with a value. If the specified key
+     * is not already associated with a value (or is mapped to null), this method computes a new value by invoking the given mapping function, passing the key as an argument. The given mapping
+     * function should return the new value to be associated with the specified key, or null if the computed value is null and no mapping should occur.</p>
+     *
+     * <p>After the new value is computed and entered into the map, the provided change listeners are notified with the details of the change.</p>
      *
      * @param key
-     *         the key with which the specified value is to be associated
+     *         the key with which the resulting value is to be associated.
      * @param mappingFunction
-     *         the function to compute a value
+     *         the function to compute a value.
      *
-     * @return the current (existing or computed) value associated with the specified key, or null if the computed value is null
-     *
-     * @apiNote The method notifies registered change listeners if a new mapping is added to the map as a result of the computation. If the key is already associated with a value, and the
-     *         computed value is different from the existing value, change listeners are also notified. The notification includes the old value (if any) and the new value.
+     * @return the existing value to which the specified key is mapped, or the newly computed value if the specified key is not mapped to any value (or is mapped to null).
      */
     @Override
     public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
         V oldValue = super.get(key); // Capture old value for comparison
         V newValue = super.computeIfAbsent(key, mappingFunction); // Compute new value if absent
         // Notify change listeners if a new value was computed and added
-        notifyChangeListeners(key, oldValue, newValue);
+        if (Objects.isNull(oldValue)) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.ADDED, key, null, newValue));
+        }
         return newValue; // Return the newly computed or existing value
     }
 
@@ -467,7 +407,21 @@ public class ObservableLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         V oldValue = super.get(key); // Capture old value for comparison
         V newValue = super.computeIfPresent(key, remappingFunction); // Compute new value if present
         // Notify change listeners if a new value was computed and replaced
-        notifyChangeListeners(key, oldValue, newValue);
+        if (!Objects.equals(oldValue, newValue)) {
+            notifyChangeListeners(new MapChangeItem<>(UpdateActions.REPLACED, key, oldValue, newValue));
+        }
         return newValue; // Return the newly computed value or null if the computation did not yield a mapping
+    }
+
+    /**
+     * Returns the state of the map before any changes were made.
+     *
+     * <p>If there is no change listeners registered, this method returns null. Otherwise, it returns a new LinkedHashMap with the same key-value mappings as the current map.</p>
+     *
+     * @return the state of the map before any changes were made, or null if no change listeners are registered
+     */
+    @Nullable
+    private Map<K, V> getBeforeState() {
+        return onChangeListeners.isEmpty() ? null : new LinkedHashMap<>(this);
     }
 }
