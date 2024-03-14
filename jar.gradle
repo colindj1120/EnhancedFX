@@ -4,7 +4,6 @@ jar {
         attributes(
                 'Implementation-Title': "${projectName}",
                 'Implementation-Version': "${projectVersion}",
-                'Main-Class': 'io.github.colindj1120.enhancedfx.HelloApplication',
                 'Automatic-Module-Name': "${projectAutomaticModuleName}",
         )
     }

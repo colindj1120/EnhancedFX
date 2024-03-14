@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.Button?>
+<GridPane fx:id="toggleNavigationBarControls" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx" alignment="CENTER"
+          fx:controller="io.github.colindj1120.enhancedfx.controllers.ToggleNavigationBarControlsController" hgap="5" vgap="5">
+    <padding>
+        <Insets topRightBottomLeft="10"/>
+    </padding>
+
+    <Button fx:id="addToggleButton" text="Add Toggle Button" onAction="#handleAddToggleButton" GridPane.rowIndex="0" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="orientationHorizontalButton" text="Orient Horizontal" onAction="#handleOrientHorizontal" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="orientationVerticalButton" text="Orient Vertical" onAction="#handleOrientVertical" GridPane.rowIndex="0" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="deleteSelected" text="Delete Selected Button" onAction="#handleDeleteSelectedButton" GridPane.rowIndex="0" GridPane.columnIndex="3" prefWidth="180"/>
+
+</GridPane>

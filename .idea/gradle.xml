@@ -8,7 +8,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/testing" />
+            <option value="$PROJECT_DIR$/modules" />
+            <option value="$PROJECT_DIR$/modules/efxbase" />
+            <option value="$PROJECT_DIR$/modules/efxcontrols" />
+            <option value="$PROJECT_DIR$/modules/efxgraphics" />
+            <option value="$PROJECT_DIR$/modules/efxtesting" />
+            <option value="$PROJECT_DIR$/modules/efxutils" />
           </set>
         </option>
       </GradleProjectSettings>

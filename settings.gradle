@@ -1,3 +1,12 @@
 rootProject.name = "EnhancedFX"
-include 'testing'
+include ':modules:efxtesting'
+findProject(':modules:efxtesting')?.name = 'efxtesting'
+include 'modules:efxcontrols'
+findProject(':modules:efxcontrols')?.name = 'efxcontrols'
+include 'modules:efxbase'
+findProject(':modules:efxbase')?.name = 'efxbase'
+include 'modules:efxgraphics'
+findProject(':modules:efxgraphics')?.name = 'efxgraphics'
+include 'modules:efxutils'
+findProject(':modules:efxutils')?.name = 'efxutils'
 

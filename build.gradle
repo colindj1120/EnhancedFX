@@ -1,47 +1,47 @@
-plugins {
-    id 'java'
-    id 'application'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.beryx.jlink' version '3.0.1'
-    id 'signing'
-    id 'maven-publish'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
+
+    group = "${projectGroup}"
+    version = "${projectVersion}"
+
+    repositories {
+        mavenCentral()
+    }
+
+    java {
+        sourceCompatibility = '21'
+        targetCompatibility = '21'
+    }
+
+    apply from: "${rootProject.projectDir}/dependencies.gradle"
+    apply from: "${rootProject.projectDir}/docs.gradle"
+    apply from: "${rootProject.projectDir}/publishing.gradle"
+    apply from: "${rootProject.projectDir}/jar.gradle"
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << '-Xlint:unchecked'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+
 }
 
-group = "${projectGroup}"
-version = "${projectVersion}"
-
-repositories {
-    mavenCentral()
-}
-
-java {
-    sourceCompatibility = '21'
-    targetCompatibility = '21'
-}
 
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-Xlint:unchecked'
-}
 
-application {
-    mainModule = 'io.github.colindj1120.enhancedfx'
-    mainClass = 'io.github.colindj1120.enhancedfx.HelloApplication'
-}
 
-javafx {
-    version = '21.0.2'
-    modules = ['javafx.controls', 'javafx.fxml']
-}
 
-apply from: "dependencies.gradle"
-apply from: "docs.gradle"
-apply from: "publishing.gradle"
-apply from: "jar.gradle"
 
-test {
-    useJUnitPlatform()
-}
+
+
+
+
+
+
 

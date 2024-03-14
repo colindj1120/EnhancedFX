@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+application {
+    mainModule = 'io.github.colindj1120.enhancedfx'
+    mainClass = 'io.github.colindj1120.enhancedfx.HelloApplication'
+}
+
+javafx {
+    version = '21.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    implementation project(':modules:efxbase')
+    implementation project(':modules:efxcontrols')
+    implementation project(':modules:efxgraphics')
+    implementation project(':modules:efxutils')
+
+
+    // Ikonli Core
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+
+    // Ikonli Icon Pack (e.g., Font Awesome)
+    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-coreui-pack:12.3.1'
+
+    implementation "fr.brouillard.oss:cssfx:11.4.0"
+}

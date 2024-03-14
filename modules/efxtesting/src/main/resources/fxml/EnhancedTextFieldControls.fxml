@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<GridPane fx:id="textFieldControls" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx" alignment="CENTER"
+          fx:controller="io.github.colindj1120.enhancedfx.controllers.EnhancedTextFieldControlsController" hgap="5" vgap="5">
+    <padding>
+        <Insets topRightBottomLeft="10"/>
+    </padding>
+
+    <Button fx:id="addLeadingIcon" text="Add Leading Icon" onAction="#handleAddLeadingIcon" GridPane.rowIndex="0" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="removeLeadingIcon" text="Remove Leading Icon" onAction="#handleRemoveLeadingIcon" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="addTrailingIcon" text="Add Trailing Icon" onAction="#handleAddTrailingIcon" GridPane.rowIndex="0" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="removeTrailingIcon" text="Remove Trailing Icon" onAction="#handleRemoveTrailingIcon" GridPane.rowIndex="0" GridPane.columnIndex="3" prefWidth="180"/>
+    <Button fx:id="setPromptText" text="Set Prompt Text" onAction="#handleSetPromptText" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2" prefWidth="180"/>
+    <Button fx:id="removePromptText" text="Remove Prompt Text" onAction="#handleRemovePromptText" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="2" GridPane.columnSpan="2" prefWidth="180"/>
+
+    <Button fx:id="setWidthTo225" text="Set Width to 225" onAction="#handleSetWidthTo225" GridPane.rowIndex="2" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setWidthToDefault" text="Set Width to Default" onAction="#handleSetWidthToDefault" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setHeightTo225" text="Set Height to 225" onAction="#handleSetHeightTo225" GridPane.rowIndex="2" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="setHeightToDefault" text="Set Height to Default" onAction="#handleSetHeightToDefault" GridPane.rowIndex="2" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="disableFloatMode" text="Disable Float Mode" onAction="#handleDisableFloatMode" GridPane.rowIndex="3" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="aboveFloatMode" text="Above Float Mode" onAction="#handleAboveFloatMode" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="borderFloatMode" text="Border Float Mode" onAction="#handleBorderFloatMode" GridPane.rowIndex="3" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="insideFloatMode" text="Inside Float Mode" onAction="#handleInsideFloatMode" GridPane.rowIndex="3" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="enableSupportingText" text="Enable Supporting Text" onAction="#handleEnableSupportingText" GridPane.rowIndex="4" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="disableSupportingText" text="Disable Supporting Text" onAction="#handleDisableSupportingText" GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="enableMaxChar" text="Enable Max Char" onAction="#handleEnableMaxChar" GridPane.rowIndex="4" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="disableMaxChar" text="Disable Max Char" onAction="#handleDisableMaxChar" GridPane.rowIndex="4" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="setMaxChar10" text="Set Max Char To 10" onAction="#handleSetMaxChar10" GridPane.rowIndex="5" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setMaxChar100" text="Set Max Char To 100" onAction="#handleSetMaxChar100" GridPane.rowIndex="5" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setMaxCharDefault" text="Set Max Char To 50" onAction="#handleSetMaxCharDefault" GridPane.rowIndex="5" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="focusHere" text="Click to Focus Here" onAction="#handleFocusHere" GridPane.rowIndex="5" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="setMaxCharAbove" text="Set Max Char Above" onAction="#handleSetMaxCharAbove" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2" prefWidth="180"/>
+    <Button fx:id="setMaxCharBelow" text="Set Max Char Below" onAction="#handleSetMaxCharBelow" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.columnIndex="2" GridPane.columnSpan="2" prefWidth="180"/>
+
+    <Button fx:id="setTextModeFilled" text="Set Text Mode Filled" onAction="#handleSetTextModeFilled" GridPane.rowIndex="7" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setTextModeOutline" text="Set Text Mode Outline" onAction="#handleSetTextModeOutline" GridPane.rowIndex="7" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setStyleDark" text="Set Style Dark" onAction="#handleSetStyleDark" GridPane.rowIndex="7" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="setStyleLight" text="Set Style Light" onAction="#handleSetStyleLight" GridPane.rowIndex="7" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="setAlignmentTopLeft" text="Set Alignment Top Left" onAction="#handleSetAlignmentTopLeft" GridPane.rowIndex="8" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setAlignmentCenterLeft" text="Set Alignment Center Left" onAction="#handleSetAlignmentCenterLeft" GridPane.rowIndex="8" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setAlignmentBottomLeft" text="Set Alignment Bottom Left" onAction="#handleSetAlignmentBottomLeft" GridPane.rowIndex="8" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="setAlignmentBaseLineLeft" text="Set Alignment BaseLine Left" onAction="#handleSetAlignmentBaseLineLeft" GridPane.rowIndex="8" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="setAlignmentTopCenter" text="Set Alignment Top Center" onAction="#handleSetAlignmentTopCenter" GridPane.rowIndex="9" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setAlignmentCenter" text="Set Alignment Center" onAction="#handleSetAlignmentCenter" GridPane.rowIndex="9" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setAlignmentBottomCenter" text="Set Alignment Bottom Center" onAction="#handleSetAlignmentBottomCenter" GridPane.rowIndex="9" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="setAlignmentBaseLineCenter" text="Set Alignment BaseLine Center" onAction="#handleSetAlignmentBaseLineCenter" GridPane.rowIndex="9" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="setAlignmentTopRight" text="Set Alignment Top Right" onAction="#handleSetAlignmentTopRight" GridPane.rowIndex="10" GridPane.columnIndex="0" prefWidth="180"/>
+    <Button fx:id="setAlignmentCenterRight" text="Set Alignment Center Right" onAction="#handleSetAlignmentCenterRight" GridPane.rowIndex="10" GridPane.columnIndex="1" prefWidth="180"/>
+    <Button fx:id="setAlignmentBottomRight" text="Set Alignment Bottom Right" onAction="#handleSetAlignmentBottomRight" GridPane.rowIndex="10" GridPane.columnIndex="2" prefWidth="180"/>
+    <Button fx:id="setAlignmentBaseLineRight" text="Set Alignment BaseLine Right" onAction="#handleSetAlignmentBaseLineRight" GridPane.rowIndex="10" GridPane.columnIndex="3" prefWidth="180"/>
+
+    <Button fx:id="alwaysFloatingOn" text="Always Float On" onAction="#handleAlwaysFloatingOn" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.columnIndex="0" GridPane.columnSpan="2" prefWidth="180"/>
+    <Button fx:id="alwaysFloatingOff" text="Always Float Off" onAction="#handleAlwaysFloatingOff" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.columnIndex="2" GridPane.columnSpan="2" prefWidth="180"/>
+</GridPane>
