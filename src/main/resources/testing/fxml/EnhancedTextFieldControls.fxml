@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <GridPane fx:id="textFieldControls" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx" alignment="CENTER"
-          fx:controller="io.github.colindj1120.materialdesignui.testing.controllers.EnhancedTextFieldControlsController" hgap="5" vgap="5">
+          fx:controller="io.github.colindj1120.enhancedfx.testing.controllers.EnhancedTextFieldControlsController" hgap="5" vgap="5">
     <padding>
         <Insets topRightBottomLeft="10"/>
     </padding>

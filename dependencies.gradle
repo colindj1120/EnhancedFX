@@ -1,0 +1,19 @@
+ext {
+    junitVersion = '5.10.0'
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    // Ikonli Core
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+
+    // Ikonli Icon Pack (e.g., Font Awesome)
+    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-coreui-pack:12.3.1'
+
+    implementation "fr.brouillard.oss:cssfx:11.4.0"
+}

@@ -1,0 +1,6 @@
+@import "../EFXColors.css";
+
+.character-count-label {
+    -fx-text-fill: -efx-black;
+    -fx-font-size: 9px;
+}

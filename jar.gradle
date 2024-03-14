@@ -1,0 +1,11 @@
+// Configure the main jar task
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': "${projectName}",
+                'Implementation-Version': "${projectVersion}",
+                'Main-Class': 'io.github.colindj1120.enhancedfx.HelloApplication',
+                'Automatic-Module-Name': "${projectAutomaticModuleName}",
+        )
+    }
+}

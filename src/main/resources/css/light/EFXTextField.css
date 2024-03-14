@@ -1,0 +1,35 @@
+@import "../EFXColors.css";
+
+.floating-text-label {
+    -fx-text-fill: -efx-black;
+    -fx-padding: 0 5 0 5;
+}
+
+.enhanced-text-field {
+    -fx-background-color: -efx-light;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-size: 12;
+    -fx-font-family: "Tahoma";
+    -fx-border-color: -efx-main-light;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-padding: 4 7 4 7;
+    -fx-text-fill: -efx-black;
+    -fx-prompt-text-fill: -efx-toned-down-black;
+}
+
+.enhanced-text-field:textmode-filled {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: #FFFFFF, rgba(128, 128, 128, .3);
+    -fx-border-color: transparent transparent #000000 transparent;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-font-size: 12;
+    -fx-font-family: Arial;
+    -fx-padding: 4 7 4 7;
+    -fx-text-fill: #000000;
+    -fx-prompt-text-fill: #000000BA;
+}

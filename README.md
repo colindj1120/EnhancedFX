@@ -4,7 +4,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<h3 align="center">MaterialDesignUI</h3>
+<h3 align="center">EnhancedFX</h3>
 
 <!-- TABLE OF CONTENTS -->
 
@@ -37,11 +37,11 @@
 
 ### Build
 
-To build MaterialDesignUI, execute the following command:
+To build EnhancedFX, execute the following command:
 
     gradlew build
 
-**NOTE**: MaterialDesignUI requires **Java 21** and above.
+**NOTE**: EnhancedFX requires **Java 21** and above.
 
 ### Usage
 

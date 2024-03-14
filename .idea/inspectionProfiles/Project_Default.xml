@@ -6,13 +6,15 @@
       <option name="myIgnoreVendorSpecificProperties" value="false" />
       <option name="myCustomPropertiesList">
         <value>
-          <list size="1">
+          <list size="2">
             <item index="0" class="java.lang.String" itemvalue="-md-max-character-count" />
+            <item index="1" class="java.lang.String" itemvalue="-efx-global-font" />
           </list>
         </value>
       </option>
     </inspection_tool>
     <inspection_tool class="ReassignedVariable" enabled="false" level="TEXT ATTRIBUTES" enabled_by_default="false" />
+    <inspection_tool class="StructuralWrap" enabled="false" level="TYPO" enabled_by_default="false" />
     <inspection_tool class="unused" enabled="true" level="TEXT ATTRIBUTES" enabled_by_default="true" checkParameterExcludingHierarchy="false">
       <option name="LOCAL_VARIABLE" value="true" />
       <option name="FIELD" value="true" />

@@ -1,0 +1,29 @@
+.enhanced-toggle-button {
+    -fx-padding: 5px 10px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #c0c0c0;
+    -fx-border-width: 2px;
+    -fx-text-fill: #000000;
+    -fx-cursor: pointer;
+}
+
+.enhanced-toggle-button:selected {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: #ffffff;
+}
+
+.enhanced-toggle-button:hover {
+    -fx-background-color: #f2f2f2;
+}
+
+.enhanced-toggle-button:pressed {
+    -fx-background-color: #d3d3d3;
+}
+
+.enhanced-toggle-button:selected:hover {
+    -fx-background-color: #005a9e;
+}
+
+.enhanced-toggle-button:selected:pressed {
+    -fx-background-color: #004c87;
+}
