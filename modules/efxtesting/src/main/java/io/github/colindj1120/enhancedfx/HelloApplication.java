@@ -60,8 +60,8 @@ public class HelloApplication extends Application {
         button.setPrefSize(200, 200);
 
         //ETF etf = new ETF();
-//        etf.setPadding(InsetUtils.vertical(20));
-//        etf.setPadding(InsetUtils.all(20, 30, 20, 30));
+//        etf.setPadding(EFXInsetUtils.vertical(20));
+//        etf.setPadding(EFXInsetUtils.all(20, 30, 20, 30));
 
         return getvBox(new HBox(button), 600, new GridPane());
     }

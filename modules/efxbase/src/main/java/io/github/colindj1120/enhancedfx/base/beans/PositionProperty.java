@@ -12,8 +12,8 @@ public class PositionProperty {
     public PositionProperty() {}
 
     public PositionProperty(double x, double y) {
-        setX(x);
-        setY(y);
+        this.x.set(x);
+        this.y.set(y);
     }
 
     public static PositionProperty of(double x, double y) {

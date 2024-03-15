@@ -23,4 +23,15 @@ module efx.base {
     exports io.github.colindj1120.enhancedfx.base.exceptions;
 
     exports io.github.colindj1120.enhancedfx.base.factory;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.base;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.base.interfaces.controls;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.base.interfaces.layout;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.base.interfaces.scene;
+
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.controls;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.layout;
+    exports io.github.colindj1120.enhancedfx.base.factory.configurators.scene;
+
+    exports io.github.colindj1120.enhancedfx.base.factory.property;
+    exports io.github.colindj1120.enhancedfx.base.factory.property.base;
 }

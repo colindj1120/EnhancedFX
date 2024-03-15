@@ -19,8 +19,8 @@ package io.github.colindj1120.enhancedfx.controls.skins.base;
 
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.EFXTextBase;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
 import io.github.colindj1120.enhancedfx.utils.*;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -139,8 +139,8 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
             Font supportingLabelFont     = supportingTextLabel.getFont();
             Font characterCountLabelFont = characterCountLabel.getFont();
 
-            UIUtils.setLabelFont(supportingTextLabel, supportingLabelFont, newFont);
-            UIUtils.setLabelFont(characterCountLabel, characterCountLabelFont, newFont);
+            EFXUIUtils.setLabelFont(supportingTextLabel, supportingLabelFont, newFont);
+            EFXUIUtils.setLabelFont(characterCountLabel, characterCountLabelFont, newFont);
             control.requestLayout();
         };
     }
@@ -184,16 +184,16 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     private void setupCharacterCountLabel() {
         EFXTextBase<?> control = getSkinnable();
 
-        StringProperty charCountOverMax = ExpressionUtils.expressionToStringProperty(createCharacterCountExpression(control));
+        StringProperty charCountOverMax = EFXExpressionUtils.expressionToStringProperty(createCharacterCountExpression(control));
 
-        InvalidationListener layoutInvalidListener = UIUtils.requestControlLayout(control);
+        InvalidationListener layoutInvalidListener = EFXUIUtils.requestControlLayout(control);
 
         LabelConfigurator.create(characterCountLabel)
-                         .bindBackgroundProperty(UIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
-                         .bindManagedProperty(PropertyUtils.toBooleanProperty(false))
+                         .bindBackgroundProperty(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
+                         .bindManagedProperty(EFXPropertyUtils.toBooleanProperty(false))
                          .bindVisibleProperty(Bindings.createBooleanBinding(control::isMaxCharacterCountEnabled, control.maxCharCountStateProperty()))
                          .bindTextProperty(charCountOverMax)
-                         .addVisibleChangeListener(UIUtils.manageLabelVisibility(characterCountLabel, getChildren(), control))
+                         .addVisibleChangeListener(EFXUIUtils.manageLabelVisibility(characterCountLabel, getChildren(), control))
                          .addStyleClass("character-count-label");
 
         CustomControlConfigurator.create(control)
@@ -273,8 +273,8 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
                                       double leftInset) {
         T control = getSkinnable();
 
-        double leadingWidth  = NodeUtils.getNodeWidth(control.getLeadingIcon());
-        double trailingWidth = NodeUtils.getNodeWidth(control.getTrailingIcon());
+        double leadingWidth  = EFXNodeUtils.getNodeWidth(control.getLeadingIcon());
+        double trailingWidth = EFXNodeUtils.getNodeWidth(control.getTrailingIcon());
 
         return leftInset + leadingWidth + control.getInnerControl()
                                                  .prefWidth(-1) + trailingWidth + rightInset;
@@ -286,8 +286,8 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     @Override
     protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
         EFXTextBase<?> control       = getSkinnable();
-        double         leadingHeight = NodeUtils.getNodeHeight(control.getLeadingIcon());
-        double            trailingHeight = NodeUtils.getNodeHeight(control.getTrailingIcon());
+        double         leadingHeight = EFXNodeUtils.getNodeHeight(control.getLeadingIcon());
+        double            trailingHeight = EFXNodeUtils.getNodeHeight(control.getTrailingIcon());
         double            iconMax        = topInset + Math.max(leadingHeight, trailingHeight) + bottomInset;
 
         double height = topInset + control.getInnerControl()
@@ -311,9 +311,9 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     private void layoutInnerField(double x, double y, double w, double h) {
         T control = getSkinnable();
 
-        double xOffset = NodeUtils.getNodeWidth(control.getLeadingIcon(), LEADING_ICON_OFFSET);
+        double xOffset = EFXNodeUtils.getNodeWidth(control.getLeadingIcon(), LEADING_ICON_OFFSET);
 
-        double wOffset = NodeUtils.getNodeWidth(control.getTrailingIcon(), TRAILING_ICON_OFFSET);
+        double wOffset = EFXNodeUtils.getNodeWidth(control.getTrailingIcon(), TRAILING_ICON_OFFSET);
 
         control.getInnerControl()
                .resizeRelocate(x + xOffset, y, w - xOffset - wOffset, h);
@@ -360,9 +360,9 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
             double characterCountLabelY;
             if (control.isMaxCharacterCountPosBelow()) {
-                characterCountLabelY = h + InsetUtils.getBottomBorderInset(control) + characterCountLabelHeight;
+                characterCountLabelY = h + EFXInsetUtils.getBottomBorderInset(control) + characterCountLabelHeight;
             } else {
-                characterCountLabelY = 0 - InsetUtils.getTopBorderInset(control) - characterCountLabelHeight;
+                characterCountLabelY = 0 - EFXInsetUtils.getTopBorderInset(control) - characterCountLabelHeight;
             }
             characterCountLabel.resizeRelocate(characterCountLabelX, characterCountLabelY, characterCountLabelWidth,
                                                characterCountLabelHeight);

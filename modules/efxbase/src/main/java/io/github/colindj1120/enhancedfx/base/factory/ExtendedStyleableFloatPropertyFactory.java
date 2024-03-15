@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableFloatPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableFloatPropertyFactory() {}
+
+    /**
      * Generates a builder for constructing {@link EFXStyleableFloatProperty} instances. This static method provides access to a builder tailored for creating styleable float properties. The
      * builder is designed with a fluent API, facilitating the easy and intuitive configuration of float properties for UI styling purposes.
      * <p>

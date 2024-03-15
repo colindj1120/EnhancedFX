@@ -88,40 +88,7 @@ public class EFXStyleableLongProperty extends StyleableLongProperty implements E
     private final String                                                   name;
     private final Object                                                   bean;
     private final CssMetaData<? extends Styleable, Number>                 cssMetaData;
-    private       Long                                                     oldValue = get();
-
-    /**
-     * Constructs an {@code EFXStyleableLongProperty} using the provided {@code Builder} instance. This constructor initializes the property without a default value, configuring it with the options
-     * specified in the builder.
-     * <p>
-     * It performs null checks on the builder and its critical fields to ensure a fully configured property. The property is associated with a bean, a name, CSS metadata, and optional callbacks for property
-     * invalidation handling.
-     * <p>
-     * The callbacks include:
-     * <ul>
-     *     <li>A void callback for general invalidation handling.</li>
-     *     <li>A property-specific callback that provides the property itself for more contextual actions upon invalidation.</li>
-     *     <li>A cached value callback that facilitates actions based on the change from the old value to the new value.</li>
-     * </ul>
-     * This constructor is designed for use when no default value for the property is specified, relying on the superclasses
-     * default initialization mechanism.
-     *
-     * @param builder
-     *         The {@code Builder} instance containing the configuration for this property.
-     *
-     * @throws IllegalArgumentException
-     *         if the builder or any required configuration option is null.
-     */
-    protected EFXStyleableLongProperty(Builder builder) {
-        super();
-        nullCheck(builder, "EFXStyleableLongProperty Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-    }
+    private       Long                                                     oldValue;
 
     /**
      * Constructs an {@code EFXStyleableLongProperty} with a specified default value, using the provided {@code Builder} instance for other configuration options. This constructor extends the functionality
@@ -140,7 +107,7 @@ public class EFXStyleableLongProperty extends StyleableLongProperty implements E
      * @throws IllegalArgumentException
      *         if the builder or any required configuration option is null.
      */
-    protected EFXStyleableLongProperty(Builder builder, Long defaultValue) {
+    protected EFXStyleableLongProperty(Builder builder, long defaultValue) {
         super(defaultValue);
         nullCheck(builder, "EFXStyleableLongProperty Builder", this.getClass());
         this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
@@ -149,6 +116,9 @@ public class EFXStyleableLongProperty extends StyleableLongProperty implements E
         this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
         this.bean = builder.bean;
         this.cssMetaData = builder.cssMetaData;
+        this.oldValue = defaultValue;
+
+        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
     }
 
     /**
@@ -256,6 +226,16 @@ public class EFXStyleableLongProperty extends StyleableLongProperty implements E
         private Object                                                   bean;
         private CssMetaData<? extends Styleable, Number>                 cssMetaData;
         private Long                                                     defaultValue;
+
+        /**
+         * Builder class for constructing {@link EFXStyleableLongProperty} instances.
+         *
+         * <p>
+         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
+         * configuration.
+         * </p>
+         */
+        public Builder() {}
 
         /**
          * Sets the callback function to be invoked when the property value changes. The callback function takes no arguments and returns no value.
@@ -387,7 +367,7 @@ public class EFXStyleableLongProperty extends StyleableLongProperty implements E
 
             return Optional.ofNullable(defaultValue)
                            .map(v -> new EFXStyleableLongProperty(this, v))
-                           .orElse(new EFXStyleableLongProperty(this));
+                           .orElse(new EFXStyleableLongProperty(this, 0L));
         }
     }
 }

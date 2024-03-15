@@ -23,8 +23,8 @@ import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
 import io.github.colindj1120.enhancedfx.base.factory.CssFactory;
 import io.github.colindj1120.enhancedfx.base.factory.ExtendedStyleableObjectPropertyFactory;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXToggleNavigationBarSkin;
-import io.github.colindj1120.enhancedfx.utils.NodeUtils;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXNodeUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -110,7 +110,7 @@ public class EFXToggleNavigationBar extends Control {
                                                 .property("-orientation")
                                                 .converter(EnumConverter.getEnumConverter(Orientation.class))
                                                 .initialValue(Orientation.HORIZONTAL)
-                                                .isSettableFunction(node -> PropertyUtils.checkProperty(node.orientation))
+                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.orientation))
                                                 .propertyGetterFunction(node -> node.orientation));
     }
 
@@ -231,8 +231,8 @@ public class EFXToggleNavigationBar extends Control {
      * @return a Dimension2D object representing the calculated preferred size of the button
      */
     private Dimension2D calculatePreferredSize(EFXToggleButton button) {
-        double buttonWidth= NodeUtils.getNodeWidth(button);
-        double buttonHeight= NodeUtils.getNodeHeight(button);
+        double buttonWidth= EFXNodeUtils.getNodeWidth(button);
+        double buttonHeight= EFXNodeUtils.getNodeHeight(button);
 
         return new Dimension2D(buttonWidth, buttonHeight);
     }
@@ -262,7 +262,7 @@ public class EFXToggleNavigationBar extends Control {
         EFXToggleButton toggleButton = new EFXToggleButton(buttonText);
 //        toggleButton.selectedProperty()
 //                    .addListener((obs, oldVal, newVal) -> onSelectedAction.accept(newVal));
-//        toggleButton.setPadding(InsetUtils.empty());
+//        toggleButton.setPadding(EFXInsetUtils.empty());
 //        toggleButton.setToggleGroup(toggleGroup);
 //        toggleButtonList.add(toggleButton);
 

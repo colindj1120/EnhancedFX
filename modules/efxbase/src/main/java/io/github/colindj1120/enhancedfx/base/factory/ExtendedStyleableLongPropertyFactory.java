@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableLongPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableLongPropertyFactory() {}
+
+    /**
      * Generates a builder for creating {@link EFXStyleableLongProperty} instances. This static method provides access to a specialized builder designed for the construction of styleable long
      * properties. With a fluent API, the builder enables straightforward and flexible configuration of long properties tailored for UI styling purposes.
      * <p>

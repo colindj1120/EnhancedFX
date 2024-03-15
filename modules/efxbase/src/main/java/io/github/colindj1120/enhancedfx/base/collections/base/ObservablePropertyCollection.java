@@ -22,21 +22,22 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Represents an abstract foundation for creating observable collection properties in JavaFX applications. This class encapsulates the commonalities of observable collections, such as lists, stacks,
- * and queues, and provides a framework for observing and reacting to changes within these collections.
+ * Represents an abstract foundation for creating observable collection properties in JavaFX applications. This class encapsulates the commonalities of observable collections, such as lists, stacks, and queues,
+ * and provides a framework for observing and reacting to changes within these collections.
  *
  * <p>At its core, {@code ObservablePropertyCollection} leverages {@link SimpleListProperty} to wrap an {@link ObservableList}. This setup enables automatic notification of changes to the collection,
- * such as additions or removals of elements. It is designed to integrate seamlessly with the JavaFX property binding and change listening systems, making it suitable for applications that require
- * real-time updates to the UI in response to modifications in the collection.</p>
+ * such as additions or removals of elements. It is designed to integrate seamlessly with the JavaFX property binding and change listening systems, making it suitable for applications that require real-time
+ * updates to the UI in response to modifications in the collection.</p>
  *
  * <p>Subclasses of {@code ObservablePropertyCollection} are expected to implement specific collection behaviors (e.g., stack push/pop, queue enqueue/dequeue) while benefiting from the built-in
- * observability and property management features of this class. Additionally, subclasses can define custom reactions to collection changes by setting {@code onElementsAdded} and
- * {@code onElementsRemoved} consumers, which are executed whenever elements are added to or removed from the collection, respectively.</p>
+ * observability and property management features of this class. Additionally, subclasses can define custom reactions to collection changes by setting {@code onElementsAdded} and {@code onElementsRemoved}
+ * consumers, which are executed whenever elements are added to or removed from the collection, respectively.</p>
  *
  * <p>This class also provides methods for attaching and detaching listeners that can respond to more granular changes within the collection or to the invalidation of the collection property itself. Such
  * listeners allow developers to implement complex interaction patterns and data-driven UI updates with minimal boilerplate code.</p>
@@ -45,8 +46,8 @@ import java.util.function.Consumer;
  * while maintaining a strong contract for observability and interaction with the JavaFX property system.</p>
  *
  * @param <T>
- *         the type of elements contained in the collection. This generic type allows {@code ObservablePropertyCollection} to be adapted to various data types, enhancing its versatility across
- *         different application domains.
+ *         the type of elements contained in the collection. This generic type allows {@code ObservablePropertyCollection} to be adapted to various data types, enhancing its versatility across different
+ *         application domains.
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -64,8 +65,8 @@ public abstract class ObservablePropertyCollection<T> {
      * Constructs an ObservablePropertyCollection with an empty observable list.
      */
     public ObservablePropertyCollection() {
-        this.collectionProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-        attachListChangeListener();
+        collectionProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+        collectionProperty.addListener(gettListChangeListener());
     }
 
     /**
@@ -75,8 +76,8 @@ public abstract class ObservablePropertyCollection<T> {
      *         the initial elements of the collection
      */
     public ObservablePropertyCollection(ObservableList<T> initialValue) {
-        this.collectionProperty = new SimpleListProperty<>(initialValue);
-        attachListChangeListener();
+        collectionProperty = new SimpleListProperty<>(initialValue);
+        collectionProperty.addListener(gettListChangeListener());
     }
 
     /**
@@ -88,8 +89,8 @@ public abstract class ObservablePropertyCollection<T> {
      *         the name of the property
      */
     public ObservablePropertyCollection(Object bean, String name) {
-        this.collectionProperty = new SimpleListProperty<>(bean, name, FXCollections.observableArrayList());
-        attachListChangeListener();
+        collectionProperty = new SimpleListProperty<>(bean, name, FXCollections.observableArrayList());
+        collectionProperty.addListener(gettListChangeListener());
     }
 
     /**
@@ -103,15 +104,31 @@ public abstract class ObservablePropertyCollection<T> {
      *         the name of the property
      */
     public ObservablePropertyCollection(ObservableList<T> initialValue, Object bean, String name) {
-        this.collectionProperty = new SimpleListProperty<>(bean, name, initialValue);
-        attachListChangeListener();
+        collectionProperty = new SimpleListProperty<>(bean, name, initialValue);
+        collectionProperty.addListener(gettListChangeListener());
     }
 
     /**
-     * Attaches a listener to the collection property to handle custom actions on element addition or removal.
+     * Creates and returns a {@link ListChangeListener} specific to handling changes in a list. This listener is designed to react to additions and removals within the list, executing predefined actions based
+     * on these changes.
+     *
+     * <p>
+     * The method generates a listener that iterates over the changes to the list. For each change, it checks whether elements were added or removed. If elements were added and a consumer for handling additions
+     * has been defined (via {@code onElementsAdded}), it invokes this consumer with the list of added elements. Similarly, if elements were removed and a consumer for handling removals has been defined (via
+     * {@code onElementsRemoved}), it invokes this consumer with the list of removed elements.
+     * </p>
+     *
+     * <p>
+     * This approach allows for dynamic and customizable handling of list modifications, making it easier to update UI components or perform other actions in response to changes in the underlying data
+     * structure.
+     * </p>
+     *
+     * @return A {@link ListChangeListener} designed to react to additions and removals in the list by executing specified actions.
      */
-    protected void attachListChangeListener() {
-        collectionProperty.addListener((ListChangeListener<T>) change -> {
+
+    @NotNull
+    private ListChangeListener<T> gettListChangeListener() {
+        return change -> {
             while (change.next()) {
                 if (change.wasAdded() && Objects.nonNull(onElementsAdded)) {
                     onElementsAdded.accept(change.getAddedSubList());
@@ -120,7 +137,7 @@ public abstract class ObservablePropertyCollection<T> {
                     onElementsRemoved.accept(change.getRemoved());
                 }
             }
-        });
+        };
     }
 
     /**

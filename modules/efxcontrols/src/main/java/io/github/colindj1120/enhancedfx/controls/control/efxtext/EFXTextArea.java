@@ -9,9 +9,9 @@ import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.InnerTextA
 import io.github.colindj1120.enhancedfx.base.enums.State;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXTextAreaSkin;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -94,7 +94,7 @@ public class EFXTextArea extends EFXTextBase<TextArea> implements InnerTextArea<
                                       .property("-efx-title-state")
                                       .converter(EnumConverter.getEnumConverter(State.class))
                                       .initialValue(State.DISABLED)
-                                      .isSettableFunction(node -> PropertyUtils.checkProperty(node.titleState))
+                                      .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.titleState))
                                       .propertyGetterFunction(node -> node.titleState);
         STYLES_MANAGER.addCssMetaData(titleStateFactory);
 

@@ -21,18 +21,6 @@ module efx.controls {
     exports io.github.colindj1120.enhancedfx.controls.css;
     exports io.github.colindj1120.enhancedfx.controls.css.base;
 
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.base;
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.base.interfaces.controls;
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.base.interfaces.layout;
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.base.interfaces.scene;
-
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.controls;
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.layout;
-    exports io.github.colindj1120.enhancedfx.controls.factory.configurators.scene;
-
-    exports io.github.colindj1120.enhancedfx.controls.factory.property;
-    exports io.github.colindj1120.enhancedfx.controls.factory.property.base;
-
     exports io.github.colindj1120.enhancedfx.controls.skins;
     exports io.github.colindj1120.enhancedfx.controls.skins.base;
 }

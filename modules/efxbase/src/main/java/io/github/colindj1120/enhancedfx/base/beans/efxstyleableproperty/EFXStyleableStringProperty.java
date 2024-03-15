@@ -19,7 +19,10 @@ package io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty;
 
 import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase;
 import io.github.colindj1120.enhancedfx.utils.consumers.TriConsumer;
-import javafx.css.*;
+import javafx.css.CssMetaData;
+import javafx.css.StyleOrigin;
+import javafx.css.Styleable;
+import javafx.css.StyleableStringProperty;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -29,9 +32,8 @@ import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.b
 import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.nullCheck;
 
 /**
- * The {@code EFXStyleableStringProperty} class is a specialized implementation of {@link StyleableStringProperty} that incorporates additional functionality to enhance interaction with JavaFX CSS. It
- * provides mechanisms to handle property invalidation with custom callbacks, making it a versatile tool for developers seeking to extend the capabilities of styleable properties within their JavaFX
- * applications.
+ * The {@code EFXStyleableStringProperty} class is a specialized implementation of {@link StyleableStringProperty} that incorporates additional functionality to enhance interaction with JavaFX CSS. It provides
+ * mechanisms to handle property invalidation with custom callbacks, making it a versatile tool for developers seeking to extend the capabilities of styleable properties within their JavaFX applications.
  *
  * <p>
  * This class supports various callbacks for property invalidation, allowing for specific actions to be taken when the property value changes or becomes invalidated. These callbacks include:
@@ -86,44 +88,11 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
     private final String                                                         name;
     private final Object                                                         bean;
     private final CssMetaData<? extends Styleable, String>                       cssMetaData;
-    private       String                                                         oldValue = get();
+    private       String                                                         oldValue;
 
     /**
-     * Constructs an {@code EFXStyleableStringProperty} using the provided {@code Builder} instance. This constructor initializes the property without a default value, configuring it with the options
-     * specified in the builder.
-     * <p>
-     * It performs null checks on the builder and its critical fields to ensure a fully configured property. The property is associated with a bean, a name, CSS metadata, and optional callbacks for property
-     * invalidation handling.
-     * <p>
-     * The callbacks include:
-     * <ul>
-     *     <li>A void callback for general invalidation handling.</li>
-     *     <li>A property-specific callback that provides the property itself for more contextual actions upon invalidation.</li>
-     *     <li>A cached value callback that facilitates actions based on the change from the old value to the new value.</li>
-     * </ul>
-     * This constructor is designed for use when no default value for the property is specified, relying on the superclasses
-     * default initialization mechanism.
-     *
-     * @param builder
-     *         The {@code Builder} instance containing the configuration for this property.
-     *
-     * @throws IllegalArgumentException
-     *         if the builder or any required configuration option is null.
-     */
-    protected EFXStyleableStringProperty(Builder builder) {
-        super();
-        nullCheck(builder, "EFXStyleableStringProperty Builder", this.getClass());
-        this.invalidatedVoidCallback   = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback   = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name                      = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean                      = builder.bean;
-        this.cssMetaData               = builder.cssMetaData;
-    }
-
-    /**
-     * Constructs an {@code EFXStyleableStringProperty} with a specified default value, using the provided {@code Builder} instance for other configuration options. This constructor extends the
-     * functionality of the no-argument constructor by allowing the specification of an initial value for the property.
+     * Constructs an {@code EFXStyleableStringProperty} with a specified default value, using the provided {@code Builder} instance for other configuration options. This constructor extends the functionality of
+     * the no-argument constructor by allowing the specification of an initial value for the property.
      * <p>
      * Similar to the no-default constructor, this constructor performs null checks on the builder and its critical configuration options. It sets up the property with a bean, a name, CSS metadata, and
      * callbacks for invalidation handling, but it also initializes the property's value to the provided {@code defaultValue}.
@@ -141,12 +110,15 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
     protected EFXStyleableStringProperty(Builder builder, String defaultValue) {
         super(defaultValue);
         nullCheck(builder, "EFXStyleableStringProperty Builder", this.getClass());
-        this.invalidatedVoidCallback   = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback   = builder.invalidatedPropCallback;
+        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
+        this.invalidatedPropCallback = builder.invalidatedPropCallback;
         this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name                      = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean                      = builder.bean;
-        this.cssMetaData               = builder.cssMetaData;
+        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
+        this.bean = builder.bean;
+        this.cssMetaData = builder.cssMetaData;
+        this.oldValue = defaultValue;
+
+        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
     }
 
     /**
@@ -197,11 +169,11 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         return name;
     }
 
-
     /**
      * Determines whether the given element is equal to the value of this property.
      *
-     * @param value The String to compare with the value of this property.
+     * @param value
+     *         The String to compare with the value of this property.
      *
      * @return {@code true} if the given element is equal to the value of this property, {@code false} otherwise.
      */
@@ -215,20 +187,21 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
      * This method compares the specified element with the value of the property, ignoring any differences in case.
      * </p>
      *
-     * @param value The String to be compared with the property value.
-     * @return {@code true} if the element is equal to the property value, ignoring case sensitivity,
-     *         {@code false} otherwise.
+     * @param value
+     *         The String to be compared with the property value.
+     *
+     * @return {@code true} if the element is equal to the property value, ignoring case sensitivity, {@code false} otherwise.
      */
     public boolean valueEqualsIgnoreCase(String value) {
         return getValue().equalsIgnoreCase(value);
     }
 
     /**
-     * The {@code Builder} class for {@code EFXStyleableStringProperty} provides a fluent interface for incrementally constructing an {@code EFXStyleableStringProperty}. This builder allows for the
-     * detailed configuration of the property, including its CSS metadata, name, bean, default value, and callbacks for various invalidation scenarios.
+     * The {@code Builder} class for {@code EFXStyleableStringProperty} provides a fluent interface for incrementally constructing an {@code EFXStyleableStringProperty}. This builder allows for the detailed
+     * configuration of the property, including its CSS metadata, name, bean, default value, and callbacks for various invalidation scenarios.
      * <p>
-     * Usage of this builder facilitates the creation of a custom {@code EFXStyleableStringProperty} tailored to specific needs, enhancing the property's integration within a JavaFX application's styling
-     * and behavior management system.
+     * Usage of this builder facilitates the creation of a custom {@code EFXStyleableStringProperty} tailored to specific needs, enhancing the property's integration within a JavaFX application's styling and
+     * behavior management system.
      * <p>
      * Features and Options:
      * <ul>
@@ -271,9 +244,20 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         private String                                                         defaultValue;
 
         /**
+         * Builder class for constructing {@link EFXStyleableStringProperty} instances.
+         *
+         * <p>
+         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward configuration.
+         * </p>
+         */
+        public Builder() {}
+
+        /**
          * Sets the invalidation callback for void properties.
          *
-         * @param invalidatedVoidCallback The invalidation callback for void properties.
+         * @param invalidatedVoidCallback
+         *         The invalidation callback for void properties.
+         *
          * @return The Builder object.
          */
         public Builder invalidatedVoidCallback(Consumer<Void> invalidatedVoidCallback) {
@@ -284,7 +268,9 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         /**
          * Sets the invalidated Property callback for the Builder.
          *
-         * @param invalidatedPropCallback The callback function to be called when the Property is invalidated.
+         * @param invalidatedPropCallback
+         *         The callback function to be called when the Property is invalidated.
+         *
          * @return The Builder instance.
          */
         public Builder invalidatedPropCallback(Consumer<StyleableStringProperty> invalidatedPropCallback) {
@@ -293,12 +279,12 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         }
 
         /**
-         * Sets the callback function to be invoked when the cached value of the {@link StyleableStringProperty} is invalidated.
-         * This callback function takes three parameters: the property itself, the old value of the property, and a consumer
-         * that can be used to set the new value of the property. This is useful when you want to cache the computed value
-         * of the property and invalidate it only when necessary.
+         * Sets the callback function to be invoked when the cached value of the {@link StyleableStringProperty} is invalidated. This callback function takes three parameters: the property itself, the old value
+         * of the property, and a consumer that can be used to set the new value of the property. This is useful when you want to cache the computed value of the property and invalidate it only when necessary.
          *
-         * @param invalidatedCachedCallback The callback function to be invoked when the cached value is invalidated.
+         * @param invalidatedCachedCallback
+         *         The callback function to be invoked when the cached value is invalidated.
+         *
          * @return The current instance of the Builder.
          */
         public Builder invalidatedCachedCallback(TriConsumer<StyleableStringProperty, String, Consumer<String>> invalidatedCachedCallback) {
@@ -309,7 +295,9 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         /**
          * Sets the name of the Builder.
          *
-         * @param name The name to set for the Builder.
+         * @param name
+         *         The name to set for the Builder.
+         *
          * @return The updated Builder object.
          */
         public Builder name(String name) {
@@ -320,7 +308,9 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         /**
          * Sets the bean for the Builder.
          *
-         * @param bean The bean object to set.
+         * @param bean
+         *         The bean object to set.
+         *
          * @return The Builder instance.
          */
         public Builder bean(Object bean) {
@@ -331,7 +321,9 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         /**
          * Sets the CSS metadata for the property.
          *
-         * @param cssMetaData the CSS metadata for the property.
+         * @param cssMetaData
+         *         the CSS metadata for the property.
+         *
          * @return the Builder instance.
          */
         public Builder cssMetaData(CssMetaData<? extends Styleable, String> cssMetaData) {
@@ -342,7 +334,9 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         /**
          * Sets the default value for the property being built.
          *
-         * @param defaultValue the default value for the property
+         * @param defaultValue
+         *         the default value for the property
+         *
          * @return the Builder instance
          */
         public Builder defaultValue(String defaultValue) {
@@ -351,8 +345,8 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
         }
 
         /**
-         * Finalizes the construction of an {@code EFXStyleableStringProperty} based on the current configuration of the builder. This method ensures that all required fields have been properly set and
-         * that the property is fully prepared for use within a JavaFX application.
+         * Finalizes the construction of an {@code EFXStyleableStringProperty} based on the current configuration of the builder. This method ensures that all required fields have been properly set and that the
+         * property is fully prepared for use within a JavaFX application.
          *
          * <p>
          * Prior to constructing the property, this method performs several null checks to ensure the integrity of the configuration:
@@ -387,7 +381,7 @@ public class EFXStyleableStringProperty extends StyleableStringProperty implemen
 
             return Optional.ofNullable(defaultValue)
                            .map(v -> new EFXStyleableStringProperty(this, v))
-                           .orElse(new EFXStyleableStringProperty(this));
+                           .orElse(new EFXStyleableStringProperty(this, null));
         }
     }
 }

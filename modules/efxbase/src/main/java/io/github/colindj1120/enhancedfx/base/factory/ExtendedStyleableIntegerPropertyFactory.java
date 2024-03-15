@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableIntegerPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableIntegerPropertyFactory() {}
+
+    /**
      * Generates a builder for constructing {@link EFXStyleableIntegerProperty} instances. This static method provides a pathway to a specialized builder dedicated to the creation of
      * styleable integer properties. Featuring a fluent API, this builder enables an intuitive and straightforward process for configuring integer properties for use in UI styling.
      * <p>

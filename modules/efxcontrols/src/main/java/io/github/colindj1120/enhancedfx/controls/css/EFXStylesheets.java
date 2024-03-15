@@ -18,7 +18,9 @@
 package io.github.colindj1120.enhancedfx.controls.css;
 
 import io.github.colindj1120.enhancedfx.controls.css.base.EFXStyle;
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -101,7 +103,7 @@ public enum EFXStylesheets implements EFXStyle {
      * </p>
      *
      * <p>
-     * The method leverages {@code ObjectUtils.checkResourcePathNotNull} to validate the presence of the resource. This validation step ensures that an {@link IllegalArgumentException} is thrown if the resource
+     * The method leverages {@code EFXObjectUtils.checkResourcePathNotNull} to validate the presence of the resource. This validation step ensures that an {@link IllegalArgumentException} is thrown if the resource
      * cannot be located, preventing the method from returning a null or invalid stylesheet path. As such, when this method returns successfully, the caller is guaranteed to receive a valid, non-null stylesheet
      * URL.
      * </p>
@@ -123,13 +125,12 @@ public enum EFXStylesheets implements EFXStyle {
     public String getStyleSheet(String theme) {
         String path = String.format(stylesheet, theme);
 
-        // Use the utility method to check if the resource exists, throwing a detailed exception if not
-        //TODO: move this function to here
-        //ObjectUtils.checkResourcePathNotNull(path, () -> String.format("Resource for theme '%s' not found. Attempted path: '%s'", theme, path), this.getClass());
+        URL resourceUrl = this.getClass().getResource(path);
+        EFXObjectUtils.isNotNull(resourceUrl, () -> String.format("Resource for theme '%s' not found. Attempted path: '%s'", theme, path));
 
         // Since checkResourcePathNotNull would throw an exception if the resource doesn't exist,
         // the following line will only execute if the resource URL is non-null.
-        return Objects.requireNonNull(getClass().getResource(path))
+        return Objects.requireNonNull(resourceUrl)
                       .toExternalForm();
     }
 

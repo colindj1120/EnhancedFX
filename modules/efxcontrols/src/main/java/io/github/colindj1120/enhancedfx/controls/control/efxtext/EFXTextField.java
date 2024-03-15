@@ -28,9 +28,9 @@ import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.InnerTextF
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.TextMode;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXTextFieldSkin;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -129,7 +129,7 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
                                         .property("-efx-float-mode")
                                         .converter(EnumConverter.getEnumConverter(FloatMode.class))
                                         .initialValue(FloatMode.DISABLED)
-                                        .isSettableFunction(node -> PropertyUtils.checkProperty(node.floatMode) && !(node.isTextModeFilled() && node.isFloatModeBorder()))
+                                        .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.floatMode) && !(node.isTextModeFilled() && node.isFloatModeBorder()))
                                         .propertyGetterFunction(node -> node.floatMode);
         STYLES_MANAGER.addCssMetaData(floatModeCssFactory);
 

@@ -21,8 +21,8 @@ import io.github.colindj1120.enhancedfx.controls.control.efxcontrol.base.EFXCont
 import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.utils.ObjectUtils;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -177,7 +177,7 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     }
 
     public static void setThemeCssDirectory(EFXTheme efxTheme) {
-        ObjectUtils.isNotNull(efxTheme, () -> "EFXTheme cannot be null.");
+        EFXObjectUtils.isNotNull(efxTheme, () -> "EFXTheme cannot be null.");
 
         EFXControl.selectedTheme.set(efxTheme);
     }
@@ -190,10 +190,10 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     //*****************************************************************
 
     protected void loadNewThemeHelper(EFXStylesheets efxStylesheetsObj, EFXTheme oldEFXTheme, EFXTheme newEFXTheme) {
-        // Validate inputs using ObjectUtils for null or empty checks
-        ObjectUtils.isNotNull(efxStylesheetsObj, () -> "EFXStylesheets object cannot be null.");
-        ObjectUtils.isNotNull(oldEFXTheme, () -> "Old efxTheme name cannot be null.");
-        ObjectUtils.isNotNull(newEFXTheme, () -> "New efxTheme name cannot be null.");
+        // Validate inputs using EFXObjectUtils for null or empty checks
+        EFXObjectUtils.isNotNull(efxStylesheetsObj, () -> "EFXStylesheets object cannot be null.");
+        EFXObjectUtils.isNotNull(oldEFXTheme, () -> "Old efxTheme name cannot be null.");
+        EFXObjectUtils.isNotNull(newEFXTheme, () -> "New efxTheme name cannot be null.");
 
         // Ensure control and its stylesheets are not null
         Optional.ofNullable(getControl())
@@ -233,8 +233,8 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
      */
     protected String checkStylesheetPathExists(EFXStylesheets efxStylesheetsObj, Class<?> clazz) {
         // Ensure that efxStylesheetsObj and clazz are not null
-        ObjectUtils.isNotNull(efxStylesheetsObj, () -> "EFXStylesheets object cannot be null.");
-        ObjectUtils.isNotNull(clazz, () -> "Class object cannot be null.");
+        EFXObjectUtils.isNotNull(efxStylesheetsObj, () -> "EFXStylesheets object cannot be null.");
+        EFXObjectUtils.isNotNull(clazz, () -> "Class object cannot be null.");
 
         // Retrieve efxTheme directory and resolve the stylesheet path, ensuring neither is null nor empty
         String theme = Optional.ofNullable(getSelectedThemeCssDirectory())

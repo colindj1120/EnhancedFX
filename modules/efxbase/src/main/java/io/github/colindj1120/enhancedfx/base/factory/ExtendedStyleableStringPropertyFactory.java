@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableStringPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableStringPropertyFactory() {}
+
+    /**
      * Generates a new {@link EFXStyleableStringProperty.Builder} for building styleable string properties. This static method provides access to a builder specifically designed for the
      * construction of {@code EFXStyleableStringProperty} instances. The builder offers a fluent interface, allowing for intuitive and flexible configuration of styleable string properties.
      * <p>

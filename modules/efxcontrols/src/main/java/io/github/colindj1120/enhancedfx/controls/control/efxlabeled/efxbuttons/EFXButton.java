@@ -26,7 +26,7 @@ import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXButtonSkin;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
 import io.github.colindj1120.enhancedfx.base.exceptions.SkinException;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

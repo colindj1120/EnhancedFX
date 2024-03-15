@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableDoublePropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableDoublePropertyFactory() {}
+
+    /**
      * Generates a builder for creating {@link EFXStyleableDoubleProperty} instances. This static method offers access to a specialized builder that facilitates the construction of styleable
      * double properties. The builder features a fluent interface, enabling straightforward and intuitive configuration of double properties for UI styling purposes.
      * <p>

@@ -83,46 +83,7 @@ public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implem
     private final String                                                            name;
     private final Object                                                            bean;
     private final CssMetaData<? extends Styleable, Boolean>                         cssMetaData;
-    private       Boolean                                                           oldValue = get();
-
-    /**
-     * Initializes an {@code EFXStyleableBooleanProperty} with configuration provided by the {@code Builder}. This constructor sets up the property without an explicitly provided default value, relying on
-     * the superclasses default initialization.
-     *
-     * <p>
-     * Each aspect of the property configuration specified in the builder, including callback functions for property invalidation and CSS metadata, is applied to the new property instance. It ensures a robust
-     * setup that allows for enhanced functionality over standard styleable properties.
-     * </p>
-     *
-     * <p>
-     * Features set from the builder include:
-     * <ul>
-     *     <li>A void callback for actions when the property is invalidated.</li>
-     *     <li>A property callback for contextual actions based on the current property state.</li>
-     *     <li>A cached value callback for handling changes with access to the previous value.</li>
-     *     <li>The property's name and associated bean, which are crucial for its identification and use within JavaFX.</li>
-     *     <li>CSS metadata, enabling CSS styling of the property.</li>
-     * </ul>
-     * This constructor ensures that the property is fully prepared for use within a stylable JavaFX component,
-     * with thorough validation checks for necessary builder parts.
-     * </p>
-     *
-     * @param builder
-     *         The {@code Builder} providing configuration settings for this property.
-     *
-     * @throws IllegalArgumentException
-     *         if the builder or any critical configuration element is null.
-     */
-    private EFXStyleableBooleanProperty(Builder builder) {
-        super();
-        nullCheck(builder, "EFXStyleableBooleanProperty Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-    }
+    private       Boolean                                                           oldValue;
 
     /**
      * Initializes an {@code EFXStyleableBooleanProperty} with a specific default value and additional configuration provided by the {@code Builder}. This constructor extends the basic initialization by
@@ -147,7 +108,7 @@ public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implem
      * @throws IllegalArgumentException
      *         if the builder or any critical configuration element is null.
      */
-    private EFXStyleableBooleanProperty(Builder builder, Boolean defaultValue) {
+    private EFXStyleableBooleanProperty(Builder builder, boolean defaultValue) {
         super(defaultValue);
         nullCheck(builder, "EFXStyleableBooleanProperty Builder", this.getClass());
         this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
@@ -156,6 +117,9 @@ public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implem
         this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
         this.bean = builder.bean;
         this.cssMetaData = builder.cssMetaData;
+        this.oldValue = defaultValue;
+
+        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
     }
 
     /**
@@ -250,6 +214,16 @@ public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implem
         private Object                                                            bean;
         private CssMetaData<? extends Styleable, Boolean>                         cssMetaData;
         private Boolean                                                           defaultValue;
+
+        /**
+         * Builder class for constructing {@link EFXStyleableBooleanProperty} instances.
+         *
+         * <p>
+         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
+         * configuration.
+         * </p>
+         */
+        public Builder() {}
 
         /**
          * Sets the callback function invoked when the property is invalidated. The callback function does not take any arguments and does not return a value.
@@ -373,7 +347,7 @@ public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implem
 
             return Optional.ofNullable(defaultValue)
                            .map(v -> new EFXStyleableBooleanProperty(this, v))
-                           .orElse(new EFXStyleableBooleanProperty(this));
+                           .orElse(new EFXStyleableBooleanProperty(this, false));
         }
     }
 }

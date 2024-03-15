@@ -24,7 +24,7 @@ import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.b
 import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.EFXSupportedControl;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXToggleButtonSkin;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
 import javafx.beans.Observable;

@@ -1,12 +1,12 @@
 package io.github.colindj1120.enhancedfx.controls.skins;
 
 import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXButton;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.ButtonConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.ButtonConfigurator;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXSupportedControlSkin;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
-import io.github.colindj1120.enhancedfx.utils.InsetUtils;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
-import io.github.colindj1120.enhancedfx.utils.UIUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXInsetUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXUIUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,14 +40,14 @@ public class EFXButtonSkin extends EFXSupportedControlSkin<EFXButton> {
     private void setupInnerControl() {
         EFXButton control = getSkinnable();
 
-        ObjectProperty<Insets> paddingProperty = PropertyUtils.toObjectProperty(InsetUtils.empty());
-        ObjectProperty<Border> borderProperty  = PropertyUtils.toObjectProperty(Border.EMPTY);
+        ObjectProperty<Insets> paddingProperty = EFXPropertyUtils.toObjectProperty(EFXInsetUtils.empty());
+        ObjectProperty<Border> borderProperty  = EFXPropertyUtils.toObjectProperty(Border.EMPTY);
 
         ButtonConfigurator.create(control.getInnerControl())
                           .bindPaddingProperty(paddingProperty)
                           .bindBorderProperty(borderProperty)
-                          .bindBackgroundProperty(UIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
-                          .bindManagedProperty(PropertyUtils.toBooleanProperty(false))
+                          .bindBackgroundProperty(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
+                          .bindManagedProperty(EFXPropertyUtils.toBooleanProperty(false))
                           .addFontChangeListener(handleFontChange(control));
     }
 
@@ -56,7 +56,7 @@ public class EFXButtonSkin extends EFXSupportedControlSkin<EFXButton> {
         return (observable, oldFont, newFont) -> {
             Font supportingLabelFont = supportingTextLabel.getFont();
 
-            UIUtils.setLabelFont(supportingTextLabel, supportingLabelFont, newFont);
+            EFXUIUtils.setLabelFont(supportingTextLabel, supportingLabelFont, newFont);
             control.requestLayout();
         };
     }

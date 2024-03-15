@@ -25,6 +25,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableObjectPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableObjectPropertyFactory() {}
+
+    /**
      * Generates a new {@link EFXStyleableObjectProperty.Builder} instance for styleable object properties. This generic static method provides a builder for creating instances of
      * {@code EFXStyleableObjectProperty} with a specified type parameter. The builder offers a fluent API, enabling easy configuration and customization of the styleable property.
      * <p>

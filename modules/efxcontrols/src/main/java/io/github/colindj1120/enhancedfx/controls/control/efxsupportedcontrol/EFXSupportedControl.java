@@ -28,8 +28,8 @@ import io.github.colindj1120.enhancedfx.base.enums.State;
 import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.base.SupportingTextPosition;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.css.CssMetaData;
@@ -104,7 +104,7 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
                                                      .property("-efx-supporting-text-position")
                                                      .converter(EnumConverter.getEnumConverter(SupportingTextPosition.class))
                                                      .initialValue(SupportingTextPosition.LEFT)
-                                                     .isSettableFunction(node -> PropertyUtils.checkProperty(node.supportingTextPosition) && node.isSupportingTextEnabled())
+                                                     .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.supportingTextPosition) && node.isSupportingTextEnabled())
                                                      .propertyGetterFunction(node -> node.supportingTextPosition);
         STYLES_MANAGER.addCssMetaData(supportingTextPositionCssFactory);
 
@@ -120,7 +120,7 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
                                                   .property("-efx-supporting-text-state")
                                                   .converter(EnumConverter.getEnumConverter(State.class))
                                                   .initialValue(State.DISABLED)
-                                                  .isSettableFunction(node -> PropertyUtils.checkProperty(node.supportingTextState))
+                                                  .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.supportingTextState))
                                                   .propertyGetterFunction(node -> node.supportingTextState);
         STYLES_MANAGER.addCssMetaData(supportingTextStateCssFactory);
 
@@ -136,7 +136,7 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
                                                     .property("-efx-supporting-text-x-offset")
                                                     .converter(SizeConverter.getInstance())
                                                     .initialValue(0.0)
-                                                    .isSettableFunction(node -> PropertyUtils.checkProperty(node.supportingTextXOffset))
+                                                    .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.supportingTextXOffset))
                                                     .propertyGetterFunction(node -> node.supportingTextXOffset);
         STYLES_MANAGER.addCssMetaData(supportingTextXOffsetCssFactory);
 
@@ -152,7 +152,7 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
                                                     .property("-efx-supporting-text-y-offset")
                                                     .converter(SizeConverter.getInstance())
                                                     .initialValue(0.0)
-                                                    .isSettableFunction(node -> PropertyUtils.checkProperty(node.supportingTextYOffset))
+                                                    .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.supportingTextYOffset))
                                                     .propertyGetterFunction(node -> node.supportingTextYOffset);
         STYLES_MANAGER.addCssMetaData(supportingTextYOffsetCssFactory);
 

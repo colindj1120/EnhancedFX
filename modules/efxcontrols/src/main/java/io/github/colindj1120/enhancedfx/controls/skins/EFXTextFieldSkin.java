@@ -20,10 +20,10 @@ package io.github.colindj1120.enhancedfx.controls.skins;
 import io.github.colindj1120.enhancedfx.base.beans.binding.EFXBooleanBinding;
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.FloatMode;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.LabelConfigurator;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.TextFieldConfigurator;
-import io.github.colindj1120.enhancedfx.controls.factory.property.PropertyConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.TextFieldConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.property.PropertyConfigurator;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXTextBaseSkin;
 import io.github.colindj1120.enhancedfx.graphics.animation.EFXAnimationManager;
 import io.github.colindj1120.enhancedfx.utils.*;
@@ -157,10 +157,10 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
                              .addFontChangeListener(handleTextFieldFontChange(control))
                              .addFocusedChangeListener(handleTextFieldFocusChange(control))
                              .addAlignmentChangeListener(handleTextFieldAlignmentChange())
-                             .bindPaddingProperty(PropertyUtils.toObjectProperty(InsetUtils.empty()))
-                             .bindBorderProperty(PropertyUtils.toObjectProperty(Border.EMPTY))
-                             .bindBackgroundProperty(UIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
-                             .bindManagedProperty(PropertyUtils.toBooleanProperty(false))
+                             .bindPaddingProperty(EFXPropertyUtils.toObjectProperty(EFXInsetUtils.empty()))
+                             .bindBorderProperty(EFXPropertyUtils.toObjectProperty(Border.EMPTY))
+                             .bindBackgroundProperty(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
+                             .bindManagedProperty(EFXPropertyUtils.toBooleanProperty(false))
                              .addTextChangeListener(handleTextChanged(control))
                              .addFontChangeListener(handleFontChange(control));
     }
@@ -186,7 +186,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         return (observable, oldFont, newFont) -> {
             Font floatingLabelFont = floatingTextLabel.getFont();
 
-            UIUtils.setLabelFont(floatingTextLabel, floatingLabelFont, newFont);
+            EFXUIUtils.setLabelFont(floatingTextLabel, floatingLabelFont, newFont);
             control.requestLayout();
         };
     }
@@ -202,14 +202,14 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
 
         ObjectProperty<Background> backgroundProperty = getBackgroundProperty(control);
 
-        ChangeListener<Boolean> handleFloatTextVisible = UIUtils.manageLabelVisibility(floatingTextLabel, getChildren(), control);
+        ChangeListener<Boolean> handleFloatTextVisible = EFXUIUtils.manageLabelVisibility(floatingTextLabel, getChildren(), control);
 
         LabelConfigurator.create(floatingTextLabel)
                          .bindBackgroundProperty(backgroundProperty)
-                         .bindManagedProperty(PropertyUtils.toBooleanProperty(false))
+                         .bindManagedProperty(EFXPropertyUtils.toBooleanProperty(false))
                          .bindVisibleProperty(Bindings.createBooleanBinding(() -> !control.isFloatModeDisabled(), control.floatModeProperty()))
                          .bindTextProperty(control.floatingTextProperty())
-                         .addTextInvalidationListener(UIUtils.requestControlLayout(control))
+                         .addTextInvalidationListener(EFXUIUtils.requestControlLayout(control))
                          .addVisibleChangeListener(handleFloatTextVisible)
                          .setOnMouseClicked(handleFloatingTextClicked(control, innerField))
                          .addAllTransforms(scale, translate)
@@ -228,7 +228,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         return (obs) -> {
             if (floatTextLabelVisibleAndModeInside.get()) {
                 textFieldAlignmentBase.set(innerField.getAlignment());
-                Pos baseline = UIUtils.convertToBaseline(innerField.getAlignment());
+                Pos baseline = EFXUIUtils.convertToBaseline(innerField.getAlignment());
                 innerField.setAlignment(baseline);
             } else {
                 Pos base = Objects.requireNonNullElse(textFieldAlignmentBase.get(), Pos.CENTER_LEFT);
@@ -253,9 +253,9 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         BooleanBinding isTextModeFilledOrNotFloatModeBorder = Bindings.createBooleanBinding(booleanCallable, control.floatModeProperty(), control.textModeProperty());
 
         ObjectBinding<Background> backgroundBinding = Bindings.when(isTextModeFilledOrNotFloatModeBorder)
-                                                              .then(UIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
+                                                              .then(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
                                                               .otherwise(control.backgroundProperty());
-        return BindingUtils.bindingToObjectProperty(backgroundBinding);
+        return EFXBindingUtils.bindingToObjectProperty(backgroundBinding);
     }
 
     @NotNull
@@ -317,7 +317,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         KeyFrame keyFrameXFloat = createKeyFrame(scale.xProperty(), scaleFactor, translate.xProperty(), floatingTextLabel.getPadding()
                                                                                                                          .getLeft() * scaleFactor - 1);
         KeyFrame keyFrameYFloat     = createKeyFrame(scale.yProperty(), scaleFactor, translate.yProperty(), floatingTargetY.get());
-        Timeline floatTextAnimation = AnimationUtils.createAnimation(keyFrameXFloat, keyFrameYFloat);
+        Timeline floatTextAnimation = EFXAnimationUtils.createAnimation(keyFrameXFloat, keyFrameYFloat);
         efxAnimationManager.addAnimation(FLOAT_ANIMATION_KEY, floatTextAnimation);
     }
 
@@ -332,7 +332,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     protected void setupResetTextAnimation() {
         KeyFrame keyFrameXReset     = createKeyFrame(scale.xProperty(), 1, translate.xProperty(), 1);
         KeyFrame keyFrameYReset     = createKeyFrame(scale.yProperty(), 1, translate.yProperty(), 1);
-        Timeline resetTextAnimation = AnimationUtils.createAnimation(keyFrameXReset, keyFrameYReset);
+        Timeline resetTextAnimation = EFXAnimationUtils.createAnimation(keyFrameXReset, keyFrameYReset);
         efxAnimationManager.addAnimation(RESET_FLOAT_ANIMATION_KEY, resetTextAnimation);
     }
 
@@ -351,7 +351,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
      * @return The created KeyFrame.
      */
     protected KeyFrame createKeyFrame(DoubleProperty scaleProperty, double scaleEndValue, DoubleProperty translateProperty, double translateEndValue) {
-        return AnimationUtils.createKeyFrame(FLOATING_TEXT_ANIMATION_DURATION, AnimationUtils.createKeyValue(scaleProperty, scaleEndValue), AnimationUtils.createKeyValue(translateProperty, translateEndValue));
+        return EFXAnimationUtils.createKeyFrame(FLOATING_TEXT_ANIMATION_DURATION, EFXAnimationUtils.createKeyValue(scaleProperty, scaleEndValue), EFXAnimationUtils.createKeyValue(translateProperty, translateEndValue));
     }
 
     /**
@@ -382,7 +382,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
             return 0.0;
         }
 
-        double top            = InsetUtils.getTopInsetWithBorder(control);
+        double top            = EFXInsetUtils.getTopInsetWithBorder(control);
         double floatingHeight = floatingTextLabel.prefHeight(-1);
 
         return switch (getSkinnable().getFloatMode()) {
@@ -523,10 +523,10 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     private void layoutFloatingTextLabel(double x, double y, double h) {
         EFXTextField control = getSkinnable();
         if (!control.isFloatModeDisabled()) {
-            double leadingWidth            = NodeUtils.getNodeWidth(control.getLeadingIcon(), LEADING_ICON_OFFSET);
+            double leadingWidth            = EFXNodeUtils.getNodeWidth(control.getLeadingIcon(), LEADING_ICON_OFFSET);
             double floatingTextLabelWidth  = floatingTextLabel.prefWidth(-1);
             double floatingTextLabelHeight = floatingTextLabel.prefHeight(-1);
-            double floatingTextLabelX      = x + leadingWidth - InsetUtils.getLeftInset(floatingTextLabel);
+            double floatingTextLabelX      = x + leadingWidth - EFXInsetUtils.getLeftInset(floatingTextLabel);
             double floatingTextLabelY      = h / 2 + y - floatingTextLabelHeight / 2;
 
             floatingTextLabel.resizeRelocate(floatingTextLabelX, floatingTextLabelY, floatingTextLabelWidth, floatingTextLabelHeight);

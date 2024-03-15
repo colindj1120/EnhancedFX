@@ -8,6 +8,11 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
  */
 public class ExtendedStyleableBooleanPropertyFactory {
     /**
+     * Private constructor to prevent instantiation of this factory class.
+     */
+    private ExtendedStyleableBooleanPropertyFactory() {}
+
+    /**
      * Generates a builder for constructing {@link EFXStyleableBooleanProperty} instances. This static method offers access to a specialized builder that facilitates the creation of styleable
      * boolean properties. The builder features a fluent interface, enabling easy and intuitive configuration of boolean properties for UI styling.
      * <p>

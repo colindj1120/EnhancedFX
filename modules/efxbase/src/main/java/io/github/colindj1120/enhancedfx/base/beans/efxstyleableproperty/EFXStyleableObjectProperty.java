@@ -93,47 +93,7 @@ public class EFXStyleableObjectProperty<T> extends StyleableObjectProperty<T> im
     private final Object                                                  bean;
     private final CssMetaData<? extends Styleable, T>                     cssMetaData;
     private final Class<T>                                                type;
-    private       T                                                       oldValue = get();
-
-    /**
-     * Constructs an {@code EFXStyleableObjectProperty} using the provided builder configuration, without specifying an explicit default value. This constructor initializes the property with the default
-     * value defined in the superclass. It sets up the property with various configurations such as invalidation callbacks, the property's name, associated bean, CSS metadata, and the property's type, as
-     * specified in the builder.
-     *
-     * <p>
-     * <h2>Key configurations applied from the builder include:</h2>
-     * <ul>
-     *     <li>Invalidation callbacks for void, property-specific, and cached value scenarios, allowing for customized
-     *     reactions to property invalidation events.</li>
-     *     <li>The property's name, crucial for identification within its bean and potentially in CSS.</li>
-     *     <li>The bean associated with the property, embedding it within an object's property hierarchy.</li>
-     *     <li>CSS metadata, enabling the property to be styled through CSS.</li>
-     *     <li>The type of the property, ensuring type safety and correct handling of the property's value.</li>
-     * </ul>
-     * </p>
-     *
-     * <p>
-     * This constructor performs a null check on the builder to ensure that it is not null, throwing an
-     * {@code IllegalArgumentException} if the check fails.
-     * </p>
-     *
-     * @param builder
-     *         The {@code Builder} instance containing configuration settings for this property.
-     *
-     * @throws IllegalArgumentException
-     *         if the builder is null.
-     */
-    protected EFXStyleableObjectProperty(Builder<T> builder) {
-        super();
-        nullCheck(builder, "Property Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-        this.type = builder.type;
-    }
+    private       T                                                       oldValue;
 
     /**
      * Constructs an {@code EFXStyleableObjectProperty} with a specific default value using the provided builder configuration. This constructor extends the functionality of the no-default-value
@@ -167,6 +127,9 @@ public class EFXStyleableObjectProperty<T> extends StyleableObjectProperty<T> im
         this.bean = builder.bean;
         this.cssMetaData = builder.cssMetaData;
         this.type = builder.type;
+        this.oldValue = defaultValue;
+
+        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
     }
 
     /**
@@ -285,6 +248,16 @@ public class EFXStyleableObjectProperty<T> extends StyleableObjectProperty<T> im
         private CssMetaData<? extends Styleable, T>                     cssMetaData;
         private T                                                       defaultValue;
         private Class<T>                                                type;
+
+        /**
+         * Builder class for constructing {@link EFXStyleableObjectProperty} instances.
+         *
+         * <p>
+         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
+         * configuration.
+         * </p>
+         */
+        public Builder() {}
 
         /**
          * Sets the callback for general invalidation without any parameters.
@@ -434,7 +407,7 @@ public class EFXStyleableObjectProperty<T> extends StyleableObjectProperty<T> im
 
             return Optional.ofNullable(defaultValue)
                            .map(v -> new EFXStyleableObjectProperty<>(this, v))
-                           .orElse(new EFXStyleableObjectProperty<>(this));
+                           .orElse(new EFXStyleableObjectProperty<>(this, null));
         }
     }
 }

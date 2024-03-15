@@ -30,9 +30,9 @@ import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
 import io.github.colindj1120.enhancedfx.base.enums.State;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
-import io.github.colindj1120.enhancedfx.utils.UIUtils;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXUIUtils;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -122,7 +122,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                        .property("-efx-text-fill")
                                        .converter(ColorConverter.getInstance())
                                        .initialValue(javafx.scene.paint.Color.valueOf("#000000"))
-                                       .isSettableFunction(node -> PropertyUtils.checkProperty(node.textFill))
+                                       .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.textFill))
                                        .propertyGetterFunction(node -> node.textFill);
         STYLES_MANAGER.addCssMetaData(textFillCssFactory);
 
@@ -138,7 +138,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                              .property("-efx-prompt-text-fill")
                                              .converter(ColorConverter.getInstance())
                                              .initialValue(javafx.scene.paint.Color.valueOf("#000000"))
-                                             .isSettableFunction(node -> PropertyUtils.checkProperty(node.promptTextFill))
+                                             .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.promptTextFill))
                                              .propertyGetterFunction(node -> node.promptTextFill);
         STYLES_MANAGER.addCssMetaData(promptTextFillCssFactory);
 
@@ -154,7 +154,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                                 .property("-efx-max-char-count-state")
                                                 .converter(EnumConverter.getEnumConverter(State.class))
                                                 .initialValue(State.DISABLED)
-                                                .isSettableFunction(node -> PropertyUtils.checkProperty(node.maxCharCountState))
+                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.maxCharCountState))
                                                 .propertyGetterFunction(node -> node.maxCharCountState);
         STYLES_MANAGER.addCssMetaData(maxCharCountStateCssFactory);
 
@@ -170,7 +170,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                            .property("-efx-max-char-count")
                                            .converter(SizeConverter.getInstance())
                                            .initialValue(50)
-                                           .isSettableFunction(node -> PropertyUtils.checkProperty(node.maxCharCount) && node.isMaxCharacterCountEnabled())
+                                           .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.maxCharCount) && node.isMaxCharacterCountEnabled())
                                            .propertyGetterFunction(node -> node.maxCharCount);
         STYLES_MANAGER.addCssMetaData(maxCharCountCssFactory);
 
@@ -186,7 +186,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                               .property("-efx-max-char-count-pos")
                                               .converter(EnumConverter.getEnumConverter(MaxCharacterCountPosition.class))
                                               .initialValue(MaxCharacterCountPosition.ABOVE)
-                                              .isSettableFunction(node -> PropertyUtils.checkProperty(node.maxCharCountPos) && node.isMaxCharacterCountEnabled())
+                                              .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.maxCharCountPos) && node.isMaxCharacterCountEnabled())
                                               .propertyGetterFunction(node -> node.maxCharCountPos);
         STYLES_MANAGER.addCssMetaData(maxCharCountPosCssFactory);
 
@@ -202,7 +202,7 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
                                        .property("-efx-text-mode")
                                        .converter(EnumConverter.getEnumConverter(TextMode.class))
                                        .initialValue(TextMode.OUTLINED)
-                                       .isSettableFunction(node -> PropertyUtils.checkProperty(node.textMode))
+                                       .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.textMode))
                                        .propertyGetterFunction(node -> node.textMode);
         STYLES_MANAGER.addCssMetaData(textModeCssFactory);
 
@@ -448,10 +448,10 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
      * @param color
      *         The old Color object that observable value was before the change.
      *
-     * @see UIUtils#updateStyleWithNewColor
+     * @see EFXUIUtils#updateStyleWithNewColor
      */
     private void handleTextFillChange(ObservableValue<? extends Color> obs, Color newColor, Color color) {
-        UIUtils.updateStyleWithNewColor(newColor, getInnerControl(), "-efx-text-fill");
+        EFXUIUtils.updateStyleWithNewColor(newColor, getInnerControl(), "-efx-text-fill");
     }
 
     /**
@@ -469,10 +469,10 @@ public abstract class EFXTextBase<T extends TextInputControl> extends EFXSupport
      * @param color
      *         The old Color object that observable value was before the change.
      *
-     * @see UIUtils#updateStyleWithNewColor
+     * @see EFXUIUtils#updateStyleWithNewColor
      */
     private void handlePromptTextFillChange(ObservableValue<? extends Color> obs, Color newColor, Color color) {
-        UIUtils.updateStyleWithNewColor(newColor, getInnerControl(), "-efx-prompt-text-fill");
+        EFXUIUtils.updateStyleWithNewColor(newColor, getInnerControl(), "-efx-prompt-text-fill");
     }
     //endregion Listener Functions
 

@@ -3,11 +3,11 @@ package io.github.colindj1120.enhancedfx.controls.skins.base;
 import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.EFXSupportedControl;
 import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.base.SupportingTextPosition;
 import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.controls.factory.configurators.controls.LabelConfigurator;
-import io.github.colindj1120.enhancedfx.utils.InsetUtils;
-import io.github.colindj1120.enhancedfx.utils.PropertyUtils;
-import io.github.colindj1120.enhancedfx.utils.UIUtils;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.utils.EFXInsetUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXUIUtils;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 
@@ -44,11 +44,11 @@ public abstract class EFXSupportedControlSkin<T extends EFXSupportedControl<?>> 
         T control = getSkinnable();
 
         LabelConfigurator.create(supportingTextLabel)
-                         .bindBackgroundProperty(UIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
-                         .bindManagedProperty(PropertyUtils.toBooleanProperty(false))
+                         .bindBackgroundProperty(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
+                         .bindManagedProperty(EFXPropertyUtils.toBooleanProperty(false))
                          .bindVisibleProperty(Bindings.createBooleanBinding(control::isSupportingTextEnabled, control.supportingTextStateProperty()))
                          .bindTextProperty(control.supportingTextProperty())
-                         .addVisibleChangeListener(UIUtils.manageLabelVisibility(supportingTextLabel, getChildren(), control))
+                         .addVisibleChangeListener(EFXUIUtils.manageLabelVisibility(supportingTextLabel, getChildren(), control))
                          .addStyleClass(SUPPORTING_TEXT_LABEL_STYLE);
 
         CustomControlConfigurator.create(control)
@@ -86,7 +86,7 @@ public abstract class EFXSupportedControlSkin<T extends EFXSupportedControl<?>> 
 
     private void layoutSupportingTextLabelBottom(double x, double h, T control, double labelWidth, double labelHeight) {
         double supportingTextLabelX = x + control.getSupportingTextXOffset();
-        double supportingTextLabelY = h + InsetUtils.getBottomBorderInset(control) + labelHeight + control.getSupportingTextYOffset();
+        double supportingTextLabelY = h + EFXInsetUtils.getBottomBorderInset(control) + labelHeight + control.getSupportingTextYOffset();
 
         supportingTextLabel.resizeRelocate(supportingTextLabelX, supportingTextLabelY, labelWidth, labelHeight);
     }
