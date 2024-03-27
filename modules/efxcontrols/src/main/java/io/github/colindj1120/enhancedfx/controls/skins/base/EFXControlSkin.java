@@ -1,9 +1,27 @@
 package io.github.colindj1120.enhancedfx.controls.skins.base;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxcontrol.EFXControl;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.EFXControl;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.base.EFXControlBase;
 import javafx.scene.control.SkinBase;
 
+import java.lang.reflect.Constructor;
+
 public abstract class EFXControlSkin<T extends EFXControl<?>> extends SkinBase<T> {
+    protected abstract void initialize();
+
+    protected static <U extends EFXControlSkin<?>, T extends EFXControlBase<?>> U create(Class<U> clazz, T control) {
+        try {
+            Constructor<U> constructor = clazz.getDeclaredConstructor(control.getClass());
+            constructor.setAccessible(true); // Enables access to protected constructor
+            U instance = constructor.newInstance(control);
+
+            instance.initialize(); // Assuming an initialization method needs to be called
+            return instance;
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Error creating %s instance", clazz.getSimpleName()), e);
+        }
+    }
+
     /**
      * Constructs an {@code EFXControlSkin} instance for the specified control. This constructor initializes the skin with the control that it will be associated with. It calls the superclass constructor
      * with the control as an argument, ensuring that the base skin functionalities are properly initialized.

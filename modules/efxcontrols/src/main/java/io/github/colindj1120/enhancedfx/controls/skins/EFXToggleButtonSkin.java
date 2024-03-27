@@ -17,19 +17,30 @@
  */
 package io.github.colindj1120.enhancedfx.controls.skins;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleButton;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXToggleButton;
+import io.github.colindj1120.enhancedfx.controls.skins.base.EFXControlSkin;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXSupportedControlSkin;
 
 public class EFXToggleButtonSkin extends EFXSupportedControlSkin<EFXToggleButton> {
     private final EFXRippleEffect efxRippleEffect;
 
+    public static EFXToggleButtonSkin create(EFXToggleButton control) {
+        return EFXControlSkin.create(EFXToggleButtonSkin.class, control);
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        getChildren().add(efxRippleEffect);
+    }
+
     public EFXToggleButtonSkin(EFXToggleButton control) {
         super(control);
 
-        efxRippleEffect = new EFXRippleEffect(control);
+        efxRippleEffect = EFXRippleEffect.create(control);
 
-        getChildren().add(efxRippleEffect);
+
     }
 
     /**

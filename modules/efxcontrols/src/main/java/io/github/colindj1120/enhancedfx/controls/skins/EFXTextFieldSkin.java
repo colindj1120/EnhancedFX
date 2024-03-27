@@ -18,12 +18,13 @@
 package io.github.colindj1120.enhancedfx.controls.skins;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.EFXBooleanBinding;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.FloatMode;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.TextFieldConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.property.PropertyConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.label.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.textfield.TextFieldConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.property.CustomPropertyConfigurator;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.FloatMode;
+import io.github.colindj1120.enhancedfx.controls.skins.base.EFXControlSkin;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXTextBaseSkin;
 import io.github.colindj1120.enhancedfx.graphics.animation.EFXAnimationManager;
 import io.github.colindj1120.enhancedfx.utils.*;
@@ -33,10 +34,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -65,8 +63,8 @@ import java.util.concurrent.CompletableFuture;
  * </p>
  *
  * <p>
- * The {@code EFXTextFieldSkin} class is responsible for creating a custom skin for the EFXTextField control. It enhances the standard text field by adding features such as floating text labels,
- * icons, animations, and advanced layout management. This class extends {@link EFXTextBaseSkin} to leverage existing functionality for handling text input and styling.
+ * The {@code EFXTextFieldSkin} class is responsible for creating a custom skin for the EFXTextField control. It enhances the standard text field by adding features such as floating text labels, icons,
+ * animations, and advanced layout management. This class extends {@link EFXTextBaseSkin} to leverage existing functionality for handling text input and styling.
  * </p>
  *
  * <p>
@@ -109,40 +107,50 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     protected static final String   FLOAT_ANIMATION_KEY              = "floatTextAnimation";
     protected static final String   RESET_FLOAT_ANIMATION_KEY        = "resetTextAnimation";
 
-    protected static final double scaleFactor          = .75;
+    protected static final double scaleFactor = .75;
 
-    protected final SimpleObjectProperty<Pos> textFieldAlignmentBase = new SimpleObjectProperty<>(this, "textFieldAlignmentBase");
+    protected SimpleObjectProperty<Pos> textFieldAlignmentBase;
     protected final Scale                     scale                  = Transform.scale(1, 1, 0, 0);
-    protected final Translate           translate           = Transform.translate(1, 1);
-    protected final EFXAnimationManager efxAnimationManager = new EFXAnimationManager();
-    protected final DoubleProperty      floatingTargetY     = new SimpleDoubleProperty(this, "floatingTargetY", 0.0);
+    protected final Translate                 translate              = Transform.translate(1, 1);
+    protected final EFXAnimationManager       efxAnimationManager    = new EFXAnimationManager();
 
-    protected final Label                     floatingTextLabel;
-    protected       CompletableFuture<Void>   floatAnimationFinished;
-    protected       CompletableFuture<Void> resetAnimationFinished;
-    protected final EFXBooleanBinding       floatTextLabelVisibleAndModeInside;
+    protected DoubleProperty floatingTargetY;
 
-    /**
-     * The skin class for the EFXTextField control. It customizes the appearance and behavior of the text field.
-     */
-    public EFXTextFieldSkin(EFXTextField control) {
+    protected final Label                   floatingTextLabel = new Label();
+    protected       CompletableFuture<Void> floatAnimationFinished = new CompletableFuture<>();
+    protected       CompletableFuture<Void> resetAnimationFinished = new CompletableFuture<>();
+    protected       EFXBooleanBinding       floatTextLabelVisibleAndModeInside;
+
+    public static EFXTextFieldSkin create(EFXTextField control) {
+        return EFXControlSkin.create(EFXTextFieldSkin.class, control);
+    }
+
+    protected EFXTextFieldSkin(EFXTextField control) {
         super(control);
-        this.floatingTextLabel = new Label();
-        this.floatAnimationFinished = new CompletableFuture<>();
-        this.resetAnimationFinished = new CompletableFuture<>();
+    }
 
-        Callable<Boolean> isFloatModeInsideAndLabelVisible = () -> control.isFloatModeInside() && floatingTextLabel.visibleProperty()
-                                                                                                                   .get();
+    @Override
+    protected void initialize() {
+        super.initialize();
+        this.textFieldAlignmentBase = new SimpleObjectProperty<>(this, "textFieldAlignmentBase");
+        this.floatingTargetY = new SimpleDoubleProperty(this, "floatingTargetY", 0.0);
 
-        BooleanBinding binding = Bindings.createBooleanBinding(isFloatModeInsideAndLabelVisible, control.floatModeProperty(), floatingTextLabel.visibleProperty());
+        EFXTextField control = this.getSkinnable();
 
-        this.floatTextLabelVisibleAndModeInside = EFXBooleanBinding.create(binding, this);
+        BooleanProperty isFloatingLabelVisible = this.floatingTextLabel.visibleProperty();
 
-        setupTextField();
-        setupFloatingTextLabel();
-        setupAnimations();
+        Callable<Boolean> isFloatModeInsideAndLabelVisible = () -> control.isFloatModeInside() && isFloatingLabelVisible.get();
 
-        getChildren().addAll(control.getInnerControl());
+        BooleanBinding binding = Bindings.createBooleanBinding(isFloatModeInsideAndLabelVisible, control.floatModeProperty(), isFloatingLabelVisible);
+
+        this.floatTextLabelVisibleAndModeInside = EFXBooleanBinding.create(this, binding);
+
+        this.setupTextField();
+        this.setupFloatingTextLabel();
+        this.setupAnimations();
+
+        this.getChildren()
+            .addAll(control.getInnerControl());
 
         control.requestLayout();
     }
@@ -217,10 +225,10 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
 
         CustomControlConfigurator.create(control)
                                  .addObjectPropertyChangeListener(control.floatModeProperty(), handleFloatMode(control))
-                                 .addBooleanBindingAssociationChangeListener(control.isFloatAnimationEnabledProperty(), handleFloatAnimEnabled(innerField));
+                                 .addEFXBooleanBindingChangeListener(control.isFloatAnimationEnabledProperty(), handleFloatAnimEnabled(innerField));
 
-        PropertyConfigurator.create(floatingTargetY)
-                            .addInvalidationListener(handleFloatTargetYInvalid(control));
+        CustomPropertyConfigurator.create(floatingTargetY)
+                                  .addInvalidationListener(handleFloatTargetYInvalid(control));
     }
 
     @NotNull
@@ -294,9 +302,9 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     }
 
     /**
-     * Sets up the animations for the EFXTextField control. This method clears any existing animations and sets up the float text animation and reset text animation. If the control's float mode is not
-     * disabled, the float text animation and reset text animation will be setup. Additionally, the onFinished event handlers for floatAnimationFinished and resetAnimationFinished are set to complete when the
-     * respective animations finish.
+     * Sets up the animations for the EFXTextField control. This method clears any existing animations and sets up the float text animation and reset text animation. If the control's float mode is not disabled,
+     * the float text animation and reset text animation will be setup. Additionally, the onFinished event handlers for floatAnimationFinished and resetAnimationFinished are set to complete when the respective
+     * animations finish.
      */
     protected void setupAnimations() {
         EFXTextField control = getSkinnable();
@@ -351,7 +359,8 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
      * @return The created KeyFrame.
      */
     protected KeyFrame createKeyFrame(DoubleProperty scaleProperty, double scaleEndValue, DoubleProperty translateProperty, double translateEndValue) {
-        return EFXAnimationUtils.createKeyFrame(FLOATING_TEXT_ANIMATION_DURATION, EFXAnimationUtils.createKeyValue(scaleProperty, scaleEndValue), EFXAnimationUtils.createKeyValue(translateProperty, translateEndValue));
+        return EFXAnimationUtils.createKeyFrame(FLOATING_TEXT_ANIMATION_DURATION, EFXAnimationUtils.createKeyValue(scaleProperty, scaleEndValue),
+                                                EFXAnimationUtils.createKeyValue(translateProperty, translateEndValue));
     }
 
     /**
@@ -482,7 +491,6 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
         return super.computePrefWidth(height, topInset, rightInset, bottomInset, leftInset);
     }
-
 
     /**
      * {@inheritDoc}

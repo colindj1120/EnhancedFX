@@ -17,358 +17,187 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty;
 
-import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase;
-import io.github.colindj1120.enhancedfx.utils.consumers.TriConsumer;
-import javafx.css.CssMetaData;
-import javafx.css.StyleOrigin;
-import javafx.css.Styleable;
-import javafx.css.StyleableDoubleProperty;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.invalidatorsNullCheck;
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.nullCheck;
+import io.github.colindj1120.enhancedfx.base.beans.base.EFXStyleablePropertyBase;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 
 /**
- * The {@code EFXStyleableDoubleProperty} class is a specialized implementation of {@link StyleableDoubleProperty} that incorporates additional functionality to enhance interaction with JavaFX CSS. It
- * provides mechanisms to handle property invalidation with custom callbacks, making it a versatile tool for developers seeking to extend the capabilities of styleable properties within their JavaFX
- * applications.
+ * Represents a styleable double property within the EnhancedFX framework, extending the functionality of {@link EFXStyleablePropertyBase} by specializing in doubles.
  *
- * <p>
- * This class supports various callbacks for property invalidation, allowing for specific actions to be taken when the property value changes or becomes invalidated. These callbacks include:
+ * <p>This class allows for the creation and management of styleable properties that can be used within JavaFX's CSS styling system, providing enhanced flexibility and utility for defining and manipulating
+ * styleable attributes.</p>
+ *
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>A void callback that does not require the property's current value.</li>
- *     <li>A property callback that provides the current {@code StyleableDoubleProperty} instance, allowing direct interaction.</li>
- *     <li>A cached value callback that offers both the property and its old value, enabling comparisons and conditional logic based on changes.</li>
+ *     <li>Facilitates the creation and management of styleable double properties.</li>
+ *     <li>Allows for the double properties to be styled directly via CSS, enhancing UI customization.</li>
+ *     <li>Provides enhanced string representations, aiding in debugging and logging.</li>
  * </ul>
- * Additionally, {@code EFXStyleableDoubleProperty} is designed with a focus on customization and ease of use,
- * featuring a builder pattern for construction. This approach allows for a fluent configuration of properties, including
- * the property name, the JavaFX bean associated with the property, CSS metadata integration, and the specification of
- * a default value.
- * </p>
  *
- * <p>
- * <h2>Key Features:</h2>
- * <ul>
- *     <li>Enhanced CSS styling capabilities through {@link CssMetaData} integration.</li>
- *     <li>Customizable callbacks for handling property invalidation.</li>
- *     <li>Builder pattern for flexible and intuitive property configuration.</li>
- * </ul>
- * Usage of this class is intended for scenarios where advanced property management and styling customization are required,
- * offering a sophisticated toolset for JavaFX UI development.
- * </p>
- *
- * <p>
- * <em>Example Usage:</em>
- * <pre>{@code
- * EFXStyleableDoubleProperty customProperty = new EFXStyleableDoubleProperty.Builder()
- *         .bean(this)
- *         .name("customProperty")
- *         .cssMetaData(myCssMetaData)
- *         .defaultValue(1.0)
- *         .invalidatedVoidCallback(() -> System.out.println("Property invalidated"))
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * EFXStyleableDoubleProperty visibleProperty = EFXStyleableDoubleProperty.create()
+ *         .name("visible")
+ *         .initialValue(true)
  *         .build();
- * }</pre>
- * This class and its builder facilitate the creation of styleable properties that are deeply integrated with the
- * JavaFX styling system, providing developers with enhanced control and flexibility over UI appearance and behavior.
- * </p>
  *
- * @see StyleableDoubleProperty
+ * // Applying the property to a JavaFX node or component
+ * myComponent.styleableProperties().add(visibleProperty);
+ * }
+ *
+ * </pre>
+ *
+ * <p>This example demonstrates creating a styleable double property for controlling the visibility of a component, which can then be manipulated through CSS.</p>
+ *
+ * @author Colin Jokisch
+ * @version 1.0.0
  * @see EFXStyleablePropertyBase
- * @see CssMetaData
- * @see Styleable
- * @see Consumer
- * @see TriConsumer
  */
-public class EFXStyleableDoubleProperty extends StyleableDoubleProperty implements EFXStyleablePropertyBase {
-    private final Consumer<Void>                                                 invalidatedVoidCallback;
-    private final Consumer<StyleableDoubleProperty>                              invalidatedPropCallback;
-    private final TriConsumer<StyleableDoubleProperty, Double, Consumer<Double>> invalidatedCachedCallback;
-    private final String                                                         name;
-    private final Object                                                         bean;
-    private final CssMetaData<? extends Styleable, Number>                       cssMetaData;
-    private       Double                                                         oldValue;
+public class EFXStyleableDoubleProperty extends EFXStyleablePropertyBase<EFXStyleableDoubleProperty, Double> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
 
     /**
-     * Constructs an {@code EFXStyleableDoubleProperty} with a specified default value, using the provided {@code Builder} instance for other configuration options. This constructor extends the
-     * functionality of the no-argument constructor by allowing the specification of an initial value for the property.
-     * <p>
-     * Similar to the no-default constructor, this constructor performs null checks on the builder and its critical configuration options. It sets up the property with a bean, a name, CSS metadata, and
-     * callbacks for invalidation handling, but it also initializes the property's value to the provided {@code defaultValue}.
-     * <p>
-     * This constructor is suited for scenarios where an initial property value is known at construction time and needs to be explicitly set.
+     * Provides a static factory method to initialize a builder for {@code EFXStyleableDoubleProperty}.
+     *
+     * @return a new instance of {@link EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder}
+     */
+    public static  EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder create() {
+        return new EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder();
+    }
+
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
+
+    /**
+     * Constructs an instance of {@link EFXStyleableDoubleProperty} using the provided builder.
+     *
+     * <p>This constructor is protected to ensure that instances of {@code EFXStyleableDoubleProperty} are only created through the builder pattern, promoting a consistent and clear initialization process. The
+     * builder contains all necessary configurations for the property, including its name, initial value, CSS metadata, and style converter if specified.</p>
+     *
+     * <p>The constructor delegates to the superclass constructor of {@link EFXStyleablePropertyBase}, passing along the builder, which allows the base class to perform common initialization tasks and apply
+     * the configurations specified in the builder to the newly created property.</p>
+     *
+     * <p>It's important to note that this constructor is not intended to be used directly by client code. Instead, instances of {@code EFXStyleableDoubleProperty} should be created using the static
+     * {@code create()} method on {@code EFXStyleableDoubleProperty}, followed by builder method calls to configure the property, and finally calling {@code build()} on the builder to obtain the configured
+     * {@code EFXStyleableDoubleProperty} instance.</p>
      *
      * @param builder
-     *         The {@code Builder} instance containing the configuration for this property.
-     * @param defaultValue
-     *         The initial value to set for this property.
+     *         The {@code EFXStyleableDoublePropertyBuilder} containing the configurations for this property. It must not be {@code null} and should be fully configured.
+     */
+    protected EFXStyleableDoubleProperty(EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder builder) {
+        super(builder);
+    }
+
+    //endregion Constructor
+
+    //region Overridden Functions
+    //*****************************************************************
+    // Overridden Functions
+    //*****************************************************************
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EFXStyleableDoubleProperty getProperty() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("""
+                             %s:
+                             %s
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
+    }
+
+    //endregion Overridden Functions
+
+    //region Builder
+    //*****************************************************************
+    // Builder
+    //*****************************************************************
+
+    /**
+     * The builder class for {@link EFXStyleableDoubleProperty}, inheriting the fluid builder pattern and functionality from {@link EFXStyleablePropertyBuilder}, and providing a method to build an instance of
+     * {@code EFXStyleableDoubleProperty}.
      *
-     * @throws IllegalArgumentException
-     *         if the builder or any required configuration option is null.
-     */
-    protected EFXStyleableDoubleProperty(Builder builder, double defaultValue) {
-        super(defaultValue);
-        nullCheck(builder, "EFXStyleableDoubleProperty Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-        this.oldValue = defaultValue;
-
-        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void invalidated() {
-        Optional.ofNullable(invalidatedVoidCallback)
-                .ifPresent(callback -> callback.accept(null));
-        Optional.ofNullable(invalidatedPropCallback)
-                .ifPresent(callback -> callback.accept(this));
-        Optional.ofNullable(invalidatedCachedCallback)
-                .ifPresent(callback -> callback.accept(this, oldValue, val -> oldValue = val));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void applyStyle(StyleOrigin origin, Number v) {
-        if (Objects.nonNull(origin)) {
-            super.applyStyle(origin, v);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CssMetaData<? extends Styleable, Number> getCssMetaData() {
-        return cssMetaData;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getBean() {
-        return bean;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Checks if this Double value is equal to the provided value.
-     *
-     * @param value
-     *         The Double value to compare with.
-     *
-     * @return {@code true} if this Double value is equal to the provided value, {@code false} otherwise.
-     */
-    public boolean valueEquals(Double value) {
-        return getValue().equals(value);
-    }
-
-    /**
-     * The {@code Builder} class for {@code EFXStyleableDoubleProperty} provides a fluent interface for incrementally constructing an {@code EFXStyleableDoubleProperty}. This builder allows for the
-     * detailed configuration of the property, including its CSS metadata, name, bean, default value, and callbacks for various invalidation scenarios.
-     * <p>
-     * Usage of this builder facilitates the creation of a custom {@code EFXStyleableDoubleProperty} tailored to specific needs, enhancing the property's integration within a JavaFX application's styling
-     * and behavior management system.
-     * <p>
-     * Features and Options:
+     * <h2>Capabilities:</h2>
      * <ul>
-     *     <li>{@code invalidatedVoidCallback}: Specifies a callback to be executed when the property is invalidated, without
-     *     requiring the current value.</li>
-     *     <li>{@code invalidatedPropCallback}: Defines a callback with access to the {@code StyleableDoubleProperty}, allowing
-     *     actions that involve the property itself upon invalidation.</li>
-     *     <li>{@code invalidatedCachedCallback}: Sets a callback that provides the old value and a consumer for potentially
-     *     updating a cached value, enabling complex change handling logic.</li>
-     *     <li>{@code name}: Sets the name of the property, used for identification within the associated bean and potentially
-     *     within CSS.</li>
-     *     <li>{@code bean}: Associates the property with a JavaFX bean, embedding it within an object's property hierarchy.</li>
-     *     <li>{@code cssMetaData}: Links the property with {@link CssMetaData}, allowing it to be styled through CSS.</li>
-     *     <li>{@code defaultValue}: Defines an initial value for the property, setting its state prior to any external modifications.</li>
+     *     <li>Fluent API design for building {@code EFXStyleableDoubleProperty} instances.</li>
+     *     <li>Customizable initial value, name, CSS meta-data, and style converter.</li>
      * </ul>
-     * <p>
-     * The {@code build()} method finalizes the construction of the {@code EFXStyleableDoubleProperty}, ensuring that all
-     * required configurations are set. It performs null checks on essential fields to prevent misconfigurations.
-     * <p>
-     * Example Usage:
+     *
+     * <h2>Usage Example:</h2>
      * <pre>
-     * EFXStyleableDoubleProperty customProperty = new EFXStyleableDoubleProperty.Builder()
-     *         .bean(this)
-     *         .name("customOpacity")
-     *         .cssMetaData(CustomCssMetaData.CUSTOM_OPACITY)
-     *         .defaultValue(1.0)
-     *         .invalidatedVoidCallback(() -> System.out.println("Opacity invalidated"))
+     * {@code
+     * EFXStyleableDoubleProperty<Color> backgroundColor = EFXStyleableDoubleProperty.<Color>create()
+     *         .name("background-color")
+     *         .initialValue(Color.WHITE)
+     *         .styleConverter(ColorConverter.getInstance())
      *         .build();
+     * }
      * </pre>
-     * This approach to constructing an {@code EFXStyleableDoubleProperty} provides a clear and modular way to configure
-     * property behavior and integration within the broader JavaFX styling system.
+     *
+     *  <p>This example creates a {@code EFXStyleableDoubleProperty} for background color using the builder.</p>
      */
-    public static class Builder {
-        private Consumer<Void>                                                 invalidatedVoidCallback;
-        private Consumer<StyleableDoubleProperty>                              invalidatedPropCallback;
-        private TriConsumer<StyleableDoubleProperty, Double, Consumer<Double>> invalidatedCachedCallback;
-        private String                                                         name;
-        private Object                                                         bean;
-        private CssMetaData<? extends Styleable, Number>                       cssMetaData;
-        private Double                                                         defaultValue;
+    public static class EFXStyleableDoublePropertyBuilder extends EFXStyleablePropertyBuilder<EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder, EFXStyleableDoubleProperty, Double> {
+        /**
+         * Constructs a new {@code EFXStyleableDoublePropertyBuilder} instance with default settings.
+         *
+         * <p>This builder is used to create instances of {@link EFXStyleableDoubleProperty} through a fluent API design. Upon initialization, the builder's initial value is set to {@code null}, indicating that
+         * the {@link EFXStyleableDoubleProperty} created by this builder will not have a predefined initial value unless explicitly set via the builder's methods.</p>
+         *
+         * <p>This constructor initializes the builder in a state ready for setting up an {@code EFXStyleableDoubleProperty} instance. Properties such as the property name, CSS metadata, and the style
+         * converter can be configured using the provided builder methods.</p>
+         *
+         * <h2>Usage Example:</h2>
+         * <pre>
+         * {@code
+         * EFXStyleableDoublePropertyBuilder<Color> builder = new EFXStyleableDoublePropertyBuilder();
+         * EFXStyleableDoubleProperty<Color> colorProperty = builder
+         *         .name("text-color")
+         *         .initialValue(Color.BLACK)
+         *         .styleConverter(ColorConverter.getInstance())
+         *         .build();
+         * }
+         * </pre>
+         *
+         * <p>In this example, a new {@code EFXStyleableDoublePropertyBuilder} is created to build a {@code EFXStyleableDoubleProperty} for a text color property. The property is configured with an initial
+         * value of {@code Color.BLACK} and uses a {@code ColorConverter} for CSS styling.</p>
+         */
+        public EFXStyleableDoublePropertyBuilder() {
+            this.initialValue = null;
+        }
 
         /**
-         * Builder class for constructing {@link EFXStyleableDoubleProperty} instances.
-         *
-         * <p>
-         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
-         * configuration.
-         * </p>
+         * {@inheritDoc}
          */
-        public Builder() {}
-
-        /**
-         * Sets a callback function that will be invoked when the property associated with this builder is invalidated.
-         *
-         * @param invalidatedVoidCallback
-         *         the callback function to be set
-         *
-         * @return the modified Builder object
-         */
-        public Builder invalidatedVoidCallback(Consumer<Void> invalidatedVoidCallback) {
-            this.invalidatedVoidCallback = invalidatedVoidCallback;
+        @Override
+        protected EFXStyleableDoubleProperty.EFXStyleableDoublePropertyBuilder getBuilder() {
             return this;
         }
 
         /**
-         * Sets the callback function to be executed when the property is invalidated.
+         * Finalizes the construction of {@link EFXStyleableDoubleProperty} instance.
          *
-         * @param invalidatedPropCallback
-         *         the callback function to be executed when the property is invalidated
-         *
-         * @return the modified Builder object
-         */
-        public Builder invalidatedPropCallback(Consumer<StyleableDoubleProperty> invalidatedPropCallback) {
-            this.invalidatedPropCallback = invalidatedPropCallback;
-            return this;
-        }
-
-        /**
-         * Sets the invalidated cached callback for the Builder object.
-         *
-         * @param invalidatedCachedCallback
-         *         the function that will be called when the StyleableDoubleProperty is invalidated
-         *
-         * @return the modified Builder object
-         */
-        public Builder invalidatedCachedCallback(TriConsumer<StyleableDoubleProperty, Double, Consumer<Double>> invalidatedCachedCallback) {
-            this.invalidatedCachedCallback = invalidatedCachedCallback;
-            return this;
-        }
-
-        /**
-         * Sets the name of this Builder object.
-         *
-         * @param name
-         *         the name to be set
-         *
-         * @return the modified Builder object
-         */
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * Sets the bean property to the specified value.
-         *
-         * @param bean
-         *         the bean object to set
-         *
-         * @return the instance of the Builder class
-         */
-        public Builder bean(Object bean) {
-            this.bean = bean;
-            return this;
-        }
-
-        /**
-         * Sets the CSS metadata for this builder.
-         *
-         * @param cssMetaData
-         *         the CSS metadata to be set
-         *
-         * @return the modified Builder object
-         */
-        public Builder cssMetaData(CssMetaData<? extends Styleable, Number> cssMetaData) {
-            this.cssMetaData = cssMetaData;
-            return this;
-        }
-
-        /**
-         * Sets the default value for the property associated with this Builder object.
-         *
-         * @param defaultValue
-         *         the default value to be set
-         *
-         * @return the modified Builder object
-         */
-        public Builder defaultValue(Double defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
-        /**
-         * Finalizes the construction of an {@code EFXStyleableDoubleProperty} based on the current configuration of the builder. This method ensures that all required fields have been properly set and
-         * that the property is fully prepared for use within a JavaFX application.
-         *
-         * <p>
-         * Prior to constructing the property, this method performs several null checks to ensure the integrity of the configuration:
-         * <ul>
-         *     <li>Ensures that callbacks for property invalidation are not null, facilitating robust property change handling.</li>
-         *     <li>Validates that the bean associated with the property is specified, anchoring the property within a specific
-         *     object's context.</li>
-         *     <li>Checks for the presence of a property name, critical for identification within the bean and potentially
-         *     within CSS.</li>
-         *     <li>Confirms that CSS metadata has been provided, enabling the property to be styled through CSS.</li>
-         * </ul>
-         * If any of these validations fail, an {@code IllegalArgumentException} is thrown, indicating the specific configuration
-         * issue. This ensures the property is correctly configured before it is used.
-         * </p>
-         *
-         * <p>
-         * After passing all checks, the method constructs a new {@code EFXStyleableDoubleProperty}, optionally setting
-         * a default value if one has been specified. If no default value is provided, the property is initialized with its
-         * inherent default state.
-         * </p>
-         *
-         * @return A fully configured {@code EFXStyleableDoubleProperty} instance.
-         *
-         * @throws IllegalArgumentException
-         *         if any required configuration is missing or incorrectly specified.
+         * @return a new instance of {@code EFXStyleableDoubleProperty}
          */
         public EFXStyleableDoubleProperty build() {
-            invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, EFXStyleableDoubleProperty.class);
-            nullCheck(bean, "EFXStyleableDoubleProperty Bean", EFXStyleableDoubleProperty.class);
-            nullCheck(name, "EFXStyleableDoubleProperty Name", EFXStyleableDoubleProperty.class);
-            nullCheck(cssMetaData, "EFXStyleableDoubleProperty CssMetaData", EFXStyleableDoubleProperty.class);
-
-            return Optional.ofNullable(defaultValue)
-                           .map(v -> new EFXStyleableDoubleProperty(this, v))
-                           .orElse(new EFXStyleableDoubleProperty(this, 0.0));
+            return new EFXStyleableDoubleProperty(this);
         }
     }
-}
 
+    //endregion Builder
+}
 

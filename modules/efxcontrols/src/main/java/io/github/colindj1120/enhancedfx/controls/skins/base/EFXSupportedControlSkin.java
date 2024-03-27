@@ -1,10 +1,10 @@
 package io.github.colindj1120.enhancedfx.controls.skins.base;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.EFXSupportedControl;
-import io.github.colindj1120.enhancedfx.controls.control.efxsupportedcontrol.base.SupportingTextPosition;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcontrol.EFXSupportedControl;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcontrol.base.SupportingTextPosition;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.label.LabelConfigurator;
 import io.github.colindj1120.enhancedfx.utils.EFXInsetUtils;
 import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import io.github.colindj1120.enhancedfx.utils.EFXUIUtils;
@@ -15,17 +15,13 @@ public abstract class EFXSupportedControlSkin<T extends EFXSupportedControl<?>> 
     public static final String SUPPORTING_TEXT_LABEL_STYLE = "supporting-text-label";
     protected final     Label  supportingTextLabel         = new Label();
 
-    /**
-     * Constructs an {@code EFXSupportedControlSkin} instance for the specified control. This constructor initializes the skin with the control that it will be associated with. It calls the superclass
-     * constructor with the control as an argument, ensuring that the base skin functionalities are properly initialized. It then calls {@code setupSupportingTextLabel} to set up the internal supporting text
-     * label.
-     *
-     * @param control
-     *         The control for which this skin is being created. This control should not be {@code null}.
-     */
     protected EFXSupportedControlSkin(T control) {
         super(control);
-        setupSupportingTextLabel();
+    }
+
+    @Override
+    protected void initialize() {
+        this.setupSupportingTextLabel();
     }
 
     /**
@@ -40,7 +36,7 @@ public abstract class EFXSupportedControlSkin<T extends EFXSupportedControl<?>> 
      * @see EFXTextField
      * @see Label
      */
-    protected void setupSupportingTextLabel() {
+    private void setupSupportingTextLabel() {
         T control = getSkinnable();
 
         LabelConfigurator.create(supportingTextLabel)

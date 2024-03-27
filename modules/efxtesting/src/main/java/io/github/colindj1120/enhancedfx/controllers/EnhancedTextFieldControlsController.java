@@ -1,11 +1,11 @@
 package io.github.colindj1120.enhancedfx.controllers;
 
-import io.github.colindj1120.enhancedfx.base.enums.State;
-import io.github.colindj1120.enhancedfx.controls.control.efxcontrol.EFXControl;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.FloatMode;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.MaxCharacterCountPosition;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.TextMode;
+import io.github.colindj1120.enhancedfx.base.enums.EFXState;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.EFXControl;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.FloatMode;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.MaxCharacterCountPosition;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.TextMode;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -123,27 +123,27 @@ public class EnhancedTextFieldControlsController {
     @FXML
     protected void handleEnableSupportingText() {
         checkEnhancedTextFieldLoaded();
-        textField.setSupportingTextState(State.ENABLED);
+        textField.setSupportingTextState(EFXState.ENABLED);
         textField.setSupportingText("Supporting Text");
     }
 
     @FXML
     protected void handleDisableSupportingText() {
         checkEnhancedTextFieldLoaded();
-        textField.setSupportingTextState(State.DISABLED);
+        textField.setSupportingTextState(EFXState.DISABLED);
         textField.setSupportingText("");
     }
 
     @FXML
     protected void handleEnableMaxChar() {
         checkEnhancedTextFieldLoaded();
-        textField.setMaxCharCountState(State.ENABLED);
+        textField.setMaxCharCountState(EFXState.ENABLED);
     }
 
     @FXML
     protected void handleDisableMaxChar() {
         checkEnhancedTextFieldLoaded();
-        textField.setMaxCharCountState(State.DISABLED);
+        textField.setMaxCharCountState(EFXState.DISABLED);
     }
 
     @FXML

@@ -17,6 +17,8 @@
  */
 package io.github.colindj1120.enhancedfx.utils;
 
+import io.github.colindj1120.enhancedfx.utils.exceptions.InvalidInstanceOfException;
+
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -132,5 +134,13 @@ public class EFXObjectUtils {
                        .filter(s -> !s.isEmpty())
                        .map(s -> true)
                        .orElseThrow(() -> new IllegalArgumentException(messageSupplier.get()));
+    }
+
+    public static <T, U> T checkInstanceOfAndCast(U obj, Class<T> clazz, Supplier<String> messageSupplier) throws InvalidInstanceOfException {
+        if (clazz.isInstance(obj)) {
+            return clazz.cast(obj);
+        } else {
+            throw new InvalidInstanceOfException(messageSupplier.get());
+        }
     }
 }

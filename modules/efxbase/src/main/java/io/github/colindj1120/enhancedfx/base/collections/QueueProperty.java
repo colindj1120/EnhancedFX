@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2024 Colin Jokisch
- * This file is part of MaterialDesignUI (https://github.com/colindj1120/MaterialDesignUI).
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
  *
- * MaterialDesignUI is free software: you can redistribute it and/or modify
+ * EnhancedFX is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MaterialDesignUI is distributed in the hope that it will be useful,
+ * EnhancedFX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.base.collections;
 
@@ -23,6 +23,54 @@ import javafx.collections.ObservableList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Represents a queue data structure that is observable. This class extends {@link ObservablePropertyCollection<T>}, allowing for the observation of changes to the queue's contents.
+ *
+ * <p>It encapsulates a {@link Queue<T>} backed by a {@link LinkedList<T>}, providing standard queue operations such as enqueue and dequeue, while changes are reflected in an associated
+ * {@link ObservableList<T>}. This enables easy integration with JavaFX UI components that can bind to or display the contents of the queue, reacting to changes in real-time.</p>
+ *
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *   <li>Enqueue elements to the end of the queue.</li>
+ *   <li>Dequeue elements from the front of the queue.</li>
+ *   <li>Peek at the element at the front of the queue without removing it.</li>
+ *   <li>Check if the queue is empty.</li>
+ *   <li>Bind the queue's contents to JavaFX UI components for dynamic updates.</li>
+ * </ul>
+ *
+ * <h2>Usage Example:</h2>
+ * <pre>{@code
+ * QueueProperty<String> observableQueue = new QueueProperty<>();
+ * observableQueue.enqueue("First");
+ * observableQueue.enqueue("Second");
+ *
+ * observableQueue.getCollection().addListener((ListChangeListener.Change<? extends String> change) -> {
+ *     while (change.next()) {
+ *         if (change.wasAdded()) {
+ *             System.out.println("Added: " + change.getAddedSubList());
+ *         } else if (change.wasRemoved()) {
+ *             System.out.println("Removed: " + change.getRemoved());
+ *         }
+ *     }
+ * });
+ *
+ * System.out.println("Peek: " + observableQueue.peek()); // Output: Peek: First
+ * observableQueue.dequeue();
+ * System.out.println("After dequeue, Peek: " + observableQueue.peek()); // Output: After dequeue, Peek: Second
+ * }</pre>
+ *
+ * <p>This example demonstrates the creation of an {@code ObservableQueue}, adding elements to it, and setting up a listener to observe changes. It showcases enqueueing elements, peeking at the front
+ * element, and dequeue elements while observing the modifications to the queue.</p>
+ *
+ * @param <T>
+ *         the type of elements held in this queue
+ *
+ * @author Colin Jokisch
+ * @version 1.0.0
+ * @see ObservablePropertyCollection
+ * @see Queue
+ * @see ObservableList
+ */
 public class QueueProperty<T> extends ObservablePropertyCollection<T> {
     private final Queue<T> queue = new LinkedList<>();
 

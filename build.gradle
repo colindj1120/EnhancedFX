@@ -11,8 +11,16 @@ allprojects {
     }
 
     java {
-        sourceCompatibility = '21'
-        targetCompatibility = '21'
+
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(22)
+        }
+
+        sourceCompatibility = '22'
+        targetCompatibility = '22'
     }
 
     apply from: "${rootProject.projectDir}/dependencies.gradle"
@@ -23,6 +31,7 @@ allprojects {
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
         options.compilerArgs << '-Xlint:all'
+        options.compilerArgs << '--enable-preview'
     }
 
     test {

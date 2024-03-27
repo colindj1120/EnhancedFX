@@ -17,397 +17,194 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty;
 
-import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase;
-import io.github.colindj1120.enhancedfx.utils.consumers.TriConsumer;
-import javafx.css.CssMetaData;
-import javafx.css.StyleOrigin;
-import javafx.css.Styleable;
-import javafx.css.StyleableObjectProperty;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.invalidatorsNullCheck;
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.nullCheck;
+import io.github.colindj1120.enhancedfx.base.beans.base.EFXStyleablePropertyBase;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 
 /**
- * The {@code EFXStyleableObjectProperty<T>} class is a generic implementation of {@link StyleableObjectProperty} designed to enhance the default property with additional capabilities such as invalidation
- * callbacks, CSS styling, and custom default values. It is part of the EnhancedFX library, aimed at providing advanced property handling features for JavaFX applications.
+ * Represents a styleable object property within the EnhancedFX framework, extending the functionality of {@link EFXStyleablePropertyBase} by specializing in objects.
  *
- * <p>
- * <h2>Key features include:</h2>
+ * <p>This class allows for the creation and management of styleable properties that can be used within JavaFX's CSS styling system, providing enhanced flexibility and utility for defining and manipulating
+ * styleable attributes.</p>
+ *
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>Custom invalidation callbacks that allow developers to respond to changes in property values with specific actions.</li>
- *     <li>Integration with JavaFX CSS, allowing properties to be styled directly from CSS files using {@link CssMetaData}.</li>
- *     <li>The ability to specify a default value at construction, enhancing the flexibility of property initialization.</li>
- *     <li>Type safety and clarity through generic typing, ensuring that the property value aligns with expected data types.</li>
+ *     <li>Creation of styleable object properties through a fluent builder interface.</li>
+ *     <li>Integration with JavaFX's CSS styling system, allowing properties to be styled via CSS.</li>
+ *     <li>Enhanced formatting and string representation for debugging and logging purposes.</li>
  * </ul>
- * </p>
  *
- * <p>This property is ideal for developers looking to extend the standard JavaFX property system with more nuanced control over property behavior, especially in UI-heavy applications requiring dynamic
- * responses to user interactions or external changes.</p>
- *
- * <p>
- * <h2>Builder Pattern for Property Construction</h2>
- * The inner {@code Builder<T>} class offers a fluent API for constructing an {@code EFXStyleableObjectProperty<T>} instance. This pattern allows for clear and concise configuration of the property,
- * ensuring that all necessary parts are specified before its creation.
- * </p>
- *
- * <p>
  * <h2>Usage Example:</h2>
- * <pre>{@code
- * EFXStyleableObjectProperty<String> myProperty = new EFXStyleableObjectProperty.Builder<String>()
- *         .bean(this)
- *         .name("myProperty")
- *         .cssMetaData(MyCssMetaData.MY_PROPERTY)
- *         .defaultValue("InitialValue")
- *         .invalidatedVoidCallback(() -> System.out.println("Property invalidated."))
+ * <pre>
+ * {@code
+ * EFXStyleableObjectProperty<Color> backgroundColor = EFXStyleableObjectProperty.<Color>create()
+ *         .name("background-color")
+ *         .initialValue(Color.WHITE)
+ *         .styleConverter(ColorConverter.getInstance())
  *         .build();
- * }</pre>
- * </p>
  *
- * <p>In this example, a new {@code EFXStyleableObjectProperty<String>} is configured and created, demonstrating the flexibility and ease of use provided by the builder pattern. Developers can tailor
- * the property to their specific needs, ensuring seamless integration into their application's architecture.</p>
+ * somePane.styleableProperties().add(backgroundColor);
+ * }
+ * </pre>
  *
- * <p>The {@code EFXStyleableObjectProperty<T>} and its builder are part of EnhancedFX, a library dedicated to enriching JavaFX's capabilities and fostering the development of sophisticated,
- * interactive, and highly customizable user interfaces.</p>
+ * <p>This example demonstrates the creation of a styleable property for background color, using the builder pattern provided by {@code EFXStyleableObjectProperty}.</p>
  *
  * @param <T>
- *         The type of the property's value, ensuring type safety throughout its usage.
+ *         the type of the property value
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see StyleableObjectProperty
  * @see EFXStyleablePropertyBase
- * @see CssMetaData
- * @see Styleable
- * @see Consumer
- * @see TriConsumer
  */
-public class EFXStyleableObjectProperty<T> extends StyleableObjectProperty<T> implements EFXStyleablePropertyBase {
-    private final Consumer<Void>                                          invalidatedVoidCallback;
-    private final Consumer<StyleableObjectProperty<T>>                    invalidatedPropCallback;
-    private final TriConsumer<StyleableObjectProperty<T>, T, Consumer<T>> invalidatedCachedCallback;
-    private final String                                                  name;
-    private final Object                                                  bean;
-    private final CssMetaData<? extends Styleable, T>                     cssMetaData;
-    private final Class<T>                                                type;
-    private       T                                                       oldValue;
+public class EFXStyleableObjectProperty<T> extends EFXStyleablePropertyBase<EFXStyleableObjectProperty<T>, T> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
 
     /**
-     * Constructs an {@code EFXStyleableObjectProperty} with a specific default value using the provided builder configuration. This constructor extends the functionality of the no-default-value
-     * constructor by explicitly setting an initial value for the property, alongside configuring other features like invalidation callbacks, property's name, associated bean, CSS metadata, and the property's
-     * type.
-     *
-     * <p>
-     * Similar to the no-default constructor, this version ensures that the property is fully prepared for use within a stylable JavaFX component, with thorough validation checks for necessary builder
-     * components. The explicit default value is applied to the property, setting its initial state prior to any external modifications.
-     * </p>
-     *
-     * <p>
-     * This constructor is suited for scenarios where an initial property value is known at construction time and needs to be explicitly set, enhancing the property's configurability and usability.
-     * </p>
-     *
-     * @param builder
-     *         The {@code Builder<T>} instance providing configuration settings for this property.
-     * @param defaultValue
-     *         The default value to initialize the property with.
-     *
-     * @throws IllegalArgumentException
-     *         if the builder is null.
-     */
-    protected EFXStyleableObjectProperty(Builder<T> builder, T defaultValue) {
-        super(defaultValue);
-        nullCheck(builder, "Property Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-        this.type = builder.type;
-        this.oldValue = defaultValue;
-
-        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void invalidated() {
-        Optional.ofNullable(invalidatedVoidCallback)
-                .ifPresent(callback -> callback.accept(null));
-        Optional.ofNullable(invalidatedPropCallback)
-                .ifPresent(callback -> callback.accept(this));
-        Optional.ofNullable(invalidatedCachedCallback)
-                .ifPresent(callback -> callback.accept(this, oldValue, val -> oldValue = val));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void applyStyle(StyleOrigin origin, T v) {
-        if (Objects.nonNull(origin)) {
-            super.applyStyle(origin, v);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CssMetaData<? extends Styleable, T> getCssMetaData() {
-        return cssMetaData;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getBean() {
-        return bean;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Checks if the specified value is equal to the value of this property.
-     *
-     * @param value The value to compare with.
-     * @return {@code true} if the specified value is equal to the value of this property, otherwise {@code false}.
-     */
-    public boolean valueEquals(T value) {
-        if(type.isInstance(value)) {
-            return getValue().equals(value);
-        }
-        return false;
-    }
-
-    /**
-     * The {@code Builder} class provides a fluent API for constructing instances of {@code EFXStyleableObjectProperty<T>}. This generic builder facilitates the customization of styleable object
-     * properties, including their invalidation callbacks, name, bean, CSS metadata, default value, and the specific type of the property. It ensures that properties are correctly configured and typed before
-     * their creation, enhancing the robustness and flexibility of JavaFX applications.
-     *
-     * <p>
-     * <h2>Key Configuration Options:</h2>
-     * <ul>
-     *     <li>{@code invalidatedVoidCallback}: Assigns a callback to be invoked when the property becomes invalidated,
-     *     without requiring the current value.</li>
-     *     <li>{@code invalidatedPropCallback}: Specifies a callback that receives the property itself upon invalidation,
-     *     enabling actions that depend on the property's specific state or identity.</li>
-     *     <li>{@code invalidatedCachedCallback}: Sets a callback with access to the property, its old value, and a consumer
-     *     to update the cached value, supporting complex change-handling logic.</li>
-     *     <li>{@code name}: Defines the name of the property, crucial for its identification within its bean and potentially
-     *     in CSS.</li>
-     *     <li>{@code bean}: Links the property with a JavaFX bean, situating it within an object's property hierarchy.</li>
-     *     <li>{@code cssMetaData}: Associates the property with {@link CssMetaData}, enabling it to be styled via CSS.</li>
-     *     <li>{@code defaultValue}: Initializes the property with a specified value, setting its initial state.</li>
-     *     <li>{@code type}: Specifies the class type of the property, ensuring type safety and correct handling of the
-     *     property's value.</li>
-     * </ul>
-     * <p>
-     * The {@code build()} method combines these configurations to instantiate a new {@code EFXStyleableObjectProperty<T>}
-     * with the specified settings. It performs null checks on essential fields to guarantee a fully-configured property.
-     * </p>
-     *
-     * <p>
-     * <ema>Example Usage:</em>
-     * <pre>
-     * EFXStyleableObjectProperty<String> myProperty = new EFXStyleableObjectProperty.Builder<String>()
-     *         .bean(this)
-     *         .name("myCustomProperty")
-     *         .cssMetaData(MyCustomCssMetaData.MY_CUSTOM_PROPERTY)
-     *         .defaultValue("default")
-     *         .type(String.class)
-     *         .invalidatedVoidCallback(() -> System.out.println("Property invalidated"))
-     *         .build();
-     * </pre>
-     * <p>
-     * This class exemplifies a pattern designed to create sophisticated, type-safe, and customizable styleable object properties
-     * for JavaFX applications, contributing to a more modular and maintainable UI development process.
-     * </p>
+     * Provides a static factory method to initialize a builder for {@code EFXStyleableObjectProperty}.
      *
      * @param <T>
-     *         The type parameter indicating the type of the property's value.
+     *         the type of the property value
+     *
+     * @return a new instance of {@link EFXStyleableObjectPropertyBuilder}
      */
-    public static class Builder<T> {
-        private Consumer<Void>                                          invalidatedVoidCallback;
-        private Consumer<StyleableObjectProperty<T>>                    invalidatedPropCallback;
-        private TriConsumer<StyleableObjectProperty<T>, T, Consumer<T>> invalidatedCachedCallback;
-        private String                                                  name;
-        private Object                                                  bean;
-        private CssMetaData<? extends Styleable, T>                     cssMetaData;
-        private T                                                       defaultValue;
-        private Class<T>                                                type;
+    public static <T> EFXStyleableObjectPropertyBuilder<T> create() {
+        return new EFXStyleableObjectPropertyBuilder<>();
+    }
+
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
+
+    /**
+     * Constructs an instance of {@link EFXStyleableObjectProperty} using the provided builder.
+     *
+     * <p>This constructor is protected to ensure that instances of {@code EFXStyleableObjectProperty} are only created through the builder pattern, promoting a consistent and clear initialization process. The
+     * builder contains all necessary configurations for the property, including its name, initial value, CSS metadata, and style converter if specified.</p>
+     *
+     * <p>The constructor delegates to the superclass constructor of {@link EFXStyleablePropertyBase}, passing along the builder, which allows the base class to perform common initialization tasks and apply
+     * the configurations specified in the builder to the newly created property.</p>
+     *
+     * <p>It's important to note that this constructor is not intended to be used directly by client code. Instead, instances of {@code EFXStyleableObjectProperty} should be created using the static
+     * {@code create()} method on {@code EFXStyleableObjectProperty}, followed by builder method calls to configure the property, and finally calling {@code build()} on the builder to obtain the configured
+     * {@code EFXStyleableObjectProperty} instance.</p>
+     *
+     * @param builder
+     *         The {@code EFXStyleableObjectPropertyBuilder} containing the configurations for this property. It must not be {@code null} and should be fully configured.
+     */
+    protected EFXStyleableObjectProperty(EFXStyleableObjectPropertyBuilder<T> builder) {
+        super(builder);
+    }
+
+    //endregion Constructor
+
+    //region Overridden Functions
+    //*****************************************************************
+    // Overridden Functions
+    //*****************************************************************
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EFXStyleableObjectProperty<T> getProperty() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("""
+                             %s:
+                             %s
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
+    }
+
+    //endregion Overridden Functions
+
+    //region Builder
+    //*****************************************************************
+    // Builder
+    //*****************************************************************
+
+    /**
+     * The builder class for {@link EFXStyleableObjectProperty}, inheriting the fluid builder pattern and functionality from {@link EFXStyleablePropertyBuilder}, and providing a method to build an instance of
+     * {@code EFXStyleableObjectProperty}.
+     *
+     * <h2>Capabilities:</h2>
+     * <ul>
+     *     <li>Fluent API design for building {@code EFXStyleableObjectProperty} instances.</li>
+     *     <li>Customizable initial value, name, CSS meta-data, and style converter.</li>
+     * </ul>
+     *
+     * <h2>Usage Example:</h2>
+     * <pre>
+     * {@code
+     * EFXStyleableObjectProperty<Color> backgroundColor = EFXStyleableObjectProperty.<Color>create()
+     *         .name("background-color")
+     *         .initialValue(Color.WHITE)
+     *         .styleConverter(ColorConverter.getInstance())
+     *         .build();
+     * }
+     * </pre>
+     *
+     *  <p>This example creates a {@code EFXStyleableObjectProperty} for background color using the builder.</p>
+     *
+     * @param <T>
+     *         the type of the property value
+     */
+    public static class EFXStyleableObjectPropertyBuilder<T> extends EFXStyleablePropertyBuilder<EFXStyleableObjectPropertyBuilder<T>, EFXStyleableObjectProperty<T>, T> {
+        /**
+         * Constructs a new {@code EFXStyleableObjectPropertyBuilder} instance with default settings.
+         *
+         * <p>This builder is used to create instances of {@link EFXStyleableObjectProperty} through a fluent API design. Upon initialization, the builder's initial value is set to {@code null}, indicating that
+         * the {@link EFXStyleableObjectProperty} created by this builder will not have a predefined initial value unless explicitly set via the builder's methods.</p>
+         *
+         * <p>This constructor initializes the builder in a state ready for setting up an {@code EFXStyleableObjectProperty} instance. Properties such as the property name, CSS metadata, and the style
+         * converter can be configured using the provided builder methods.</p>
+         *
+         * <h2>Usage Example:</h2>
+         * <pre>
+         * {@code
+         * EFXStyleableObjectPropertyBuilder<Color> builder = new EFXStyleableObjectPropertyBuilder<>();
+         * EFXStyleableObjectProperty<Color> colorProperty = builder
+         *         .name("text-color")
+         *         .initialValue(Color.BLACK)
+         *         .styleConverter(ColorConverter.getInstance())
+         *         .build();
+         * }
+         * </pre>
+         *
+         * <p>In this example, a new {@code EFXStyleableObjectPropertyBuilder} is created to build a {@code EFXStyleableObjectProperty} for a text color property. The property is configured with an initial
+         * value of {@code Color.BLACK} and uses a {@code ColorConverter} for CSS styling.</p>
+         */
+        public EFXStyleableObjectPropertyBuilder() {
+            this.initialValue = null;
+        }
 
         /**
-         * Builder class for constructing {@link EFXStyleableObjectProperty} instances.
-         *
-         * <p>
-         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
-         * configuration.
-         * </p>
+         * {@inheritDoc}
          */
-        public Builder() {}
-
-        /**
-         * Sets the callback for general invalidation without any parameters.
-         *
-         * @param invalidatedVoidCallback
-         *         The callback for general invalidation.
-         *
-         * @return The Builder object.
-         */
-        public Builder<T> invalidatedVoidCallback(Consumer<Void> invalidatedVoidCallback) {
-            this.invalidatedVoidCallback = invalidatedVoidCallback;
+        @Override
+        protected EFXStyleableObjectPropertyBuilder<T> getBuilder() {
             return this;
         }
 
         /**
-         * Sets the callback function to be invoked when the {@link StyleableObjectProperty} associated with this builder is invalidated. The callback function takes the invalidated property as its input. This
-         * method is typically used to perform custom logic or update the UI when the property's value changes.
+         * Finalizes the construction of {@link EFXStyleableObjectProperty} instance.
          *
-         * @param invalidatedPropCallback
-         *         the callback function to be invoked when the property is invalidated
-         *
-         * @return the current instance of the {@link Builder}
-         */
-        public Builder<T> invalidatedPropCallback(Consumer<StyleableObjectProperty<T>> invalidatedPropCallback) {
-            this.invalidatedPropCallback = invalidatedPropCallback;
-            return this;
-        }
-
-        /**
-         * Sets the invalidated cached callback for the Builder. This callback is triggered when the value of the StyleableObjectProperty is changed or invalidated. It accepts three parameters: the
-         * StyleableObjectProperty itself, the new value, and a Consumer to apply the new value.
-         *
-         * @param invalidatedCachedCallback
-         *         the invalidated cached callback function
-         *
-         * @return the Builder instance
-         */
-        public Builder<T> invalidatedCachedCallback(TriConsumer<StyleableObjectProperty<T>, T, Consumer<T>> invalidatedCachedCallback) {
-            this.invalidatedCachedCallback = invalidatedCachedCallback;
-            return this;
-        }
-
-        /**
-         * Sets the name of the Builder.
-         *
-         * @param name
-         *         the name to set
-         *
-         * @return the Builder object
-         */
-        public Builder<T> name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * Sets the bean for the builder.
-         *
-         * @param bean
-         *         the bean object
-         *
-         * @return the modified builder instance
-         */
-        public Builder<T> bean(Object bean) {
-            this.bean = bean;
-            return this;
-        }
-
-        /**
-         * Sets the CSS metadata for the builder.
-         *
-         * @param cssMetaData
-         *         the CSS metadata to set
-         *
-         * @return the builder instance
-         */
-        public Builder<T> cssMetaData(CssMetaData<? extends Styleable, T> cssMetaData) {
-            this.cssMetaData = cssMetaData;
-            return this;
-        }
-
-        /**
-         * Sets the default value for the property.
-         *
-         * @param defaultValue
-         *         the default value for the property
-         *
-         * @return the Builder instance for method chaining
-         */
-        public Builder<T> defaultValue(T defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
-        /**
-         * Sets the type of the Builder.
-         *
-         * @param type
-         *         The type of the Builder
-         *
-         * @return This Builder instance
-         */
-        public Builder<T> type(Class<T> type) {
-            this.type = type;
-            return this;
-        }
-
-        /**
-         * Finalizes the construction of an {@code EFXStyleableObjectProperty<T>} based on the configurations provided by this builder. This method ensures that all necessary preconditions and
-         * configurations are met before creating the property. It conducts comprehensive checks to validate the presence of essential parts such as the property type, bean, name, and CSS metadata.
-         *
-         * <p>
-         * <h2>The construction process includes several key validation steps:</h2>
-         * <ul>
-         *     <li>Ensures that callback functions for property invalidation are properly set, if provided, to enable dynamic
-         *     response to property changes.</li>
-         *     <li>Verifies that the property's type is specified, safeguarding against type mismatches and enhancing type safety.</li>
-         *     <li>Checks that the bean associated with the property is defined, anchoring the property within a specific
-         *     object context.</li>
-         *     <li>Confirms that the property's name is provided, crucial for identification within its bean and CSS.</li>
-         *     <li>Validates the inclusion of CSS metadata, enabling the property to be styled through CSS.</li>
-         * </ul>
-         * </p>
-         *
-         * <p>
-         * After passing these checks, the method proceeds to create an instance of {@code EFXStyleableObjectProperty<T>}
-         * with the specified default value, if one is provided. If no default value is specified, it initializes the property
-         * without setting an explicit initial value.
-         * </p>
-         *
-         * <p>
-         * This method encapsulates the essence of the builder pattern, providing a safe and structured approach to
-         * configuring and creating a customized {@code EFXStyleableObjectProperty<T>}.
-         * </p>
-         *
-         * @return A new {@code EFXStyleableObjectProperty<T>} instance, configured according to the builder's specifications.
-         *
-         * @throws IllegalArgumentException
-         *         if any required configuration is missing or if any validation check fails, indicating improper or incomplete setup of the property's configuration.
+         * @return a new instance of {@code EFXStyleableObjectProperty}
          */
         public EFXStyleableObjectProperty<T> build() {
-            invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, EFXStyleableObjectProperty.class);
-            nullCheck(type, "EFXStyleableObjectProperty Type", EFXStyleableObjectProperty.class);
-            nullCheck(bean, "EFXStyleableObjectProperty Bean", EFXStyleableObjectProperty.class);
-            nullCheck(name, "EFXStyleableObjectProperty Name", EFXStyleableObjectProperty.class);
-            nullCheck(cssMetaData, "EFXStyleableObjectProperty CssMetaData", EFXStyleableObjectProperty.class);
-
-            return Optional.ofNullable(defaultValue)
-                           .map(v -> new EFXStyleableObjectProperty<>(this, v))
-                           .orElse(new EFXStyleableObjectProperty<>(this, null));
+            return new EFXStyleableObjectProperty<>(this);
         }
     }
+
+    //endregion Builder
 }

@@ -17,163 +17,127 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.ObjectExpressionFunctions;
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.ObjectExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.ObjectBinding;
 
 /**
- * {@code EFXObjectBinding} is a generic class that establishes a robust linkage between an {@link ObjectBinding} of type
- * {@code T} and its associated bean object. By implementing the {@link EFXBinding} interface, it offers a structured approach
- * to managing bindings that represent complex data types or objects within an application.
+ * {@code EFXObjectBinding} is a specialized binding class that wraps an {@link ObjectBinding} of type {@code T}, providing additional functionalities as defined by {@link ObjectExpressionFunctions} and
+ * {@link BindingFunctions} interfaces. It is designed to facilitate the enhanced observation and manipulation of {@code ObjectBinding} instances within the EnhancedFX framework, particularly for objects.
  *
- * <p>
- * This class also implements {@link ObjectExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
- *
- * <p>
- * This class is part of the EnhancedFX binding associations framework, designed to facilitate the creation, management, and
- * utilization of bindings within JavaFX applications. It extends the capabilities of object bindings by integrating them with
- * associated beans, thereby enhancing data handling and UI updates based on changes in the application's state.
- * </p>
- *
- * <p>
  * <h2>Capabilities:</h2>
  * <ul>
- *      <li>Creation of {@code EFXObjectBinding} instances through a static factory method, promoting a consistent and
- *      type-safe method of associating object bindings with their respective beans.</li>
- *      <li>Implementation of {@code ObjectExpressionFunctions}, enabling advanced operations and manipulations on the associated
- *      {@code ObjectBinding}.</li>
- *      <li>Ensures a clear and maintainable link between the UI elements or application logic and the underlying data model
- *      represented by the bean.</li>
+ *     <li>Encapsulates an {@code ObjectBinding<T>} instance, enabling advanced manipulation and observation.</li>
+ *     <li>Implements additional object expression and binding functional interfaces for extended operations on object bindings.</li>
+ *     <li>Supports associating a bean with the binding for context and manageability, enhancing the integration with JavaFX's property system.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Example:</h2>
- * <pre>
- * Person person = new Person("John Doe", 30);
- * ObjectProperty<Person> personProperty = new SimpleObjectProperty<>(person);
+ * <pre>{@code
+ * ObjectProperty<String> property = new SimpleObjectProperty<>("Initial");
+ * ObjectBinding<String> objectBinding = Bindings.select(property, "length");
+ * EFXObjectBinding<String> efxObjectBinding = EFXObjectBinding.create(myBean, objectBinding);
  *
- * ObjectBinding<String> nameBinding = Bindings.selectString(personProperty, "name");
- * EFXObjectBinding<String> nameBindingAssoc = EFXObjectBinding.create(nameBinding, person);
+ * efxObjectBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value length: " + newValue);
+ * });
+ * }</pre>
  *
- * // Use nameBindingAssoc for further manipulation or binding to UI components, ensuring the link between the binding and its
- * // associated bean is maintained and utilized effectively.
- * </pre>
- * </p>
- *
- * <p>
- * {@code EFXObjectBinding} serves as a fundamental tool in developing data-driven JavaFX applications, offering a
- * streamlined mechanism for linking object bindings to their data sources. It is particularly useful in scenarios where the
- * application logic or UI components need to react dynamically to changes in complex data structures or objects.
- * </p>
+ * <p>This example demonstrates creating an {@code EFXObjectBinding} for a string length binding. It shows how {@code EFXObjectBinding} can be used to observe changes in properties of complex objects,
+ * facilitating more sophisticated property binding scenarios.</p>
  *
  * @param <T>
- *         The type of Object that is being used.
+ *         The type of the object being bound.
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see EFXBinding
+ * @see ObjectBinding
  * @see ObjectExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXObjectBinding<T> implements EFXBinding<T>, ObjectExpressionFunctions<T> {
+public class EFXObjectBinding<T> extends EFXBinding<ObjectBinding<T>> implements ObjectExpressionFunctions<T, ObjectBinding<T>>, BindingFunctions<T, ObjectBinding<T>> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Creates a new instance of {@code EFXObjectBinding} with the specified {@link ObjectBinding} and bean. This factory
-     * method encapsulates the process of associating an {@code ObjectBinding} of type {@code T} with its corresponding bean object,
-     * offering a streamlined approach to binding management within the application.
+     * Static factory method to create an instance of {@code EFXObjectBinding}.
+     *
+     * <p>This method provides a convenient way to instantiate {@code EFXObjectBinding} objects by wrapping a given {@link ObjectBinding} with an associated bean.</p>
      *
      * @param <T>
-     *         The type parameter of the {@code ObjectBinding} and the association.
-     * @param binding
-     *         The {@code ObjectBinding} to be associated. Represents a dynamic value that changes in response to the underlying bean's
-     *         state.
+     *         The type of the object being bound.
      * @param bean
-     *         The bean object associated with the {@code ObjectBinding}. Typically, it represents the data model or specific property
-     *         that the binding observes or depends upon.
+     *         The bean associated with the {@code ObjectBinding}, used for contextual information.
+     * @param binding
+     *         The {@link ObjectBinding} to be wrapped by the {@code EFXObjectBinding}.
      *
-     * @return An instance of {@code EFXObjectBinding} that links the provided {@code ObjectBinding} with the specified bean,
-     *         facilitating a clear and maintainable connection between the application's data model and UI logic.
-     *
-     * @throws IllegalArgumentException
-     *         If the bean is {@code null}, ensuring that every {@code EFXObjectBinding} is reliably connected to a valid bean
-     *         object.
+     * @return An instance of {@code EFXObjectBinding} wrapping the provided {@code ObjectBinding}.
      */
-    public static <T> EFXObjectBinding<T> create(ObjectBinding<T> binding, Object bean) {
-        return new EFXObjectBinding<>(binding, bean);
+    public static <T> EFXObjectBinding<T> create(Object bean, ObjectBinding<T> binding) {
+        return new EFXObjectBinding<>(bean, binding);
     }
 
-    /**
-     * The bean object associated with this {@code EFXObjectBinding}. It typically represents the data model or property that
-     * influences the value of the associated {@code ObjectBinding}. This association between the bean and the binding allows changes
-     * in the bean's state to be reflected in the binding, enabling reactive UI updates or other logic to respond to data changes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@code ObjectBinding} of type {@code T} that is part of this association. This binding encapsulates a computed value that
-     * reacts to changes in the application's state, often influenced by the associated bean. It provides a dynamic link between the
-     * application's data model and UI elements or other logic that depends on this data, facilitating a responsive and interactive
-     * user experience.
-     */
-    private final ObjectBinding<T> binding;
-
-    /**
-     * Constructs an {@code EFXObjectBinding} with a given {@code ObjectBinding} and bean. This constructor ensures the
-     * association between an object binding of type {@code T} and its corresponding bean object, establishing a link between the
-     * binding and the property or object it observes or depends upon.
-     * <p>
-     * The bean represents the underlying model or entity that influences the binding's value, serving as a context for the binding
-     * within the application.
-     * </p>
+     * Constructs an instance of {@code EFXObjectBinding}.
      *
-     * @param binding
-     *         the {@link ObjectBinding} to be associated with the bean. It encapsulates a computed value that reflects changes in the
-     *         application's state related to the bean.
+     * <p>This constructor is private to enforce the usage of the static factory method {@link #create(Object, ObjectBinding)} for creating instances, ensuring consistency and clarity in how instances are
+     * instantiated.</p>
+     *
      * @param bean
-     *         the bean object that the binding is associated with. It typically represents the property or object that the binding
-     *         observes or depends upon.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each association has a valid bean reference.
+     *         The bean associated with this {@code ObjectBinding}.
+     * @param binding
+     *         The {@link ObjectBinding} to be wrapped.
      */
-    private EFXObjectBinding(ObjectBinding<T> binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXObjectBinding.class);
+    protected EFXObjectBinding(Object bean, ObjectBinding<T> binding) {
+        super(bean, binding);
         this.binding = binding;
-        this.bean = bean;
     }
 
-    /**
-     * Retrieves the {@link ObjectBinding} associated with this {@code EFXObjectBinding}.
-     *
-     * @return the {@code ObjectBinding} instance, encapsulating a computed value that reflects changes in the application state
-     *         related to the associated bean.
-     */
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     @Override
-    public ObjectBinding<T> getBinding() {
+    public ObjectBinding<T> getObservableValue() {
         return this.binding;
     }
 
-    /**
-     * Retrieves the bean associated with this {@code EFXObjectBinding}. The bean represents the underlying model or object
-     * that influences the binding's computed value.
-     *
-     * @return the bean object related to the {@code ObjectBinding}.
-     */
     @Override
-    public Object getBean() {
-        return this.bean;
+    public void setObservableValue(ObjectBinding<T> value) {
+        this.binding = value;
     }
 
-    /**
-     * Provides a string representation of this {@code EFXObjectBinding}, including its binding's and bean's string
-     * representations for easier debugging and logging.
-     *
-     * @return a string representation of the {@code EFXObjectBinding}, detailing the binding and its associated bean.
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXObjectBinding<?> efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
-        return String.format("ObjectBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
 
+    //endregion Overridden Methods
 }

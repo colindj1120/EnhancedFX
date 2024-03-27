@@ -17,126 +17,62 @@
  */
 package io.github.colindj1120.enhancedfx.base.factory.property.base;
 
-import io.github.colindj1120.enhancedfx.base.factory.property.PropertyConfigurator;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
 
 /**
- * Serves as an abstract foundation for creating configurators for JavaFX {@link Property} objects, facilitating fluent API design for
- * property configuration within the EnhancedFX framework. This base class encapsulates common functionality for property manipulation,
- * including adding change and invalidation listeners, binding properties in a unidirectional or bidirectional manner, and setting
- * property values.
- * <p>
- * Implementations of this class should provide concrete methods to apply specific configuration strategies to {@link Property}
- * instances. By leveraging this base class, developers can create specialized configurators that enhance the usability and flexibility
- * of property handling in JavaFX applications, promoting cleaner and more maintainable code.
- * </p>
- * <p>
- * <h2>Key functionalities include:</h2>
+ * The {@code PropertyConfiguratorBase} abstract class serves as the foundation for property configurators within the EnhancedFX library, facilitating the management and configuration of {@link Property}
+ * instances in JavaFX.
+ *
+ * <p>Designed to be extended by concrete configurators, it provides a structured approach to property customization, enabling the development of rich, responsive user interfaces. This base class encapsulates
+ * common functionalities needed for property configuration, ensuring consistency and reducing redundancy across different types of property configurators. It mandates the implementation of key methods for
+ * accessing and setting the {@link Property} being managed, thereby establishing a contract for its subclasses.</p>
+ *
+ * <h2>Core Features</h2>
  * <ul>
- *     <li>Adding change and invalidation listeners to properties.</li>
- *     <li>Binding properties to other properties, both uni-directionally and bidirectionally.</li>
- *     <li>Setting the value of properties.</li>
- *     <li>Unbinding properties from other properties.</li>
+ *     <li><b>Abstract Design</b>: Intended to be subclassed, not instantiated directly, promoting a clear and modular architecture.</li>
+ *     <li><b>Property Management</b>: Offers a framework for accessing and modifying JavaFX {@link Property} instances, crucial for dynamic UI updates.</li>
+ *     <li><b>Encapsulation</b>: Encourages encapsulation of property logic within configurators, leading to cleaner and more maintainable code.</li>
+ *     <li><b>Extensibility</b>: Provides a solid base for creating specific property configurators, supporting diverse property types and customization needs.</li>
  * </ul>
- * </p>
- * <p>
- * This abstract class requires implementations to define how these operations are specifically handled,
- * allowing for customization and extension based on the needs of the application or the specific type
- * of property being configured.
- * </p>
+ *
+ * <h2>Abstract Methods</h2>
+ * Subclasses of {@code PropertyConfiguratorBase} are required to implement the following abstract methods:
+ * <ul>
+ *     <li>{@link #getProperty()}: Retrieves the {@link Property} instance being configured.</li>
+ *     <li>{@link #setProperty(Property)}: Associates a new {@link Property} instance with the configurator.</li>
+ * </ul>
+ *
+ * <p>By extending {@code PropertyConfiguratorBase}, developers can create specialized configurators that streamline the customization of JavaFX properties, enhancing UI interactivity and responsiveness.</p>
  *
  * @param <T>
- *         the type of the property value that this configurator manipulates
+ *         the type of the value that the {@link Property} can hold
  *
  * @author Colin Jokisch
  * @version 1.0.0
+ * @see Property
  */
-@SuppressWarnings("UnusedReturnValue")
 public abstract class PropertyConfiguratorBase<T> {
-    protected Property<T> property;
-
     /**
-     * Constructs a new {@code PropertyConfiguratorBase} instance associated with the specified {@link Property}.
+     * Constructs a new instance of {@code PropertyConfiguratorBase}.
      *
-     * @param property
-     *         The {@link Property} to be configured by this configurator. This property represents the target on which all
-     *         configuration actions (such as binding, setting values, etc.) will be performed.
+     * <p>This constructor is protected to ensure that only subclasses within the package can instantiate it, preserving the integrity of the property configuration mechanism.</p>
      */
-    protected PropertyConfiguratorBase(Property<T> property) {
-        this.property = property;
-    }
+    protected PropertyConfiguratorBase() {}
 
     /**
-     * Adds a {@link ChangeListener} to the property, which will be notified whenever the property's value changes.
+     * Retrieves the {@link Property} associated with this configurator. Subclasses must provide an implementation that returns the specific {@link Property} instance they are managing.
      *
-     * @param listener
-     *         The {@link ChangeListener} to be added.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
+     * @return the {@link Property} instance being configured by this configurator
      */
-    public abstract PropertyConfigurator<T> addChangeListener(ChangeListener<? super T> listener);
+    protected abstract Property<T> getProperty();
 
     /**
-     * Adds an {@link InvalidationListener} to the property. The listener will be notified whenever the property becomes invalid,
-     * typically after its value changes.
+     * Sets the {@link Property} to be managed by this configurator.
      *
-     * @param invalidationListener
-     *         The {@link InvalidationListener} to be added.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
-     */
-    public abstract PropertyConfigurator<T> addInvalidationListener(InvalidationListener invalidationListener);
-
-    /**
-     * Binds this configurator's property to another {@link Property}, causing the first property to automatically update its value to
-     * match the second whenever the second property's value changes.
-     *
-     * @param otherProperty
-     *         The {@link Property} to which this configurator's property will be bound.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
-     */
-    public abstract PropertyConfigurator<T> bind(Property<T> otherProperty);
-
-    /**
-     * Unbinds the property from any other property it is currently bound to. After calling this method, the property will no longer
-     * automatically update its value to match that of the other property.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
-     */
-    public abstract PropertyConfigurator<T> unbind();
-
-    /**
-     * Establishes a bidirectional binding between this configurator's property and another {@link Property}. Both properties will
-     * automatically update to match each other's value whenever either of their values changes.
-     *
-     * @param otherProperty
-     *         The {@link Property} to bind with this configurator's property bidirectionally.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
-     */
-    public abstract PropertyConfigurator<T> bindBidirectional(Property<T> otherProperty);
-
-    /**
-     * Removes a bidirectional binding between this configurator's property and another {@link Property}. After calling this method,
-     * the properties will no longer automatically update to match each other's value.
-     *
-     * @param otherProperty
-     *         The {@link Property} from which the bidirectional binding will be removed.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
-     */
-    public abstract PropertyConfigurator<T> unbindBidirectional(Property<T> otherProperty);
-
-    /**
-     * Sets the value of the property. This method allows for directly setting the value of the property managed by this configurator.
+     * <p>This method allows subclasses to define how a new {@link Property} instance is associated with the configurator, enabling dynamic property management.</p>
      *
      * @param value
-     *         The new value to set for the property.
-     *
-     * @return A reference to this {@code PropertyConfigurator}, allowing for method chaining.
+     *         the new {@link Property} instance to be managed by this configurator
      */
-    public abstract PropertyConfigurator<T> setValue(T value);
+    protected abstract void setProperty(final Property<T> value);
 }

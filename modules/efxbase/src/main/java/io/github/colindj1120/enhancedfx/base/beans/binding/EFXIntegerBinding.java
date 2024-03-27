@@ -18,137 +18,135 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.IntegerExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.IntegerExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.NumberExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.IntegerBinding;
 
 /**
- * The {@code EFXIntegerBinding} class is a critical part of the EnhancedFX framework, aiming to bridge the gap between numeric
- * expressions that produce integer values and the application's data model or state. This association simplifies the process of
- * linking an {@link IntegerBinding} with a specific bean object, facilitating real-time updates in the application's UI or logic in
- * response to changes in the state represented by the integer binding.
+ * {@code EFXIntegerBinding} is a specialized binding class that wraps a {@link IntegerBinding} and provides additional functionalities defined by {@link IntegerExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>
- * This class also implements {@link IntegerExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
+ * <p>It allows for enhanced manipulation and observation of {@code IntegerBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * <h2>Features and Benefits:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li><b>Direct Association:</b> Links an {@code IntegerBinding} with a bean, providing a clear and direct
- *       connection between the UI or logic and the underlying data model or state.</li>
- *   <li><b>Integer Expression Utilities:</b> Inherits functionalities from {@link IntegerExpressionFunctions},
- *       offering a wide range of operations and utilities for integer expressions.</li>
- *   <li><b>Dynamic Updates:</b> Ensures that UI components or logic react dynamically to changes in the
- *       associated integer values, enhancing the application's interactivity and user experience.</li>
- *   <li><b>Enhanced Maintainability:</b> By providing a clear association between the binding and its bean,
- *       it helps in maintaining a cleaner and more manageable codebase.</li>
+ *     <li>Encapsulates a {@link IntegerBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional integer expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced integer bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Example:</h2>
- * This example demonstrates how to use {@code EFXIntegerBinding} to bind a model's integer property
- * to update a UI component dynamically:
  * <pre>{@code
- * IntegerBinding volumeLevelBinding = Bindings.createIntegerBinding(() ->
- *     audioSettings.volumeLevelProperty().get(), audioSettings.volumeLevelProperty());
- * Object bean = audioSettings; // The model object with the volume level property
- * EFXIntegerBinding association = EFXIntegerBinding.create(volumeLevelBinding, bean);
- * volumeControlUIComponent.valueProperty().bind(association.getBinding());
+ * IntegerProperty property = new SimpleIntegerProperty(2);
+ * IntegerBinding binding = property.add(3);
+ * EFXIntegerBinding efxBinding = EFXIntegerBinding.create(myBean, binding);
+ *
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
  * }</pre>
- * </p>
+ *
+ * <p>In this example, an {@code EFXIntegerBinding} is created by wrapping a {@link IntegerBinding} with a negation operation. It then listens for changes to the integer value, demonstrating how {@code
+ * EFXIntegerBinding} can be used to enhance and observe integer bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see IntegerBinding
  * @see EFXBinding
+ * @see IntegerBinding
  * @see IntegerExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXIntegerBinding implements EFXBinding<Number>, IntegerExpressionFunctions {
+public class EFXIntegerBinding extends EFXBinding<IntegerBinding> implements IntegerExpressionFunctions<IntegerBinding>, NumberExpressionFunctions<IntegerBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXIntegerBinding}. This method establishes an association between an
-     * {@link IntegerBinding} and a specific bean object. It encapsulates the relationship between the integer binding and the
-     * underlying property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXIntegerBinding}.
      *
-     * @param binding
-     *         the {@link IntegerBinding} to be associated with the bean. This binding represents a numeric expression that evaluates
-     *         to an integer value, depending on one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXIntegerBinding} objects with a specific {@link IntegerBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code IntegerBinding}. This object typically represents the underlying model or entity
-     *         that the binding observes or depends upon.
+     *         The bean associated with the {@code IntegerBinding}. This can be used for contextual information or binding management.
+     * @param binding
+     *         The {@link IntegerBinding} to be encapsulated by the {@code EFXIntegerBinding}.
      *
-     * @return a new instance of {@code EFXIntegerBinding} that encapsulates the relationship between the provided
-     *         {@code IntegerBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXIntegerBinding} has a valid bean reference.
+     * @return An instance of {@code EFXIntegerBinding} wrapping the provided {@code IntegerBinding}.
      */
-    public static EFXIntegerBinding create(IntegerBinding binding, Object bean) {
-        return new EFXIntegerBinding(binding, bean);
+    public static EFXIntegerBinding create(Object bean, IntegerBinding binding) {
+        return new EFXIntegerBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link IntegerBinding} in this {@code EFXIntegerBinding}. The bean represents the
-     * underlying model or object that influences the value of the {@code IntegerBinding}. It provides a contextual link between the
-     * binding and the part of the application state it represents or observes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link IntegerBinding} instance that is part of this association. This binding encapsulates a computed integer value that,
-     * when observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core
-     * functional component of the association, providing the dynamic link between the application state and the UI or other dependent
-     * logic.
-     */
-    private final IntegerBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXIntegerBinding}. Called internally by the
-     * {@link #create(IntegerBinding, Object)} factory method, it initializes the association with a specific {@code IntegerBinding}
-     * and bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXIntegerBinding}.
      *
-     * @param binding
-     *         the {@code IntegerBinding} to associate.
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, IntegerBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXIntegerBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code IntegerBinding}.
+     * @param binding
+     *         The {@link IntegerBinding} to be encapsulated.
      */
-    private EFXIntegerBinding(IntegerBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXIntegerBinding.class);
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXIntegerBinding(Object bean, IntegerBinding binding) {
+        super(bean, binding);
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link IntegerBinding} associated with this {@code EFXIntegerBinding}.
-     *
-     * @return the {@code IntegerBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public IntegerBinding getBinding() {
+    @Override
+    public IntegerBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code IntegerBinding}. The bean represents the underlying property or object that the
-     * {@code IntegerBinding} depends on.
-     *
-     * @return the bean object associated with the {@code IntegerBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public void setObservableValue(IntegerBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXIntegerBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXIntegerBinding}.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXIntegerBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("IntegerBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
+
+    //endregion Overridden Methods
 }

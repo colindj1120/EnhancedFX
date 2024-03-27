@@ -1,22 +1,23 @@
 /*
  * Copyright (C) 2024 Colin Jokisch
- * This file is part of MaterialDesignUI (https://github.com/colindj1120/MaterialDesignUI).
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
  *
- * MaterialDesignUI is free software: you can redistribute it and/or modify
+ * EnhancedFX is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MaterialDesignUI is distributed in the hope that it will be useful,
+ * EnhancedFX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.base.factory;
 
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import javafx.css.CssMetaData;
 import javafx.css.StyleConverter;
 import javafx.css.Styleable;
@@ -29,28 +30,36 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * A builder class for creating {@link CssMetaData} instances for JavaFX styleable objects. This class provides a fluent API to define various aspects of CSS metadata, including the property name, converter,
- * initial value, inheritance behavior, and associated sub-properties. It also allows for the specification of custom functions to determine if a property is settable, to get the property value, and to obtain
- * the initial value of the property.
- * <p>
- * The builder is designed to be used in scenarios where custom CSS properties need to be created for JavaFX components, enabling developers to define these properties in a structured and flexible manner. This
- * approach ensures that all necessary aspects of a CSS property are accounted for and can be easily integrated into the JavaFX styling system.
- * </p>
- * <p>
- * Example Usage:
+ * The {@code CssFactory} class serves as a builder for creating {@link CssMetaData} instances, which define the CSS properties applicable to JavaFX {@link Styleable} objects.
+ *
+ * <p>This class streamlines the process of defining custom CSS properties, including their types, default values, and inheritance behavior. It enables developers to create rich, stylable JavaFX components with
+ * custom properties, enhancing the application's visual design and user experience.</p>
+ *
+ * <h2>Features</h2>
+ * <ul>
+ *   <li>Generic creation method facilitating type-safe construction of {@code CssFactory} instances for any {@link Styleable}.</li>
+ *   <li>Support for defining CSS property names, value types, and converters for type-safe CSS value translation.</li>
+ *   <li>Option to specify initial values, inheritance, and associated sub-properties for comprehensive CSS styling.</li>
+ *   <li>Customizable property settable and getter functions for enhanced control over property application and retrieval.</li>
+ * </ul>
+ *
+ * <h2>Usage Example</h2>
+ * The following example demonstrates how to use {@code CssFactory} to define a custom CSS property for a JavaFX component:
  * <pre>
  * {@code
- * CssBuilder<Styleable, Color> colorCssBuilder = new CssBuilder<Styleable, Color>()
- *     .property("-custom-color")
- *     .converter(StyleConverter.getColorConverter())
- *     .initialValue(Color.BLACK)
+ * CssMetaData<MyCustomControl, Number> customOpacityProperty = CssFactory.<MyCustomControl, Number>create()
+ *     .property("-custom-opacity")
+ *     .converter(StyleConverter.getNumberConverter())
+ *     .initialValue(1.0)
  *     .inherits(true)
- *     .isSettableFunction(styleable -> true)
- *     .propertyGetterFunction(styleable -> styleable.styleableProperty())
+ *     .isSettableFunction(MyCustomControl::isCustomOpacitySettable)
+ *     .propertyGetterFunction(MyCustomControl::customOpacityProperty)
  *     .build();
  * }
  * </pre>
- * </p>
+ *
+ * <p>This example illustrates the definition of a custom opacity property for {@code MyCustomControl}, specifying its name, type, initial value, and inheritance behavior. It uses the {@code CssFactory}
+ * builder pattern to set up and build the {@code CssMetaData} instance, which can then be included in the control's CSS metadata list.</p>
  *
  * @param <S>
  *         The type of the styleable object that the CSS metadata is associated with.
@@ -69,19 +78,18 @@ public class CssFactory<S extends Styleable, V> {
      * Creates and returns a new instance of {@code CssFactory}. This static factory method serves as a generic constructor for creating instances of {@code CssFactory} tailored to specific types of
      * {@link Styleable} objects and their associated value types.
      *
-     * <p>
-     * The method is generic, allowing it to be used for any subclass of {@link Styleable}, which represents any JavaFX node that can be styled using CSS, and any value type {@code V} that corresponds to the
-     * styleable properties of interest. This design facilitates a flexible and type-safe way to create and manage CSS factories for various UI components and their styling attributes.
-     * </p>
+     * <p>The method is generic, allowing it to be used for any subclass of {@link Styleable}, which represents any JavaFX node that can be styled using CSS, and any value type {@code V} that corresponds to
+     * the styleable properties of interest. This design facilitates a flexible and type-safe way to create and manage CSS factories for various UI components and their styling attributes.</p>
      *
-     * <p>
-     * <em>Example Usage:</em>
+     * <h2>Example Usage:</h2>
      * <pre>
+     * {@code
      * CssFactory<Region, String> regionCssFactory = CssFactory.create();
+     * }
      * </pre>
-     * In this example, {@code CssFactory.create()} is used to instantiate a new {@code CssFactory} for {@link Region} objects with a value type of {@code String}. This enables the creation of CSS-related
-     * functionalities specific to {@code Region} nodes.
-     * </p>
+     *
+     * <p>In this example, {@code CssFactory.create()} is used to instantiate a new {@code CssFactory} for {@link Region} objects with a value type of {@code String}. This enables the creation of CSS-related
+     * functionalities specific to {@code Region} nodes.</p>
      *
      * @param <S>
      *         the type parameter extending {@link Styleable}, indicating the type of {@code Styleable} objects this factory will work with
@@ -107,11 +115,9 @@ public class CssFactory<S extends Styleable, V> {
      * Constructs a new instance of {@code CssFactory}. This private constructor prevents direct instantiation of the {@code CssFactory} class from outside the class itself, enforcing the use of the static
      * factory method {@link #create()} for obtaining instances.
      *
-     * <p>
-     * The design choice to restrict instantiation through a private constructor ensures a controlled creation process, allowing for future enhancements or modifications to the instance creation logic without
-     * affecting the clients of this class. It supports the singleton or factory pattern by centralizing the instantiation logic within the {@code create} method, providing a clear and consistent approach for
-     * obtaining instances of {@code CssFactory}.
-     * </p>
+     * <p>The design choice to restrict instantiation through a private constructor ensures a controlled creation process, allowing for future enhancements or modifications to the instance creation logic
+     * without affecting the clients of this class. It supports the singleton or factory pattern by centralizing the instantiation logic within the {@code create} method, providing a clear and consistent
+     * approach for obtaining instances of {@code CssFactory}.</p>
      */
     private CssFactory() {}
 
@@ -221,48 +227,33 @@ public class CssFactory<S extends Styleable, V> {
     }
 
     /**
-     * Builds and returns a customized {@code CssMetaData} object based on the previously specified parameters. This method
-     * finalizes the creation of a {@code CssMetaData} instance, ensuring all mandatory properties are set and applying
-     * custom behavior through overridden methods.
-     * <p>
-     * Before constructing the {@code CssMetaData}, this method validates the non-nullity of essential properties such as
-     * {@code property}, {@code converter}, {@code isSettableFunction}, and {@code propertyGetterFunction}. If any of these
-     * are null, an {@link IllegalArgumentException} is thrown, indicating a misconfiguration in the builder setup.
-     * <p>
-     * The returned {@code CssMetaData} includes custom implementations for:
+     * Builds and returns a customized {@code CssMetaData} object based on the previously specified parameters.
+     *
+     * <p>This method finalizes the creation of a {@code CssMetaData} instance, ensuring all mandatory properties are set and applying custom behavior through overridden methods. Before constructing the
+     * {@code CssMetaData}, this method validates the non-nullity of essential properties such as {@code property}, {@code converter}, {@code isSettableFunction}, and {@code propertyGetterFunction}. If any of
+     * these are null, an {@link IllegalArgumentException} is thrown, indicating a misconfiguration in the builder setup.</p>
+     *
+     * <h2>{@code CssMetaData} includes:</h2>
      * <ul>
-     *     <li>{@code getInitialValue(S styleable)}: Determines the initial value for the CSS property, optionally using
-     *     a provided function. If the function is not specified or does not yield a result, the initial value specified at
-     *     construction is used.</li>
-     *     <li>{@code isSettable(S styleable)}: Checks whether the CSS property can be set on the given {@code styleable},
-     *     based on a supplied function.</li>
-     *     <li>{@code getStyleableProperty(S styleable)}: Retrieves the {@link StyleableProperty} for the CSS property
-     *     from the given {@code styleable}, using a provided function.</li>
+     *     <li>{@code getInitialValue(S styleable)}: Determines the initial value for the CSS property, optionally using a provided function. If the function is not specified or does not yield a result, the
+     *     initial value specified at construction is used.</li>
+     *     <li>{@code isSettable(S styleable)}: Checks whether the CSS property can be set on the given {@code styleable}, based on a supplied function.</li>
+     *     <li>{@code getStyleableProperty(S styleable)}: Retrieves the {@link StyleableProperty} for the CSS property from the given {@code styleable}, using a provided function.</li>
      * </ul>
-     * This method enables the creation of {@code CssMetaData} objects that are highly configurable and adaptable to
-     * specific requirements, enhancing the flexibility and functionality of CSS styling in JavaFX applications.
+     *
+     * <p>This method enables the creation of {@code CssMetaData} objects that are highly configurable and adaptable to specific requirements, enhancing the flexibility and functionality of CSS styling in
+     * JavaFX applications.</p>
      *
      * @return a fully constructed and customized {@code CssMetaData} object
-     * @throws IllegalArgumentException if any of the essential properties ({@code property}, {@code converter},
-     *         {@code isSettableFunction}, or {@code propertyGetterFunction}) are null
+     *
+     * @throws IllegalArgumentException
+     *         if any of the essential properties ({@code property}, {@code converter}, {@code isSettableFunction}, or {@code propertyGetterFunction}) are null
      */
     public CssMetaData<S, V> build() {
-        if (Objects.isNull(property)) {
-            throw new IllegalArgumentException("Property cannot be null in the CssBuilder");
-        }
-
-        if (Objects.isNull(converter)) {
-            throw new IllegalArgumentException("Converter cannot be null in the CssBuilder");
-
-        }
-
-        if (Objects.isNull(isSettableFunction)) {
-            throw new IllegalArgumentException("IsSettable function cannot be null in the CssBuilder");
-        }
-
-        if (Objects.isNull(propertyGetterFunction)) {
-            throw new IllegalArgumentException("PropertyGetter function cannot be null in the CssBuilder");
-        }
+        EFXObjectUtils.isNotNull(property, () -> "Property cannot be null in the CssBuilder");
+        EFXObjectUtils.isNotNull(converter, () -> "Converter cannot be null in the CssBuilder");
+        EFXObjectUtils.isNotNull(isSettableFunction, () -> "IsSettable function cannot be null in the CssBuilder");
+        EFXObjectUtils.isNotNull(propertyGetterFunction, () -> "PropertyGetter function cannot be null in the CssBuilder");
 
         return new CssMetaData<>(property, converter, initialValue, inherits, subProperties) {
             @Override

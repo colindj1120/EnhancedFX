@@ -19,8 +19,8 @@ package io.github.colindj1120.enhancedfx.controls.skins;
 
 import io.github.colindj1120.enhancedfx.base.collections.ObservableLinkedList;
 import io.github.colindj1120.enhancedfx.base.collections.base.UpdateActions;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleButton;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleNavigationBar;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXToggleButton;
+import io.github.colindj1120.enhancedfx.controls.complexcontrol.EFXToggleNavigationBar;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * A custom skin for the {@link EFXToggleNavigationBar} control in the EnhancedFX framework, designed to dynamically adjust the layout and presentation of a navigation bar comprising toggle
- * buttons. This skin supports both horizontal and vertical orientations and dynamically updates to reflect changes in the control's properties and the toggle buttons it contains.
+ * A custom skin for the {@link EFXToggleNavigationBar} control in the EnhancedFX framework, designed to dynamically adjust the layout and presentation of a navigation bar comprising toggle buttons. This skin
+ * supports both horizontal and vertical orientations and dynamically updates to reflect changes in the control's properties and the toggle buttons it contains.
  *
  * <p>The {@code EFXToggleNavigationBarSkin} extends {@link SkinBase} and integrates closely with {@link EFXToggleNavigationBar}, providing a flexible and customizable appearance for the navigation bar. It
  * manages a collection of {@link EFXToggleButton} instances, arranging them according to the specified orientation of the navigation bar and responding to user interactions.</p>
@@ -96,16 +96,33 @@ import java.util.stream.IntStream;
 public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar> {
     private final HBox                       horizontalContainer   = new HBox();
     private final VBox                       verticalContainer     = new VBox();
-    private final SimpleObjectProperty<Pane> currentContainer      = new SimpleObjectProperty<>(this, "currentContainer");
+    private       SimpleObjectProperty<Pane> currentContainer;
     private final ListChangeListener<Node>   layoutRequestListener = change -> getSkinnable().requestLayout();
 
+    public static EFXToggleNavigationBarSkin create(EFXToggleNavigationBar control) {
+        EFXToggleNavigationBarSkin efxToggleNavigationBarSkin = new EFXToggleNavigationBarSkin(control);
+        efxToggleNavigationBarSkin.initialize();
+        return efxToggleNavigationBarSkin;
+    }
+
+    private void initialize() {
+        EFXToggleNavigationBar control = this.getSkinnable();
+        this.currentContainer = new SimpleObjectProperty<>(this, "currentContainer");
+
+        this.currentContainer.addListener(this.createNavigationBarChangeListener());
+        this.currentContainer.bind(Bindings.createObjectBinding(() -> control.isHorizontal() ? this.horizontalContainer : this.verticalContainer, control.isHorizontalProperty()));
+        this.addActionListener(control.getToggleButtonList());
+        this.getSkinnable()
+            .requestLayout();
+    }
+
     /**
-     * Constructs a new skin for the {@link EFXToggleNavigationBar}. This skin implementation manages the layout and styling of the {@link EFXToggleNavigationBar} control, dynamically adjusting its
-     * appearance and behavior based on the control's properties and the list of toggle buttons it contains.
+     * Constructs a new skin for the {@link EFXToggleNavigationBar}. This skin implementation manages the layout and styling of the {@link EFXToggleNavigationBar} control, dynamically adjusting its appearance
+     * and behavior based on the control's properties and the list of toggle buttons it contains.
      *
      * <p>
-     * Upon instantiation, this constructor initializes and binds listeners to the control's properties, including the orientation (horizontal or vertical) and the list of toggle buttons. It ensures
-     * that the navigation bar's content and layout are updated in response to changes in these properties.
+     * Upon instantiation, this constructor initializes and binds listeners to the control's properties, including the orientation (horizontal or vertical) and the list of toggle buttons. It ensures that the
+     * navigation bar's content and layout are updated in response to changes in these properties.
      * </p>
      *
      * <p>
@@ -126,10 +143,6 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
      */
     public EFXToggleNavigationBarSkin(EFXToggleNavigationBar control) {
         super(control);
-        currentContainer.addListener(createNavigationBarChangeListener());
-        currentContainer.bind(Bindings.createObjectBinding(() -> control.isHorizontal() ? horizontalContainer : verticalContainer, control.isHorizontalProperty()));
-        addActionListener(control.getToggleButtonList());
-        getSkinnable().requestLayout();
     }
 
     /**
@@ -164,8 +177,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Adds the new container pane to the navigation bar's children. It sets the new container to be unmanaged, meaning that its layout will not be automatically computed during the layout pass, and
-     * attaches a layout request listener to it. This method also ensures that any child elements of the navigation bar are added to the new container.
+     * Adds the new container pane to the navigation bar's children. It sets the new container to be unmanaged, meaning that its layout will not be automatically computed during the layout pass, and attaches a
+     * layout request listener to it. This method also ensures that any child elements of the navigation bar are added to the new container.
      *
      * <p>This operation is a key part of updating the navigation bar's UI to reflect a change in its container pane.</p>
      *
@@ -183,8 +196,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Adds child elements of the navigation bar to the new container. This typically involves iterating over a collection of UI elements associated with the navigation bar (e.g., toggle buttons) and
-     * adding them to the new container's children.
+     * Adds child elements of the navigation bar to the new container. This typically involves iterating over a collection of UI elements associated with the navigation bar (e.g., toggle buttons) and adding
+     * them to the new container's children.
      *
      * <p>This method ensures that after a container change, all relevant child elements are present in the new container, maintaining the navigation bar's functionality and appearance.</p>
      *
@@ -198,8 +211,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Registers an action listener to an {@link ObservableLinkedList} of {@link EFXToggleButton}. This listener responds to changes in the list, such as additions, removals, and replacements of
-     * toggle buttons. Based on the type of change, it delegates to specific methods to update the UI accordingly.
+     * Registers an action listener to an {@link ObservableLinkedList} of {@link EFXToggleButton}. This listener responds to changes in the list, such as additions, removals, and replacements of toggle buttons.
+     * Based on the type of change, it delegates to specific methods to update the UI accordingly.
      *
      * @param buttonList
      *         the {@link ObservableLinkedList} to which the listener is added.
@@ -219,8 +232,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Replaces a list of old toggle buttons with a new list of toggle buttons in bulk. This method validates that the old and new lists have the same size before proceeding with replacements to
-     * maintain consistency.
+     * Replaces a list of old toggle buttons with a new list of toggle buttons in bulk. This method validates that the old and new lists have the same size before proceeding with replacements to maintain
+     * consistency.
      *
      * @param oldList
      *         the list of toggle buttons being replaced.
@@ -243,8 +256,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Replaces an old toggle button with a new toggle button within the UI container. If the old toggle button is found within the container's children, it is replaced by the new toggle button at the
-     * same index.
+     * Replaces an old toggle button with a new toggle button within the UI container. If the old toggle button is found within the container's children, it is replaced by the new toggle button at the same
+     * index.
      *
      * @param oldElement
      *         the toggle button being replaced.
@@ -260,8 +273,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Clears all toggle buttons from the current container. This method is typically called when the list of toggle buttons is cleared, and it ensures that the UI reflects this change by removing all
-     * button nodes.
+     * Clears all toggle buttons from the current container. This method is typically called when the list of toggle buttons is cleared, and it ensures that the UI reflects this change by removing all button
+     * nodes.
      */
     private void clearContainer() {
         getCurrentContainer().getChildren()
@@ -304,8 +317,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Removes a list of old toggle buttons from the UI container in bulk, based on a comparison between an old list and a new list of toggle buttons. This method calculates which buttons have been
-     * removed by comparing the two lists and then removes those buttons from the container.
+     * Removes a list of old toggle buttons from the UI container in bulk, based on a comparison between an old list and a new list of toggle buttons. This method calculates which buttons have been removed by
+     * comparing the two lists and then removes those buttons from the container.
      *
      * @param oldList
      *         the list of toggle buttons before the bulk removal operation.
@@ -318,8 +331,8 @@ public class EFXToggleNavigationBarSkin extends SkinBase<EFXToggleNavigationBar>
     }
 
     /**
-     * Determines which toggle buttons have been removed by comparing an old list of toggle buttons to a new list. This method is used in bulk removal operations to identify which buttons need to be
-     * removed from the UI container.
+     * Determines which toggle buttons have been removed by comparing an old list of toggle buttons to a new list. This method is used in bulk removal operations to identify which buttons need to be removed
+     * from the UI container.
      *
      * @param oldList
      *         the list of toggle buttons before the removal operation.

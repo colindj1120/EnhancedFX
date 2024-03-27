@@ -17,19 +17,27 @@
  */
 package io.github.colindj1120.enhancedfx.controls.skins;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextArea;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextArea;
+import io.github.colindj1120.enhancedfx.controls.skins.base.EFXControlSkin;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXTextBaseSkin;
 import javafx.scene.control.Label;
 
 public class EFXTextAreaSkin extends EFXTextBaseSkin<EFXTextArea> {
-    protected final Label titleTextLabel;
+    protected final Label titleTextLabel = new Label();
 
-    public EFXTextAreaSkin(EFXTextArea control) {
+    public static EFXTextAreaSkin create(EFXTextArea control) {
+        return EFXControlSkin.create(EFXTextAreaSkin.class, control);
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        this.setupTextArea();
+        this.setupTitleTextLabel();
+    }
+
+    protected EFXTextAreaSkin(EFXTextArea control) {
         super(control);
-        titleTextLabel = new Label();
-
-        setupTextArea();
-        setupTitleTextLabel();
     }
 
     private void setupTextArea() {

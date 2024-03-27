@@ -16,8 +16,8 @@
  * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.graphics.effects.base;
+import io.github.colindj1120.enhancedfx.base.enums.EFXState;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
-import io.github.colindj1120.enhancedfx.base.enums.State;
 import javafx.animation.Interpolator;
 import javafx.scene.effect.BlurType;
 import javafx.scene.paint.Color;
@@ -49,7 +49,7 @@ import javafx.util.Duration;
  * @author Colin Jokisch
  * @version 1.0.0
  * @see EFXRippleEffect
- * @see State
+ * @see EFXState
  * @see EFXRippleShape
  * @see Color
  * @see Duration
@@ -58,23 +58,25 @@ import javafx.util.Duration;
  * @see BlurType
  */
 public class EFXRippleDefaults {
-    public static final State          DEFAULT_RIPPLE_STATE      = State.ENABLED;
-    public static final EFXRippleShape DEFAULT_RIPPLE_SHAPE      = EFXRippleShape.CIRCLE;
+    private EFXRippleDefaults() {}
+
+    public static final EFXState           DEFAULT_RIPPLE_EFX_STATE      = EFXState.ENABLED;
+    public static final EFXRippleShape     DEFAULT_RIPPLE_SHAPE          = EFXRippleShape.CIRCLE;
     public static final EFXRippleShape DEFAULT_RIPPLE_CLIP_SHAPE = EFXRippleShape.RECTANGLE;
     public static final Color          DEFAULT_RIPPLE_COLOR      = Color.BLACK;
     public static final Duration        DEFAULT_RIPPLE_DURATION      = Duration.millis(600);
-    public static final Interpolator    DEFAULT_RIPPLE_INTERPOLATOR  = Interpolator.EASE_OUT;
-    public static final State           DEFAULT_RIPPLE_FILL_STATE    = State.ENABLED;
-    public static final double          DEFAULT_RIPPLE_RADIUS        = 10.0;
+    public static final Interpolator       DEFAULT_RIPPLE_INTERPOLATOR   = Interpolator.EASE_OUT;
+    public static final EFXState           DEFAULT_RIPPLE_FILL_EFX_STATE = EFXState.ENABLED;
+    public static final double             DEFAULT_RIPPLE_RADIUS         = 10.0;
     public static final double          DEFAULT_RIPPLE_STROKE_WIDTH  = .25;
     public static final Color              DEFAULT_RIPPLE_STROKE_COLOR = Color.BLACK;
-    public static final EFXRippleDirection DEFAULT_RIPPLE_DIRECTION    = EFXRippleDirection.OUT;
-    public static final State              DEFAULT_RIPPLE_FADE_STATE   = State.ENABLED;
-    public static final BlurType        DEFAULT_DROPSHADOW_BLUR_TYPE = BlurType.GAUSSIAN;
+    public static final EFXRippleDirection DEFAULT_RIPPLE_DIRECTION      = EFXRippleDirection.OUT;
+    public static final EFXState           DEFAULT_RIPPLE_FADE_EFX_STATE = EFXState.ENABLED;
+    public static final BlurType           DEFAULT_DROPSHADOW_BLUR_TYPE  = BlurType.GAUSSIAN;
     public static final Color           DEFAULT_DROPSHADOW_COLOR     = Color.rgb(0, 0, 0, .5);
     public static final double          DEFAULT_DROPSHADOW_RADIUS    = 8.0;
     public static final double          DEFAULT_DROPSHADOW_SPREAD    = .2;
     public static final double          DEFAULT_DROPSHADOW_OFFSET_X  = 4.0;
-    public static final double          DEFAULT_DROPSHADOW_OFFSET_Y  = 4.0;
-    public static final State           DEFAULT_DROPSHADOW_STATE     = State.ENABLED;
+    public static final double             DEFAULT_DROPSHADOW_OFFSET_Y   = 4.0;
+    public static final EFXState           DEFAULT_DROPSHADOW_EFX_STATE  = EFXState.ENABLED;
 }

@@ -18,152 +18,134 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.StringExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.StringExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.StringBinding;
 
 /**
- * {@code EFXStringBinding} provides a concrete implementation of {@link EFXBinding} for {@code String} type bindings,
- * combining a {@link StringBinding} with an associated bean. This class facilitates the management and use of string bindings within
- * the application, tying them directly to their respective data models or objects.
+ * {@code EFXStringBinding} is a specialized binding class that wraps a {@link StringBinding} and provides additional functionalities defined by {@link StringExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>
- * This class also implements {@link StringExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
+ * <p>It allows for enhanced manipulation and observation of {@code StringBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * This association class makes it easier to track and manipulate bindings in relation to their beans, ensuring a clear and
- * maintainable link between UI elements and the underlying application state. By encapsulating both the {@code StringBinding} and its
- * associated bean within a single entity, it provides a streamlined approach to handling dynamic string expressions that react to
- * changes in the application's data model.
- * </p>
- *
- * <p1>
  * <h2>Capabilities:</h2>
  * <ul>
- *      <li>Creation of {@code EFXStringBinding} instances through a static factory method, ensuring a tight coupling
- *      between a {@code StringBinding} and its corresponding bean.</li>
- *      <li>Implementation of {@code StringExpressionFunctions}, allowing for enhanced manipulation and querying of the associated
- *      string binding's value.</li>
- *      <li>Validation of the associated bean to ensure it is not {@code null}, promoting robustness and reliability in the
- *      association's usage.</li>
+ *     <li>Encapsulates a {@link StringBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional string expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced string bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Example:</h2>
- * <pre>
- * ObservableStringValue myObservableStringValue = ...;
- * Object myBean = ...;
+ * <pre>{@code
+ * StringProperty property = new SimpleStringProperty("Hello");
+ * StringBinding binding = property.concat(" World");
+ * EFXStringBinding efxBinding = EFXStringBinding.create(myBean, binding);
  *
- * StringBinding myStringBinding = Bindings.createStringBinding(() -> {
- *     return myObservableStringValue.get() + " transformed";
- * }, myObservableStringValue);
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
+ * }</pre>
  *
- * EFXStringBinding myStringBindingAssoc = EFXStringBinding.create(myStringBinding, myBean);
- *
- * // Now, myStringBindingAssoc encapsulates both the StringBinding and its associated bean, allowing for centralized management
- * // and use within your application.
- * </pre>
- * </p>
- *
- * <p>
- * This approach simplifies the management of string bindings, especially when working with complex data models or UI components
- * that require dynamic string content based on the application's state. By associating bindings with their beans directly,
- * {@code EFXStringBinding} helps maintain a clean and understandable flow of data within the application.
- * </p>
+ * <p>In this example, an {@code EFXStringBinding} is created by wrapping a {@link StringBinding} with a negation operation. It then listens for changes to the string value, demonstrating how {@code
+ * EFXStringBinding} can be used to enhance and observe string bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see EFXBinding
  * @see StringBinding
  * @see StringExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXStringBinding implements EFXBinding<String>, StringExpressionFunctions {
+public class EFXStringBinding extends EFXBinding<StringBinding> implements StringExpressionFunctions<StringBinding>, BindingFunctions<String, StringBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * A factory method that creates a new {@code EFXStringBinding} instance. This method encapsulates the association between
-     * a {@link StringBinding} and its corresponding bean. It provides a concrete implementation of the {@code EFXBinding}
-     * interface for {@code String} type bindings.
+     * Static factory method to create an instance of {@code EFXStringBinding}.
      *
-     * @param binding
-     *         the {@code StringBinding} to be associated with a bean
+     * <p>This method provides a convenient way to instantiate {@code EFXStringBinding} objects with a specific {@link StringBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object that the {@code StringBinding} is associated with. This bean typically represents the underlying
-     *         property or object that the {@code StringBinding} observes or depends upon.
+     *         The bean associated with the {@code StringBinding}. This can be used for contextual information or binding management.
+     * @param binding
+     *         The {@link StringBinding} to be encapsulated by the {@code EFXStringBinding}.
      *
-     * @return a new instance of {@code EFXStringBinding} encapsulating the relationship between the provided
-     *         {@code StringBinding} and bean
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that every {@code EFXStringBinding} has a valid bean reference
+     * @return An instance of {@code EFXStringBinding} wrapping the provided {@code StringBinding}.
      */
-    public static EFXStringBinding create(StringBinding binding, Object bean) {
-        return new EFXStringBinding(binding, bean);
+    public static EFXStringBinding create(Object bean, StringBinding binding) {
+        return new EFXStringBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link StringBinding} in this {@code EFXStringBinding}. The bean typically represents the
-     * underlying model or object that influences the value of the {@code StringBinding}. It acts as a contextual link between the
-     * binding and the part of the application state it represents or depends upon.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link StringBinding} instance that is part of this association. This binding encapsulates a computed value that, when
-     * observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core functional
-     * component of the association, providing the dynamic link between the application state and the UI or other dependent logic.
-     */
-    private final StringBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXStringBinding}. This constructor is called internally by the
-     * {@link #create(StringBinding, Object)} factory method. It initializes the association with a specific {@code StringBinding} and
-     * bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXStringBinding}.
      *
-     * @param binding
-     *         the {@code StringBinding} to associate
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, StringBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXStringBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}
+     *         The bean associated with this {@code StringBinding}.
+     * @param binding
+     *         The {@link StringBinding} to be encapsulated.
      */
-    private EFXStringBinding(StringBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXDoubleBinding.class); // The reference class should be EFXStringBinding.class
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXStringBinding(Object bean, StringBinding binding) {
+        super(bean, binding);
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link StringBinding} associated with this {@code EFXStringBinding}.
-     *
-     * @return the {@code StringBinding} instance associated with this association
+     * {@inheritDoc}
      */
     @Override
-    public StringBinding getBinding() {
+    public StringBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code StringBinding}. The bean represents the underlying property or object that the
-     * {@code StringBinding} depends on.
-     *
-     * @return the bean object associated with the {@code StringBinding}
+     * {@inheritDoc}
      */
     @Override
-    public Object getBean() {
-        return this.bean;
+    public void setObservableValue(StringBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXStringBinding}, including its binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXStringBinding}
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXStringBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("StringBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
 
+    //endregion Overridden Methods
 }

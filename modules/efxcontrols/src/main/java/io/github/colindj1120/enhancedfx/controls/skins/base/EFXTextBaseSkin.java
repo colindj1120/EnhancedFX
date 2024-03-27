@@ -17,15 +17,14 @@
  */
 package io.github.colindj1120.enhancedfx.controls.skins.base;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.base.EFXTextBase;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.EFXTextBase;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.label.LabelConfigurator;
 import io.github.colindj1120.enhancedfx.utils.*;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -92,45 +91,19 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     protected static final int LEADING_ICON_OFFSET  = 5;
     protected static final int TRAILING_ICON_OFFSET = 2;
 
-    protected final Label characterCountLabel;
+    protected final Label characterCountLabel = new Label();
 
     protected boolean skipMaxCharacterCountLayout = false;
 
-    /**
-     * Constructs an instance of {@code EFXTextBaseSkin}, initializing the skin for a given {@code EFXTextField} or any of its subclasses. This constructor sets up the fundamental components of the
-     * enhanced text control, including the text field itself, a supporting text label, and a character count label. Each of these components is configured to enhance the standard text field behavior with
-     * additional visual cues and information, adhering to Material Design principles for text input.
-     *
-     * <p>
-     * Upon instantiation, the constructor performs the following actions:
-     * <ul>
-     *     <li>Initializes the inner text field component, which is the primary text input area, by retrieving it from the
-     *     supplied control.</li>
-     *     <li>Creates and initializes a supporting text label, which can be used to display additional information or guidance
-     *     related to the text input, such as helper or error text.</li>
-     *     <li>Creates and initializes a character count label, which provides feedback about the number of characters entered
-     *     in comparison to the field's maximum character limit.</li>
-     *     <li>Sets up the text field and labels by configuring their properties and applying necessary bindings to ensure they
-     *     react appropriately to changes in the control's state.</li>
-     * </ul>
-     * </p>
-     *
-     * <p>
-     * This constructor ensures that all components are properly initialized and configured to provide an enhanced user
-     * experience for text input. The setup methods called within this constructor are responsible for the detailed
-     * configuration of each component, including setting up listeners, bindings, and visual adjustments.
-     * </p>
-     *
-     * @param control
-     *         The {@code EFXTextField} or subclass instance to which this skin is applied. This control provides the text input functionality and additional properties that the skin enhances with Material
-     *         Design features.
-     */
+    @Override
+    protected void initialize() {
+        super.initialize();
+        this.setupCharacterCountLabel();
+        this.setupIcons();
+    }
+
     protected EFXTextBaseSkin(T control) {
         super(control);
-        this.characterCountLabel = new Label();
-
-        setupCharacterCountLabel();
-        setupIcons();
     }
 
     @NotNull
@@ -206,7 +179,7 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     /**
      * Sets up the icons for this component. This method adds a change listener to both the leading icon and trailing icon. When the icon changes, the registered change listener will be notified.
      */
-    protected void setupIcons() {
+    private void setupIcons() {
         T control = getSkinnable();
 
         control.leadingIconProperty()
@@ -226,7 +199,7 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
      * @return a ChangeListener that handles the change of an icon
      */
     @NotNull
-    protected ChangeListener<Node> getIconChangeListener() {
+    private ChangeListener<Node> getIconChangeListener() {
         return (obs, oldIcon, newIcon) -> {
             if (Objects.isNull(newIcon)) {
                 getChildren().remove(oldIcon);
@@ -243,8 +216,8 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
     private StringExpression createCharacterCountExpression(EFXTextBase<?> control) {
         ReadOnlyIntegerProperty controlLengthProperty            = control.lengthProperty();
-        IntegerProperty         controlMaxCharacterCountProperty = control.maxCharCountProperty();
-        return Bindings.concat(controlLengthProperty.asString(), "/", controlMaxCharacterCountProperty.asString());
+//        IntegerProperty         controlMaxCharacterCountProperty = control.maxCharCountProperty();
+        return Bindings.concat(controlLengthProperty.asString(), "/", control.maxCharCountProperty().asString());
     }
 
     private ChangeListener<Number> trimTextToMaxCountIfRequired(EFXTextBase<?> control) {

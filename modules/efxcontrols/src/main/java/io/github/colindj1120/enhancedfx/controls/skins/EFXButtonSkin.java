@@ -1,7 +1,8 @@
 package io.github.colindj1120.enhancedfx.controls.skins;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXButton;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.ButtonConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.button.ButtonConfigurator;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXButton;
+import io.github.colindj1120.enhancedfx.controls.skins.base.EFXControlSkin;
 import io.github.colindj1120.enhancedfx.controls.skins.base.EFXSupportedControlSkin;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
 import io.github.colindj1120.enhancedfx.utils.EFXInsetUtils;
@@ -21,20 +22,26 @@ public class EFXButtonSkin extends EFXSupportedControlSkin<EFXButton> {
 
     private final Label icon = new Label();
 
-    /**
-     * Constructor for all SkinBase instances.
-     *
-     * @param control
-     *         The control for which this Skin should attach to.
-     */
-    public EFXButtonSkin(EFXButton control) {
-        super(control);
-        setupInnerControl();
-        setupRippleEffect();
+    public static EFXButtonSkin create(EFXButton control) {
+        return EFXControlSkin.create(EFXButtonSkin.class, control);
+    }
 
-        getChildren().addAll(control.getInnerControl(), efxRippleEffect);
+    @Override
+    protected void initialize() {
+        super.initialize();
+        EFXButton control = this.getSkinnable();
+
+        this.setupInnerControl();
+        this.setupRippleEffect();
+
+        this.getChildren()
+            .addAll(control.getInnerControl(), efxRippleEffect);
 
         control.requestLayout();
+    }
+
+    protected EFXButtonSkin(EFXButton control) {
+        super(control);
     }
 
     private void setupInnerControl() {
@@ -62,14 +69,14 @@ public class EFXButtonSkin extends EFXSupportedControlSkin<EFXButton> {
     }
 
     private void setupRippleEffect() {
-        efxRippleEffect = new EFXRippleEffect(getSkinnable());
+        efxRippleEffect = EFXRippleEffect.create(getSkinnable());
         efxRippleEffect.managedProperty()
                        .bind(Bindings.createBooleanBinding(() -> false));
     }
 
     /**
-     * Returns the EFXRippleEffect instance associated with the EFXToggleButtonSkin. The EFXRippleEffect provides visual feedback
-     * when the button is interacted with, creating a material design-inspired ripple effect.
+     * Returns the EFXRippleEffect instance associated with the EFXToggleButtonSkin. The EFXRippleEffect provides visual feedback when the button is interacted with, creating a material design-inspired ripple
+     * effect.
      *
      * @return the EFXRippleEffect instance associated with the EFXToggleButtonSkin.
      *

@@ -1,28 +1,28 @@
 /*
  * Copyright (C) 2024 Colin Jokisch
- * This file is part of MaterialDesignUI (https://github.com/colindj1120/MaterialDesignUI).
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
  *
- * MaterialDesignUI is free software: you can redistribute it and/or modify
+ * EnhancedFX is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MaterialDesignUI is distributed in the hope that it will be useful,
+ * EnhancedFX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.graphics.factory;
 
+import io.github.colindj1120.enhancedfx.base.enums.EFXState;
 import io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleDefaults;
 import io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleDirection;
 import io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleShape;
 import io.github.colindj1120.enhancedfx.graphics.effects.ripple.EFXRippleEffect;
-import io.github.colindj1120.enhancedfx.base.enums.State;
-import io.github.colindj1120.enhancedfx.base.exceptions.RippleEffectException;
+import io.github.colindj1120.enhancedfx.utils.exceptions.RippleEffectException;
 import javafx.animation.Interpolator;
 import javafx.scene.effect.BlurType;
 import javafx.scene.layout.Region;
@@ -62,48 +62,40 @@ import java.util.Optional;
  * @see RippleEffectException
  */
 public class EFXRippleEffectFactory {
-    private Region      targetNode  = null; //required field
-    private State          rippleState     = EFXRippleDefaults.DEFAULT_RIPPLE_STATE;
-    private EFXRippleShape efxRippleShape  = EFXRippleDefaults.DEFAULT_RIPPLE_SHAPE;
+    private Region             targetNode         = null; //required field
+    private EFXState           rippleEFXState     = EFXRippleDefaults.DEFAULT_RIPPLE_EFX_STATE;
+    private EFXRippleShape     efxRippleShape     = EFXRippleDefaults.DEFAULT_RIPPLE_SHAPE;
     private EFXRippleShape rippleClipShape = EFXRippleDefaults.DEFAULT_RIPPLE_CLIP_SHAPE;
     private Color          rippleColor     = EFXRippleDefaults.DEFAULT_RIPPLE_COLOR;
     private Duration        rippleDuration     = EFXRippleDefaults.DEFAULT_RIPPLE_DURATION;
-    private Interpolator    rippleInterpolator = EFXRippleDefaults.DEFAULT_RIPPLE_INTERPOLATOR;
-    private State           rippleFillState    = EFXRippleDefaults.DEFAULT_RIPPLE_FILL_STATE;
-    private double          rippleRadius       = EFXRippleDefaults.DEFAULT_RIPPLE_RADIUS;
+    private Interpolator       rippleInterpolator = EFXRippleDefaults.DEFAULT_RIPPLE_INTERPOLATOR;
+    private EFXState           rippleFillEFXState = EFXRippleDefaults.DEFAULT_RIPPLE_FILL_EFX_STATE;
+    private double             rippleRadius       = EFXRippleDefaults.DEFAULT_RIPPLE_RADIUS;
     private Color           rippleStrokeColor  = EFXRippleDefaults.DEFAULT_RIPPLE_STROKE_COLOR;
     private double             rippleStrokeWidth  = EFXRippleDefaults.DEFAULT_RIPPLE_STROKE_WIDTH;
     private EFXRippleDirection efxRippleDirection = EFXRippleDefaults.DEFAULT_RIPPLE_DIRECTION;
-    private State              rippleFadeState    = EFXRippleDefaults.DEFAULT_RIPPLE_FADE_STATE;
-    private BlurType        dropShadowBlurType = EFXRippleDefaults.DEFAULT_DROPSHADOW_BLUR_TYPE;
+    private EFXState           rippleFadeEFXState = EFXRippleDefaults.DEFAULT_RIPPLE_FADE_EFX_STATE;
+    private BlurType           dropShadowBlurType = EFXRippleDefaults.DEFAULT_DROPSHADOW_BLUR_TYPE;
     private Color           dropShadowColor    = EFXRippleDefaults.DEFAULT_DROPSHADOW_COLOR;
     private double          dropShadowRadius   = EFXRippleDefaults.DEFAULT_DROPSHADOW_RADIUS;
     private double          dropShadowSpread   = EFXRippleDefaults.DEFAULT_DROPSHADOW_SPREAD;
     private double          dropShadowOffsetX  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_X;
-    private double          dropShadowOffsetY  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_Y;
-    private State           dropShadowState    = EFXRippleDefaults.DEFAULT_DROPSHADOW_STATE;
+    private double             dropShadowOffsetY  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_Y;
+    private EFXState           dropShadowEFXState = EFXRippleDefaults.DEFAULT_DROPSHADOW_EFX_STATE;
 
-    /**
-     * Sets the target node for the EFXRippleEffect and checks if the input is null.
-     *
-     * @param targetNode
-     *         the target node to set for the EFXRippleEffect
-     *
-     * @return the EFXRippleEffectFactory instance
-     *
-     * @throws RippleEffectException
-     *         if the input is null
-     */
-    public EFXRippleEffectFactory targetNode(Region targetNode) {
+    private EFXRippleEffectFactory(Region targetNode) {
         checkInput(targetNode, "Target Node");
         this.targetNode = targetNode;
-        return this;
+    }
+
+    public static EFXRippleEffectFactory create(Region targetNode) {
+        return new EFXRippleEffectFactory(targetNode);
     }
 
     /**
      * Sets the ripple state of the EFXRippleEffectFactory.
      *
-     * @param rippleState
+     * @param rippleEFXState
      *         the ripple state to set
      *
      * @return the updated EFXRippleEffectFactory instance
@@ -111,9 +103,9 @@ public class EFXRippleEffectFactory {
      * @throws RippleEffectException
      *         if the input is null
      */
-    public EFXRippleEffectFactory rippleState(State rippleState) {
-        checkInput(rippleState, "Ripple State");
-        this.rippleState = rippleState;
+    public EFXRippleEffectFactory rippleState(EFXState rippleEFXState) {
+        checkInput(rippleEFXState, "Ripple EFXState");
+        this.rippleEFXState = rippleEFXState;
         return this;
     }
 
@@ -206,7 +198,7 @@ public class EFXRippleEffectFactory {
     /**
      * Sets the ripple fill state for the EFXRippleEffectFactory object.
      *
-     * @param rippleFillState
+     * @param rippleFillEFXState
      *         the new ripple fill state for the EFXRippleEffectFactory object
      *
      * @return the EFXRippleEffectFactory object with the updated ripple fill state
@@ -214,9 +206,9 @@ public class EFXRippleEffectFactory {
      * @throws RippleEffectException
      *         if the input is null
      */
-    public EFXRippleEffectFactory rippleFillState(State rippleFillState) {
-        checkInput(rippleFillState, "Ripple Fill State");
-        this.rippleFillState = rippleFillState;
+    public EFXRippleEffectFactory rippleFillState(EFXState rippleFillEFXState) {
+        checkInput(rippleFillEFXState, "Ripple Fill EFXState");
+        this.rippleFillEFXState = rippleFillEFXState;
         return this;
     }
 
@@ -292,7 +284,7 @@ public class EFXRippleEffectFactory {
     /**
      * Sets the ripple fade state of the EFXRippleEffectFactory.
      *
-     * @param rippleFadeState
+     * @param rippleFadeEFXState
      *         the ripple fade state to set
      *
      * @return the updated EFXRippleEffectFactory instance
@@ -300,9 +292,9 @@ public class EFXRippleEffectFactory {
      * @throws RippleEffectException
      *         if the input is null
      */
-    public EFXRippleEffectFactory rippleFadeState(State rippleFadeState) {
-        checkInput(rippleFadeState, "Ripple Fade State");
-        this.rippleFadeState = rippleFadeState;
+    public EFXRippleEffectFactory rippleFadeState(EFXState rippleFadeEFXState) {
+        checkInput(rippleFadeEFXState, "Ripple Fade EFXState");
+        this.rippleFadeEFXState = rippleFadeEFXState;
         return this;
     }
 
@@ -411,7 +403,7 @@ public class EFXRippleEffectFactory {
     /**
      * Sets the drop shadow state of the EFXRippleEffectFactory.
      *
-     * @param dropShadowState
+     * @param dropShadowEFXState
      *         the drop shadow state to set
      *
      * @return the updated EFXRippleEffectFactory instance
@@ -419,9 +411,9 @@ public class EFXRippleEffectFactory {
      * @throws RippleEffectException
      *         if the input is null
      */
-    public EFXRippleEffectFactory dropShadowState(State dropShadowState) {
-        checkInput(dropShadowState, "Drop Shadow State");
-        this.dropShadowState = dropShadowState;
+    public EFXRippleEffectFactory dropShadowState(EFXState dropShadowEFXState) {
+        checkInput(dropShadowEFXState, "Drop Shadow EFXState");
+        this.dropShadowEFXState = dropShadowEFXState;
         return this;
     }
 
@@ -483,26 +475,26 @@ public class EFXRippleEffectFactory {
     public EFXRippleEffect build() {
         return Optional.ofNullable(targetNode)
                        .map(node -> {
-                           EFXRippleEffect efxRippleEffect = new EFXRippleEffect(targetNode);
-                           efxRippleEffect.setRippleState(rippleState);
+                           EFXRippleEffect efxRippleEffect = EFXRippleEffect.create(targetNode);
+                           efxRippleEffect.setRippleState(rippleEFXState);
                            efxRippleEffect.setRippleShape(efxRippleShape);
                            efxRippleEffect.setRippleClipShape(rippleClipShape);
                            efxRippleEffect.setRippleColor(rippleColor);
                            efxRippleEffect.setRippleDuration(rippleDuration);
                            efxRippleEffect.setRippleInterpolator(rippleInterpolator);
-                           efxRippleEffect.setRippleFillState(rippleFillState);
+                           efxRippleEffect.setRippleFillState(rippleFillEFXState);
                            efxRippleEffect.setRippleRadius(rippleRadius);
                            efxRippleEffect.setRippleStrokeColor(rippleStrokeColor);
                            efxRippleEffect.setRippleStrokeWidth(rippleStrokeWidth);
                            efxRippleEffect.setRippleDirection(efxRippleDirection);
-                           efxRippleEffect.setRippleFadeState(rippleFadeState);
+                           efxRippleEffect.setRippleFadeState(rippleFadeEFXState);
                            efxRippleEffect.setDropShadowBlurType(dropShadowBlurType);
                            efxRippleEffect.setDropShadowColor(dropShadowColor);
                            efxRippleEffect.setDropShadowRadius(dropShadowRadius);
                            efxRippleEffect.setDropShadowSpread(dropShadowSpread);
                            efxRippleEffect.setDropShadowOffsetX(dropShadowOffsetX);
                            efxRippleEffect.setDropShadowOffsetY(dropShadowOffsetY);
-                           efxRippleEffect.setDropShadowState(dropShadowState);
+                           efxRippleEffect.setDropShadowState(dropShadowEFXState);
 
                            return efxRippleEffect;
                        })

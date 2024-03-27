@@ -17,32 +17,38 @@
  */
 package io.github.colindj1120.enhancedfx.utils;
 
+import io.github.colindj1120.enhancedfx.utils.exceptions.InvalidInstanceOfException;
+import javafx.scene.Node;
+
 /**
- * Provides utility methods for generating {@link IllegalStateException} in various scenarios where method calls or instance checks fail
- * within the EnhancedFX framework. This class is designed to centralize the logic for generating exception messages related to invalid
- * method calls or incorrect instance types, thereby promoting code reuse and enhancing error reporting.
- * <p>
- * The utilities within this class are static methods that can be invoked to immediately throw an {@link IllegalStateException} with a
- * descriptive error message. These methods are particularly useful in the context of dynamic method invocation and type checking
- * within the EnhancedFX library, ensuring that developers receive clear and informative feedback when an operation cannot be performed
- * as expected.
- * </p>
- * <p>
- * <h2>Usage example:</h2>
- * <pre>
- * <h3>To report an invalid method call</h3>
- * throw new EFXExceptionUtils.invalidMethodCall(MyClass.class, "myMethod");
+ * The {@code EFXExceptionUtils} class provides utility functions related to exception handling within the EnhancedFX framework.
  *
- * <h3>To report an incorrect instance type in a specific context</h3>
- * throw new EFXExceptionUtils.invalidInstanceOf("myNode", "ExpectedType", MyClass.class, "myMethod");
- * </pre>
- * These examples demonstrate how to use the class to signal violations of expected behavior or constraints within EnhancedFX-enhanced
- * components or utilities.
- * </p>
+ * <p>It offers specialized methods for generating and managing exceptions, particularly focusing on scenarios where invalid instance types are encountered. This class is part of the EnhancedFX utility package,
+ * aimed at aiding developers in creating more robust and error-resistant JavaFX applications.</p>
+ *
+ * <h2>Key Features</h2>
+ * <ul>
+ *   <li><b>Exception Generation:</b> Facilitates the creation of customized exceptions, particularly {@link InvalidInstanceOfException}, to signal errors related to incorrect type usage within the
+ *   EnhancedFX framework.</li>
+ *   <li><b>Utility-Oriented Design:</b> Designed purely as a utility class, it contains static methods only and cannot be instantiated or extended, reinforcing its utility role within the library.</li>
+ * </ul>
+ *
+ * <h2>Usage Example</h2>
+ * Here's how you might use {@code EFXExceptionUtils} to generate an {@code InvalidInstanceOfException} when a node is not of an expected type:
+ * <pre>{@code
+ * public void checkNodeType(Node node) {
+ *     if (!(node instanceof DesiredType)) {
+ *         throw EFXExceptionUtils.getInvalidInstanceOfException(node, DesiredType.class, this.getClass(), "checkNodeType");
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>This example demonstrates how to use {@code EFXExceptionUtils} to generate and throw a specific exception when a node does not match the desired type. It aids in maintaining type safety and providing
+ * clear error messages within EnhancedFX-based applications.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see IllegalStateException
+ * @see InvalidInstanceOfException
  */
 public class EFXExceptionUtils {
     /**
@@ -55,39 +61,8 @@ public class EFXExceptionUtils {
      */
     private EFXExceptionUtils() {}
 
-    /**
-     * Generates an {@link IllegalStateException} indicating that a specified method call is invalid for a given class.
-     * This method is typically used to signal that a method, identified by its name, should not be or cannot be
-     * invoked on the specified class, either due to access restrictions, the method not existing in the class's context,
-     * or the method not being appropriate for the current state of the object.
-     *
-     * @param clazz       The {@link Class} object representing the class where the invalid method call was attempted.
-     * @param methodName  The name of the method that was called invalidly.
-     * @return            An {@link IllegalStateException} with a message detailing the invalid method call.
-     * @throws IllegalStateException  This exception is thrown to indicate the specific error condition.
-     */
-    public static IllegalStateException invalidMethodCall(Class<?> clazz, String methodName) {
-        return new IllegalStateException(String.format("%s is not a valid method call for %s", methodName, clazz));
-    }
-
-    /**
-     * Generates an {@link IllegalStateException} to indicate that a specific control or node, identified by its
-     * name, is not an instance of the expected type. This utility method is useful for type checking in scenarios
-     * where dynamic casting or reflection is used, and the type of an object must be strictly controlled or verified.
-     * The exception message provides detailed context, including the name of the node or control, the expected type,
-     * and the location (class and method name) where the type mismatch was detected.
-     *
-     * @param nodeName      The name of the node or control being checked.
-     * @param instanceType  The expected type (as a {@link String}) that the node or control should be an instance of.
-     * @param clazz         The {@link Class} object representing the class within which the type check was performed.
-     * @param methodName    The name of the method within which the incorrect instance type was identified.
-     * @return              An {@link IllegalStateException} with a detailed message explaining the type mismatch.
-     * @throws IllegalStateException  This exception is thrown to signal the type mismatch error condition.
-     */
-    public static IllegalStateException invalidInstanceOf(String nodeName, String instanceType, Class<?> clazz, String methodName)
-            throws IllegalStateException {
-        String errorMessage = String.format("Control{Name: %s} is not an instance of %s in {Class: %s, Method: %s}", nodeName,
-                                            instanceType, clazz, methodName);
-        return new IllegalStateException(errorMessage);
+    public static InvalidInstanceOfException getInvalidInstanceOfException(Node node, Class<?> instanceType, Class<?> implementingClass, String methodName) throws InvalidInstanceOfException {
+        String errorMessage = String.format("Node:{%s} is not an instance of %s in {Class: %s, Method: %s}", node.toString(), instanceType.getSimpleName(), implementingClass.getSimpleName(), methodName);
+        return new InvalidInstanceOfException(errorMessage);
     }
 }

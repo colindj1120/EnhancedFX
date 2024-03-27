@@ -17,32 +17,31 @@
  */
 package io.github.colindj1120.enhancedfx.graphics.effects.ripple;
 
+import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyleableDoubleProperty;
+import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyleableObjectProperty;
 import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
-import io.github.colindj1120.enhancedfx.base.enums.State;
-import io.github.colindj1120.enhancedfx.base.exceptions.RippleEffectException;
+import io.github.colindj1120.enhancedfx.base.enums.EFXState;
 import io.github.colindj1120.enhancedfx.base.factory.CssFactory;
-import io.github.colindj1120.enhancedfx.base.factory.ExtendedStyleableDoublePropertyFactory;
-import io.github.colindj1120.enhancedfx.base.factory.ExtendedStyleableObjectPropertyFactory;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.controls.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.configurators.layout.RegionConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.region.RegionConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customregion.CustomRegionConfigurator;
 import io.github.colindj1120.enhancedfx.graphics.animation.EFXAnimationManager;
 import io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleDirection;
 import io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleShape;
 import io.github.colindj1120.enhancedfx.graphics.shapes.AsymmetricRoundedRectangle;
 import io.github.colindj1120.enhancedfx.utils.EFXAnimationUtils;
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
-import io.github.colindj1120.enhancedfx.utils.converters.InterpolatorStyleConverter;
+import io.github.colindj1120.enhancedfx.utils.converters.styleconverters.DoubleStyleConverter;
+import io.github.colindj1120.enhancedfx.utils.converters.styleconverters.InterpolatorStyleConverter;
+import io.github.colindj1120.enhancedfx.utils.exceptions.RippleEffectException;
 import javafx.animation.Interpolator;
 import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
-import javafx.css.StyleableDoubleProperty;
-import javafx.css.StyleableObjectProperty;
 import javafx.css.converter.ColorConverter;
 import javafx.css.converter.DurationConverter;
 import javafx.css.converter.EnumConverter;
-import javafx.css.converter.SizeConverter;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
@@ -59,83 +58,103 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleDefaults.*;
 
 /**
- * Implements a ripple effect for UI components, which can be customized through CSS. This effect creates visual feedback for user interactions like mouse clicks. The Ripple effect can take on many different
- * shapes determined by {@link EFXRippleShape}
+ * {@code EFXRippleEffect} enhances JavaFX {@link Region} components by adding a customizable ripple effect, simulating material design-like interaction feedback.
  *
- * <p>The EFXRippleEffect class supports various customizable properties such as color, duration,
- * interpolator, and more, which can be defined in CSS files. This allows for a flexible and dynamic approach to styling JavaFX components with ripple effects.</p>
+ * <p>This effect dynamically applies visual cues in response to mouse events, indicating an interactive area to the user. It integrates seamlessly with JavaFX's styling and animation framework, allowing for
+ * extensive customization through both Java code and CSS.</p>
  *
- * <p>Example CSS to customize the ripple effect:</p>
- * <pre>
- * .button {
- *     -efx-ripple-color: #FF0000;
- *     -efx-ripple-shape: CIRCLE;
- *     -efx-ripple-clip-shape: ROUNDED_RECTANGLE;
- *     -efx-ripple-duration: 400;
- *     -efx-ripple-interpolator: "EASE_OUT";
- *     -efx-ripple-radius: 20;
- *     -efx-ripple-stroke-width: .25;
- *     -efx-ripple-stroke-color: #FF0000;
- *     -efx-ripple-fill-state: ENABLED;
- *     -efx-ripple-direction: OUT;
- *     -efx-ripple-fade-state: ENABLED;
- *     -efx-ripple-drop-shadow-blur-type: GAUSSIAN;
- *     -efx-ripple-drop-shadow-color: rgba(0, 0, 0, 0.5);
- *     -efx-ripple-drop-shadow-radius: 5;
- *     -efx-ripple-drop-shadow-spread: 0.2;
- *     -efx-ripple-drop-shadow-offset-x: 2;
- *     -efx-ripple-drop-shadow-offset-y: 2;
- *     -efx-ripple-drop-shadow-state: ENABLED;
+ * <h2>Capabilities List</h2>
+ * <ul>
+ *     <li><b>Shape Variability</b>: Choose from multiple shapes (rectangle, circle, ellipse) for the ripple effect, enabling consistency with the component's design.</li>
+ *     <li><b>Color Customization</b>: Define the ripple's color to match or contrast with the UI theme, enhancing visual appeal or signaling interactivity.</li>
+ *     <li><b>Animation Tweaking</b>: Adjust animation duration and easing to align with the application's interaction speed and style.</li>
+ *     <li><b>Advanced Effects</b>: Apply optional drop shadows to the ripple, lending depth and prominence on activation.</li>
+ *     <li><b>Dynamic Response</b>: The effect reacts to the size and shape of the target region, ensuring that the visual feedback is always appropriately scaled.</li>
+ *     <li><b>CSS Integration</b>: Leverage CSS for theming and styling, providing a familiar and powerful tool for designers.</li>
+ *     <li><b>Performance Optimized</b>: Designed with performance in mind, ensuring minimal overhead on UI responsiveness.</li>
+ * </ul>
+ *
+ * <h2>Key Properties and Methods</h2>
+ * <ul>
+ *     <li>{@link #create(Region)}: Static factory method to instantiate and apply the effect to a {@link Region}.</li>
+ *     <li>{@link #createRippleClip()}: Creates the clip shape for the ripple effect.</li>
+ *     <li>{@link #createAndAnimateRipple(MouseEvent)}: Creates the ripple animation and starts the animation</li>
+ *     <li>{@link #createRippleEffect(MouseEvent)}: Creates the ripple effect for the desired shape</li>
+ * </ul>
+ *
+ * <h2>Usage Examples</h2>
+ *
+ * <h3>Basic Application</h3>
+ * <pre>{@code
+ * Region button = new Region();
+ * EFXRippleEffect.applyTo(button);
+ * // Optionally, customize the effect further
+ * button.getStyleClass().add("my-custom-button");
+ * }</pre>
+ *
+ * <h3>Customization through Code</h3>
+ * <pre>{@code
+ * EFXRippleEffect rippleEffect = EFXRippleEffect.create(button);
+ * rippleEffect.setRippleColor(Color.BLUE);
+ * rippleEffect.setRippleDuration(Duration.millis(300));
+ * rippleEffect.setRippleInterpolator(Interpolator.EASE_OUT);
+ * }</pre>
+ *
+ * <h3>Styling with CSS</h3>
+ * The ripple effect's properties can be styled using CSS, offering an alternative to programmatic customization.
+ * <pre>{@code
+ * .my-custom-button {
+ *     -efx-ripple-color: #3498db;
+ *     -efx-ripple-duration: 300ms;
+ *     -efx-ripple-interpolator: ease-out;
  * }
- * </pre>
- *
- * <p>Properties such as {@code -efx-ripple-color}, {@code -efx-ripple-duration}, and others
- * allow for detailed customization of the ripple effect, including its appearance and behavior.</p>
+ * }</pre>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see EFXRippleShape
+ * @see Region
+ * @see MouseEvent
  * @see Interpolator
- * @see InterpolatorStyleConverter
- * @see Duration
- * @see Color
+ * @see DropShadow
+ * @see Styleable
  */
 public class EFXRippleEffect extends Region {
-    private static final String                     RIPPLE_STYLE        = "ripple-effect";
-    private final        EFXAnimationManager        efxAnimationManager = new EFXAnimationManager();
-    private static final StyleablePropertiesManager stylesManager       = new StyleablePropertiesManager(Region.getClassCssMetaData());
+    private static final String                     RIPPLE_STYLE  = "ripple-effect";
+    private static final StyleablePropertiesManager stylesManager = new StyleablePropertiesManager(Region.getClassCssMetaData());
 
-    private StyleableObjectProperty<State>              rippleState;
-    private StyleableObjectProperty<EFXRippleShape>     rippleShape;
-    private StyleableObjectProperty<EFXRippleShape>     rippleClipShape;
-    private StyleableObjectProperty<Color>              rippleColor;
-    private StyleableObjectProperty<Duration>           rippleDuration;
-    private StyleableObjectProperty<Interpolator>       rippleInterpolator;
-    private StyleableObjectProperty<State>              rippleFillState;
-    private StyleableDoubleProperty                     rippleRadius;
-    private StyleableObjectProperty<Color>              rippleStrokeColor;
-    private StyleableDoubleProperty                     rippleStrokeWidth;
-    private StyleableObjectProperty<EFXRippleDirection> rippleDirection;
-    private StyleableObjectProperty<State>              rippleFadeState;
-    private StyleableObjectProperty<BlurType>           dropShadowBlurType;
-    private StyleableObjectProperty<Color>              dropShadowColor;
-    private StyleableDoubleProperty                     dropShadowRadius;
-    private StyleableDoubleProperty                     dropShadowSpread;
-    private StyleableDoubleProperty                     dropShadowOffsetX;
-    private StyleableDoubleProperty                     dropShadowOffsetY;
-    private StyleableObjectProperty<State>              dropShadowState;
+    private final EFXAnimationManager efxAnimationManager = new EFXAnimationManager();
+    private final Region              targetNode;
 
-    private final Region targetNode;
+    private EFXStyleableObjectProperty<EFXState>           rippleState;
+    private EFXStyleableObjectProperty<EFXRippleShape>     rippleShape;
+    private EFXStyleableObjectProperty<EFXRippleShape>     rippleClipShape;
+    private EFXStyleableObjectProperty<Color>              rippleColor;
+    private EFXStyleableObjectProperty<Duration>           rippleDuration;
+    private EFXStyleableObjectProperty<Interpolator>       rippleInterpolator;
+    private EFXStyleableObjectProperty<EFXState>           rippleFillState;
+    private EFXStyleableDoubleProperty                     rippleRadius;
+    private EFXStyleableObjectProperty<Color>              rippleStrokeColor;
+    private EFXStyleableDoubleProperty                     rippleStrokeWidth;
+    private EFXStyleableObjectProperty<EFXRippleDirection> rippleDirection;
+    private EFXStyleableObjectProperty<EFXState>           rippleFadeState;
+    private EFXStyleableObjectProperty<BlurType>           dropShadowBlurType;
+    private EFXStyleableObjectProperty<Color>              dropShadowColor;
+    private EFXStyleableDoubleProperty                     dropShadowRadius;
+    private EFXStyleableDoubleProperty                     dropShadowSpread;
+    private EFXStyleableDoubleProperty                     dropShadowOffsetX;
+    private EFXStyleableDoubleProperty                     dropShadowOffsetY;
+    private EFXStyleableObjectProperty<EFXState>           dropShadowState;
 
     static {
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, State>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, EFXState>create()
                                                .property("-efx-ripple-state")
-                                               .converter(EnumConverter.getEnumConverter(State.class))
-                                               .initialValue(DEFAULT_RIPPLE_STATE)
+                                               .converter(EnumConverter.getEnumConverter(EFXState.class))
+                                               .initialValue(DEFAULT_RIPPLE_EFX_STATE)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleState))
                                                .propertyGetterFunction(node -> node.rippleState));
 
@@ -174,23 +193,23 @@ public class EFXRippleEffect extends Region {
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleInterpolator))
                                                .propertyGetterFunction(node -> node.rippleInterpolator));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, State>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, EFXState>create()
                                                .property("-efx-ripple-fill-state")
-                                               .converter(EnumConverter.getEnumConverter(State.class))
-                                               .initialValue(DEFAULT_RIPPLE_FILL_STATE)
+                                               .converter(EnumConverter.getEnumConverter(EFXState.class))
+                                               .initialValue(DEFAULT_RIPPLE_FILL_EFX_STATE)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleFillState))
                                                .propertyGetterFunction(node -> node.rippleFillState));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-radius")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_RIPPLE_RADIUS)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleRadius))
                                                .propertyGetterFunction(node -> node.rippleRadius));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-stroke-width")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_RIPPLE_STROKE_WIDTH)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleStrokeWidth))
                                                .propertyGetterFunction(node -> node.rippleStrokeWidth));
@@ -209,10 +228,10 @@ public class EFXRippleEffect extends Region {
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleDirection))
                                                .propertyGetterFunction(node -> node.rippleDirection));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, State>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, EFXState>create()
                                                .property("-efx-ripple-fade-state")
-                                               .converter(EnumConverter.getEnumConverter(State.class))
-                                               .initialValue(DEFAULT_RIPPLE_FADE_STATE)
+                                               .converter(EnumConverter.getEnumConverter(EFXState.class))
+                                               .initialValue(DEFAULT_RIPPLE_FADE_EFX_STATE)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.rippleFadeState))
                                                .propertyGetterFunction(node -> node.rippleFadeState));
 
@@ -230,80 +249,127 @@ public class EFXRippleEffect extends Region {
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowColor))
                                                .propertyGetterFunction(node -> node.dropShadowColor));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-drop-shadow-radius")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_DROPSHADOW_RADIUS)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowRadius))
                                                .propertyGetterFunction(node -> node.dropShadowRadius));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-drop-shadow-spread")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_DROPSHADOW_SPREAD)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowSpread))
                                                .propertyGetterFunction(node -> node.dropShadowSpread));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-drop-shadow-offset-x")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_DROPSHADOW_OFFSET_X)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowOffsetX))
                                                .propertyGetterFunction(node -> node.dropShadowOffsetX));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Number>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, Double>create()
                                                .property("-efx-ripple-drop-shadow-offset-y")
-                                               .converter(SizeConverter.getInstance())
+                                               .converter(DoubleStyleConverter.getInstance())
                                                .initialValue(DEFAULT_DROPSHADOW_OFFSET_Y)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowOffsetY))
                                                .propertyGetterFunction(node -> node.dropShadowOffsetY));
 
-        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, State>create()
+        stylesManager.addCssMetaData(CssFactory.<EFXRippleEffect, EFXState>create()
                                                .property("-efx-ripple-drop-shadow-state")
-                                               .converter(EnumConverter.getEnumConverter(State.class))
-                                               .initialValue(DEFAULT_DROPSHADOW_STATE)
+                                               .converter(EnumConverter.getEnumConverter(EFXState.class))
+                                               .initialValue(DEFAULT_DROPSHADOW_EFX_STATE)
                                                .isSettableFunction(node -> EFXPropertyUtils.checkProperty(node.dropShadowState))
                                                .propertyGetterFunction(node -> node.dropShadowState));
     }
 
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Initializes the ripple effect with a target node. The ripple effect properties are set to their default values, which can be overridden by CSS.
+     * Creates a new instance of {@code EFXRippleEffect} associated with the specified {@link Region}.
+     *
+     * <p>This static factory method provides a convenient way to instantiate {@code EFXRippleEffect} objects. The created effect will be applied to the given {@code targetNode}, enabling ripple effects on
+     * mouse clicks within that {@code Region}.</p>
      *
      * @param targetNode
-     *         The node to which the ripple effect will be applied.
+     *         The {@link Region} to which the ripple effect will be applied. This cannot be {@code null}.
+     *
+     * @return A new instance of {@code EFXRippleEffect} initialized with the target node.
+     *
+     * @throws IllegalArgumentException
+     *         if {@code targetNode} is {@code null}.
      */
-    public EFXRippleEffect(Region targetNode) {
-        this.targetNode = targetNode;
-        initialize();
+    public static EFXRippleEffect create(Region targetNode) {
+        return new EFXRippleEffect(targetNode);
     }
 
-    private void initialize() {
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
+
+    /**
+     * Constructs an instance of {@code EFXRippleEffect} for the given target node.
+     *
+     * <p>This constructor initializes the ripple effect, setting up the necessary style, event filters, and listeners to ensure that the ripple animation is displayed correctly on the target region.</p>
+     *
+     * <p>It ensures the target node is not null with {@link EFXObjectUtils#isNotNull(Object, Supplier)} and sets the {@code pickOnBounds} property to false to ensure that only visible parts of the target node
+     * can trigger the ripple effect. Additionally, it applies a specific style class to the effect, initializes all styleable properties, and sets up listeners to properly handle changes to the target node's
+     * dimensions, background, and the ripple clip shape.</p>
+     *
+     * <p>This constructor is private to enforce the use of the static factory method {@link #create(Region)} for object creation, promoting a consistent and controlled way of instantiating
+     * {@code EFXRippleEffect}.</p>
+     *
+     * @param targetNode
+     *         The {@link Region} to which this ripple effect is to be applied. Must not be {@code null}.
+     *
+     * @throws IllegalArgumentException
+     *         if {@code targetNode} is {@code null}, ensuring that a valid region is provided.
+     */
+    private EFXRippleEffect(Region targetNode) {
+        super();
+        EFXObjectUtils.isNotNull(targetNode, () -> "targetNode cannot be null when creating a ripple effect");
+        this.targetNode = targetNode;
         this.initializeStyleableProperties();
 
-        RegionConfigurator.create(this)
-                                 .setPickOnBounds(false)
-                                 .setAllStyleClasses(RIPPLE_STYLE);
+        InvalidationListener clipInvalidationListener = ignored -> this.setClip(createRippleClip());
 
-        InvalidationListener clipInvalidationListener = invalidated -> this.setClip(createRippleClip());
+        CustomRegionConfigurator.create(this)
+                                .setPickOnBounds(false)
+                                .setAllStyleClasses(RIPPLE_STYLE)
+                                .addObjectPropertyInvalidationListener(rippleClipShape, clipInvalidationListener);
 
         RegionConfigurator.create(targetNode)
                           .addEventFilter(MouseEvent.MOUSE_CLICKED, this::createAndAnimateRipple)
                           .addWidthInvalidationListener(clipInvalidationListener)
                           .addHeightInvalidationListener(clipInvalidationListener)
                           .addBackgroundInvalidationListener(clipInvalidationListener);
-
-        rippleClipShape.addListener(clipInvalidationListener);
     }
 
+    //endregion Constructor
+
+    //region Ripple Clip Creation
+    //*****************************************************************
+    // Ripple Clip Creation
+    //*****************************************************************
+
     /**
-     * Constructs a {@link Shape} to be used as a clipping mask based on the current {@code efxRippleShape} configuration. This method determines the appropriate clipping shape to match the ripple effect shape,
-     * ensuring the visual boundaries of the ripple effect are consistent with the intended design. The method supports various shapes such as rectangles, uniform rounded rectangles, asymmetric rounded
-     * rectangles, circles, and ellipses. It utilizes {@link Optional} to gracefully handle potential null values and enforce the requirement that a valid shape configuration is provided.
+     * Creates a clip shape based on the currently set ripple effect shape.
      *
-     * @return A {@link Shape} object that serves as a clipping mask for the ripple effect.
+     * <p>The method uses the rippleClipShape property to determine which specific shape to create, supporting various shapes like rectangle, rounded rectangle (both uniform and asymmetric), circle, and
+     * ellipse.</p>
+     *
+     * @return The created {@link Shape} that will be used as a clip.
      *
      * @throws RippleEffectException
-     *         if {@code efxRippleShape} is null, indicating that a valid shape must be specified for creating a clipping mask.
+     *         if the ripple shape is null or not recognized.
      */
     private Shape createRippleClip() {
         return Optional.ofNullable(rippleClipShape.get())
@@ -319,19 +385,24 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a rectangle clipping mask matching the dimensions of the target node. This method provides a straightforward rectangular clip without rounded corners.
+     * Creates a clip shape based on the currently set ripple effect shape.
      *
-     * @return A {@link Rectangle} object representing the clipping mask.
+     * <p>The method uses the rippleClipShape property to determine which specific shape to create, supporting various shapes like rectangle, rounded rectangle (both uniform and asymmetric), circle, and
+     * ellipse.</p>
+     *
+     * @return The created {@link Shape} that will be used as a clip.
+     *
+     * @throws RippleEffectException
+     *         if the ripple shape is null or not recognized.
      */
     private Rectangle createRectangleClip() {
         return new Rectangle(targetNode.getWidth(), targetNode.getHeight());
     }
 
     /**
-     * Creates a rounded rectangle clipping mask based on the target node's dimensions and corner radii. This method allows for a clipping mask with rounded corners, providing a more aesthetically pleasing
-     * visual effect that can match the UI component's design.
+     * Creates a uniformly rounded rectangle clip. The corner radii are determined by examining the target node's background fills, using the first fill's radii as the basis for the clip's rounded corners.
      *
-     * @return A {@link Rectangle} with rounded corners representing the clipping mask.
+     * @return A {@link Rectangle} with rounded corners for clipping.
      */
     private Rectangle createRoundedRectangleClip() {
         Rectangle clip = new Rectangle();
@@ -347,51 +418,23 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a new instance of {@link AsymmetricRoundedRectangle} with the dimensions and corner radii of the targetNode.
+     * Creates an asymmetrically rounded rectangle based on the target node's dimensions and corner radii.
      *
-     * @return a new instance of {@link AsymmetricRoundedRectangle} with the dimensions and corner radii of the targetNode.
+     * <p>This allows for different corner radii across the rectangle, providing more customization for the clip shape.</p>
+     *
+     * @return An instance of {@link AsymmetricRoundedRectangle} for clipping.
      */
     private AsymmetricRoundedRectangle createAsymmetricRoundedRectangle() {
-        return new AsymmetricRoundedRectangle(targetNode.getWidth(), targetNode.getHeight(), getCornerRadii(targetNode));
+        return AsymmetricRoundedRectangle.create(targetNode.getWidth(), targetNode.getHeight(), getCornerRadii(targetNode));
     }
 
     /**
-     * Creates a circular clipping mask. This method assumes the target node is square (width equals height) and uses the smaller dimension as the circle's radius. If the target node is not square, it throws an
-     * {@link RippleEffectException} to indicate the mismatch.
-     *
-     * @return A {@link Circle} representing the clipping mask.
-     *
-     * @throws RippleEffectException
-     *         if the target node's width and height are not equal, indicating a circular clip cannot be accurately applied.
-     */
-    private Circle createCircleClip() {
-        if (targetNode.getWidth() != targetNode.getHeight()) {
-            throw new RippleEffectException("Clip Shape should be ellipse not circle. Target node width and height are not equal");
-        }
-        double radius = Math.min(targetNode.getWidth(), targetNode.getHeight()) / 2;
-        return new Circle(radius);
-    }
-
-    /**
-     * Creates an ellipse clipping mask based on the target node's dimensions. This method is suitable for scenarios where the target node's width and height differ, providing an elliptical clip that matches
-     * the aspect ratio of the target node.
-     *
-     * @return An {@link Ellipse} representing the clipping mask.
-     */
-    private Ellipse createEllipseClip() {
-        double horizontalRadius = targetNode.getWidth() / 2;
-        double verticalRadius   = targetNode.getHeight() / 2;
-        return new Ellipse(horizontalRadius, verticalRadius);
-    }
-
-    /**
-     * Retrieves the {@link CornerRadii} of the target node's background, if any. This method is used to determine the appropriate rounded corners for clipping masks and ripple effects based on the target
-     * node's current design.
+     * Retrieves the corner radii of the target node's first background fill. If the target node has no background or the background has no fills, it returns {@link CornerRadii#EMPTY}.
      *
      * @param targetNode
-     *         The {@link Region} whose corner radii are to be determined.
+     *         The {@link Region} from which to extract corner radii.
      *
-     * @return The {@link CornerRadii} of the target node's background or {@link CornerRadii#EMPTY} if no background or radii are defined.
+     * @return The corner radii of the target node's first background fill.
      */
     private CornerRadii getCornerRadii(Region targetNode) {
         return Optional.ofNullable(targetNode.getBackground())
@@ -403,11 +446,56 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Generates and animates a ripple effect in response to a mouse click event on the target node. The animation properties such as duration and interpolator are based on the current styleable property
-     * values.
+     * Creates a circle clip centered on the target node.
+     *
+     * <p>The radius is set to half the smaller of the node's width or height. This method ensures that the created clip is a perfect circle by throwing an exception if the target node's width and height are
+     * not equal.</p>
+     *
+     * @return A {@link Circle} shaped clip.
+     *
+     * @throws RippleEffectException
+     *         if the target node's width and height are not equal.
+     */
+    private Circle createCircleClip() {
+        if (targetNode.getWidth() != targetNode.getHeight()) {
+            throw new RippleEffectException("Clip Shape should be ellipse not circle. Target node width and height are not equal");
+        }
+        double radius = Math.min(targetNode.getWidth(), targetNode.getHeight()) / 2;
+        return new Circle(radius);
+    }
+
+    /**
+     * Creates an ellipse clip based on the target node's dimensions.
+     *
+     * <p>The horizontal and vertical radii are set to half the width and height of the target node, respectively, allowing the ellipse to exactly fit the node's bounds.</p>
+     *
+     * @return An {@link Ellipse} shaped clip.
+     */
+    private Ellipse createEllipseClip() {
+        double horizontalRadius = targetNode.getWidth() / 2;
+        double verticalRadius   = targetNode.getHeight() / 2;
+        return new Ellipse(horizontalRadius, verticalRadius);
+    }
+
+    //endregion Ripple Clip Creation
+
+    //region Ripple Animation Creation
+    //*****************************************************************
+    // Ripple Animation Creation
+    //*****************************************************************
+
+    /**
+     * Creates and animates a ripple effect in response to a {@link MouseEvent}.
+     *
+     * <p>This method first checks if the ripple effect is enabled through {@code isRippleEnabled()}. If so, it generates a ripple shape at the event location and adds it to the children of this component. The
+     * ripple animation is configured based on the properties defined for this effect, such as end scale, end opacity, and the interpolator to use. The animation makes the ripple expand and fade out (if fade is
+     * enabled) over the duration specified by {@code getRippleDuration()}.</p>
+     *
+     * <p>Once the animation is created, it is managed and played by the {@code efxAnimationManager}, ensuring that the ripple effect is properly timed and cleaned up after completion. The method consumes the
+     * mouse event to prevent further handling.</p>
      *
      * @param event
-     *         The mouse event that triggers the ripple effect.
+     *         The {@link MouseEvent} that triggered the ripple creation.
      */
     private void createAndAnimateRipple(MouseEvent event) {
         if (isRippleEnabled()) {
@@ -434,9 +522,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Calculates the end scale for the ripple effect based on the target node's dimensions. This determines how far the ripple should expand.
+     * Calculates the end scale factor for the ripple animation.
      *
-     * @return The calculated end scale for the ripple animation.
+     * <p>This factor determines how much the ripple should scale from its origin point to cover the entire target node. The calculation involves finding the diagonal distance from the event source to the
+     * furthest corner of the target node, which ensures the ripple can fully expand beyond the visible bounds of the node.</p>
+     *
+     * <p>If the ripple direction is set to expand outwards ({@code isRippleDirectionOut()} returns true), the end scale is determined by this maximum distance. Otherwise, a default minimal scale factor is
+     * returned, useful for inward animations or specific stylistic effects.</p>
+     *
+     * @return The calculated end scale factor for the ripple effect.
      */
     private double getEndScale() {
         // Calculate the maximum distance from the event point to the corners of the target node
@@ -449,23 +543,26 @@ public class EFXRippleEffect extends Region {
         return isRippleDirectionOut() ? maxDistance : 0.1; // Multiply by 2 for both directions
     }
 
+    //endregion Ripple Animation Creation
+
+    //region Ripple Creation
+    //*****************************************************************
+    // Ripple Creation
+    //*****************************************************************
+
     /**
-     * Dynamically creates a ripple effect {@link Shape} based on the specified ripple shape configuration. This method utilizes {@link Optional} to safely handle the potential nullability of
-     * {@code efxRippleShape}. Depending on the configured {@code efxRippleShape} value, it delegates to specific methods to create the appropriate {@link Shape} instance for the ripple effect, such as a
-     * rectangle, circle, or ellipse. The shape and behavior of the ripple are determined by the type of the event-triggering UI component and the mouse event coordinates.
+     * Creates a ripple effect based on the specified {@link MouseEvent} and the current ripple shape.
      *
-     * <p>
-     * This implementation ensures that a {@link RippleEffectException} is thrown if {@code efxRippleShape} is not set, enforcing the requirement that a valid shape must be specified to create a ripple effect.
-     * This approach enhances the robustness of the method by explicitly handling the case where the ripple shape configuration might be missing or incorrectly set.
-     * </p>
+     * <p>This method determines the shape of the ripple effect by inspecting the {@code rippleShape} property, creating a shape-specific ripple at the location of the event. Supported shapes include uniform
+     * and asymmetric rounded rectangles, rectangle, circle, and both horizontal and vertical ellipses. The method throws a {@link RippleEffectException} if the ripple shape is not set.</p>
      *
      * @param event
-     *         The {@link MouseEvent} that triggers the creation of the ripple effect, used to determine the origin and characteristics of the ripple.
+     *         The {@link MouseEvent} that triggers the ripple effect.
      *
-     * @return A {@link Shape} object that represents the created ripple effect, tailored according to the configured shape and the event details.
+     * @return A {@link Shape} representing the created ripple effect, not null.
      *
      * @throws RippleEffectException
-     *         if {@code efxRippleShape} is null, ensuring that a valid shape is always provided for the creation of a ripple effect.
+     *         if the ripple shape is null.
      */
     @NotNull
     private Shape createRippleEffect(MouseEvent event) {
@@ -482,13 +579,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a rounded rectangle ripple effect shape. This method calculates the ripple's size and position based on the {@link MouseEvent} coordinates and the predefined ripple radius. It also applies
-     * rounded corners to the rectangle based on the target node's corner radii, providing a visually integrated ripple effect within the UI component.
+     * Creates a rounded rectangle ripple at the location of the provided mouse event.
+     *
+     * <p>The corner radii of the ripple are determined by the target node's current corner radii, ensuring the ripple complements the target's appearance. The size of the ripple is based on the
+     * {@code rippleRadius}, and it is positioned such that the event location is at its center. Ripple effect properties are then applied to the created shape.</p>
      *
      * @param event
-     *         The {@link MouseEvent} triggering the ripple effect, used for calculating the ripple's center.
+     *         The {@link MouseEvent} that triggers the creation of the ripple.
      *
-     * @return A {@link Rectangle} with rounded corners representing the ripple effect.
+     * @return A {@link Rectangle} representing the ripple, with rounded corners, not null.
      */
     @NotNull
     private Rectangle createRoundedRectangleRipple(MouseEvent event) {
@@ -509,12 +608,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates an asymmetric rounded rectangle ripple based on the mouse event.
+     * Creates an asymmetrically rounded rectangle ripple based on the mouse event location.
+     *
+     * <p>The ripple's corner radii are adjusted from the target node's corner radii to fit the ripple's aesthetics. This method calculates the ripple's dimensions using {@code rippleRadius} and positions it
+     * so that the mouse event's location is at the center of the ripple. Ripple effect properties are applied to enhance its visual appearance.</p>
      *
      * @param event
-     *         the mouse event from which the coordinates are retrieved
+     *         The {@link MouseEvent} that triggers the ripple.
      *
-     * @return the created asymmetric rounded rectangle ripple
+     * @return An {@link AsymmetricRoundedRectangle} that represents the created ripple, not null.
      */
     @NotNull
     private AsymmetricRoundedRectangle createAsymmetricRoundedRectangleRipple(MouseEvent event) {
@@ -524,7 +626,7 @@ public class EFXRippleEffect extends Region {
         double      width         = rippleRadius * 2;
         double      height        = rippleRadius * 2;
 
-        AsymmetricRoundedRectangle ripple = new AsymmetricRoundedRectangle(event.getX() - rippleRadius, event.getY() - rippleRadius, width, height, adjustedRadii);
+        AsymmetricRoundedRectangle ripple = AsymmetricRoundedRectangle.create(event.getX() - rippleRadius, event.getY() - rippleRadius, width, height, adjustedRadii);
 
         applyRippleEffectProperties(ripple);
 
@@ -532,12 +634,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Adjusts the given CornerRadii by multiplying each radius value by a specified multiplier.
+     * Adjusts the corner radii for the ripple effect based on the original radii of the target node's background and the ripple radius.
+     *
+     * <p>This adjustment ensures that the ripple's corners are proportionally rounded relative to its size, maintaining a consistent design aesthetic. The method calculates the multiplier based on the
+     * {@code rippleRadius} and applies it to each corner radius of the original {@link CornerRadii}.</p>
      *
      * @param originalRadii
-     *         the original CornerRadii object to be adjusted
+     *         The original corner radii of the target node's background.
      *
-     * @return a new CornerRadii object with each radius adjusted by the multiplier
+     * @return A new {@link CornerRadii} object with adjusted corner radii for the ripple effect.
      */
     private CornerRadii getAdjustedRadii(CornerRadii originalRadii) {
         //@formatter:off
@@ -555,13 +660,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a rectangle ripple effect shape. This method constructs a {@link Rectangle} based on the {@link MouseEvent} coordinates and the predefined ripple radius, offering a simple, geometric ripple
-     * effect suitable for various UI components.
+     * Creates a rectangular ripple effect centered at the mouse event location.
+     *
+     * <p>The size of the rectangle is determined by the {@code rippleRadius} property, ensuring the ripple expands symmetrically from the event point. After creating the rectangle, it applies common ripple
+     * effect properties such as fill color, stroke width, and optional drop shadow through {@link #applyRippleEffectProperties(Shape)}.</p>
      *
      * @param event
-     *         The {@link MouseEvent} triggering the ripple effect, used for determining the rectangle's origin.
+     *         The {@link MouseEvent} that triggers the ripple effect.
      *
-     * @return A {@link Rectangle} representing the ripple effect.
+     * @return A {@link Rectangle} shaped ripple effect, positioned based on the event location.
      */
     @NotNull
     private Rectangle createRectangleRipple(MouseEvent event) {
@@ -573,13 +680,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a circle ripple effect shape. The method generates a {@link Circle} using the {@link MouseEvent} coordinates as the center and the predefined ripple radius. This shape provides a symmetrical,
-     * visually appealing ripple effect, ideal for circular or small UI elements.
+     * Creates a circular ripple effect at the location of the mouse event.
+     *
+     * <p>The radius of the circle is defined by the {@code rippleRadius} property, creating a ripple that emanates from the point of interaction. This method also applies standardized ripple effect properties
+     * to the circle, including fill and stroke colors, stroke width, and potentially a drop shadow if enabled.</p>
      *
      * @param event
-     *         The {@link MouseEvent} triggering the ripple effect, used to set the circle's center.
+     *         The {@link MouseEvent} that initiates the ripple effect.
      *
-     * @return A {@link Circle} representing the ripple effect.
+     * @return A {@link Circle} representing the ripple effect, centered on the event location.
      */
     @NotNull
     private Circle createCircleRipple(MouseEvent event) {
@@ -589,13 +698,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a horizontal ellipse ripple effect. This method forms an {@link Ellipse} with its major axis aligned horizontally. The ellipse's size and position are determined based on the {@link MouseEvent}
-     * coordinates and the predefined ripple radius, creating a stretched ripple effect along the horizontal axis.
+     * Generates a horizontally elongated ellipse ripple centered at the mouse event's location.
+     *
+     * <p>The major axis (horizontal) of the ellipse is twice the length of the {@code rippleRadius} property, while the minor axis (vertical) matches the {@code rippleRadius}, creating a horizontally
+     * stretched ripple effect. Common ripple effect properties are applied to enhance the visual appearance of the ellipse, including color, stroke, and shadow effects as configured.</p>
      *
      * @param event
-     *         The {@link MouseEvent} triggering the ripple effect, used to set the ellipse's center.
+     *         The {@link MouseEvent} that triggers this ripple effect.
      *
-     * @return An {@link Ellipse} representing the horizontal ripple effect.
+     * @return An {@link Ellipse} with a horizontal orientation, centered at the event point.
      */
     @NotNull
     private Ellipse createHorizontalEllipseRipple(MouseEvent event) {
@@ -607,13 +718,15 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Creates a vertical ellipse ripple effect. Similar to the horizontal ellipse method, this creates an {@link Ellipse} but with its major axis aligned vertically. It uses the {@link MouseEvent} coordinates
-     * and the predefined ripple radius to determine the ellipse's size and positioning, offering a unique, vertically stretched ripple effect.
+     * Creates a vertically elongated ellipse ripple centered on the mouse event's location.
+     *
+     * <p>This method sets the ellipse's vertical radius to twice the {@code rippleRadius} property value, and the horizontal radius to the {@code rippleRadius}, resulting in a vertically stretched appearance.
+     * Similar to other shapes, this ripple undergoes styling through {@link #applyRippleEffectProperties(Shape)} to apply fill color, stroke, and possibly a drop shadow to enhance its visual effect.</p>
      *
      * @param event
-     *         The {@link MouseEvent} triggering the ripple effect, used to establish the ellipse's center.
+     *         The {@link MouseEvent} responsible for initiating the ripple.
      *
-     * @return An {@link Ellipse} representing the vertical ripple effect.
+     * @return An {@link Ellipse} shaped ripple effect with a vertical orientation.
      */
     @NotNull
     private Ellipse createVerticalEllipseRipple(MouseEvent event) {
@@ -625,8 +738,11 @@ public class EFXRippleEffect extends Region {
     }
 
     /**
-     * Applies common ripple effect properties to a given {@link Shape}. This method configures the fill color, stroke width, stroke color, and optionally a drop shadow effect based on the current settings. It
-     * standardizes the appearance and styling of the ripple effect across different shapes, ensuring consistency in the visual presentation.
+     * Applies common ripple effect properties to the specified {@link Shape}, including fill color, stroke color, stroke width, and an optional drop shadow.
+     *
+     *
+     * <p>The method determines the fill color based on whether the ripple fill state is enabled, applying either the specified {@code rippleColor} or making it transparent. If the drop shadow effect is
+     * enabled, it configures and applies a {@link DropShadow} effect based on the configured properties such as color, radius, spread, and offsets.</p>
      *
      * @param ripple
      *         The {@link Shape} to which the ripple effect properties are applied.
@@ -641,173 +757,197 @@ public class EFXRippleEffect extends Region {
         }
     }
 
+    //endregion Ripple Creation
+
+    //region Styleable Properties
+    //*****************************************************************
+    // Styleable Properties
+    //*****************************************************************
+
     /**
-     * Initializes the styleable properties for the ripple effect. This method is called during the construction of the EFXRippleEffect object to set up the CSS metadata for all customizable properties.
+     * Initializes the styleable properties for the {@code EFXRippleEffect}.
+     *
+     * <p>This method sets up various properties that can be styled via CSS, allowing for customization of the ripple effect's appearance and behavior. Each property is created with a specific name, initial
+     * value, and linked to its CSS metadata defined in the styles' manager.</p>
+     *
+     * <h2>The following styleable properties are initialized:</h2>
+     * <ul>
+     *     <li>{@code rippleState}: Defines the overall state of the ripple effect.</li>
+     *     <li>{@code rippleShape}: Determines the shape of the ripple effect.</li>
+     *     <li>{@code rippleClipShape}: Specifies the clipping shape of the ripple effect.</li>
+     *     <li>{@code rippleColor}: Sets the fill color of the ripple.</li>
+     *     <li>{@code rippleDuration}: Configures the duration of the ripple animation.</li>
+     *     <li>{@code rippleInterpolator}: Defines the interpolation method for the ripple animation.</li>
+     *     <li>{@code rippleFillState}: Indicates whether the ripple is filled or not.</li>
+     *     <li>{@code rippleRadius}: Determines the radius of the ripple effect.</li>
+     *     <li>{@code rippleStrokeWidth}: Sets the stroke width of the ripple.</li>
+     *     <li>{@code rippleStrokeColor}: Specifies the stroke color of the ripple.</li>
+     *     <li>{@code rippleDirection}: Defines the direction of the ripple expansion.</li>
+     *     <li>{@code rippleFadeState}: Indicates whether the ripple should fade out after animation.</li>
+     *     <li>{@code dropShadowBlurType}: Configures the blur type of the optional drop shadow.</li>
+     *     <li>{@code dropShadowColor}: Sets the color of the drop shadow.</li>
+     *     <li>{@code dropShadowRadius}: Determines the radius of the drop shadow.</li>
+     *     <li>{@code dropShadowSpread}: Configures the spread of the drop shadow.</li>
+     *     <li>{@code dropShadowOffsetX}: Sets the horizontal offset of the drop shadow.</li>
+     *     <li>{@code dropShadowOffsetY}: Sets the vertical offset of the drop shadow.</li>
+     *     <li>{@code dropShadowState}: Defines the state of the drop shadow effect.</li>
+     * </ul>
+     *
+     * <p>These properties allow for extensive customization through CSS, making it possible to adjust the visual characteristics of the ripple effect to fit the design requirements.</p>
      */
     private void initializeStyleableProperties() {
-        rippleState = ExtendedStyleableObjectPropertyFactory.<State>builder()
-                                                            .name("rippleState")
-                                                            .bean(EFXRippleEffect.this)
-                                                            .type(State.class)
-                                                            .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-state"))
-                                                            .defaultValue(DEFAULT_RIPPLE_STATE)
-                                                            .build();
+        rippleState = EFXStyleableObjectProperty.<EFXState>create()
+                                                .name("rippleEFXState")
+                                                .bean(EFXRippleEffect.this)
+                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-state"))
+                                                .initialValue(DEFAULT_RIPPLE_EFX_STATE)
+                                                .build();
 
-        rippleShape = ExtendedStyleableObjectPropertyFactory.<EFXRippleShape>builder()
-                                                            .name("efxRippleShape")
-                                                            .bean(EFXRippleEffect.this)
-                                                            .type(EFXRippleShape.class)
-                                                            .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-shape"))
-                                                            .defaultValue(DEFAULT_RIPPLE_SHAPE)
-                                                            .build();
+        rippleShape = EFXStyleableObjectProperty.<EFXRippleShape>create()
+                                                .name("efxRippleShape")
+                                                .bean(EFXRippleEffect.this)
+                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-shape"))
+                                                .initialValue(DEFAULT_RIPPLE_SHAPE)
+                                                .build();
 
-        rippleClipShape = ExtendedStyleableObjectPropertyFactory.<EFXRippleShape>builder()
-                                                                .name("rippleClipShape")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(EFXRippleShape.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-clip-shape"))
-                                                                .defaultValue(DEFAULT_RIPPLE_CLIP_SHAPE)
-                                                                .build();
+        rippleClipShape = EFXStyleableObjectProperty.<EFXRippleShape>create()
+                                                    .name("rippleClipShape")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-clip-shape"))
+                                                    .initialValue(DEFAULT_RIPPLE_CLIP_SHAPE)
+                                                    .build();
 
-        rippleColor = ExtendedStyleableObjectPropertyFactory.<Color>builder()
-                                                            .name("rippleColor")
-                                                            .bean(EFXRippleEffect.this)
-                                                            .type(Color.class)
-                                                            .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-color"))
-                                                            .defaultValue(DEFAULT_RIPPLE_COLOR)
-                                                            .build();
+        rippleColor = EFXStyleableObjectProperty.<Color>create()
+                                                .name("rippleColor")
+                                                .bean(EFXRippleEffect.this)
+                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-color"))
+                                                .initialValue(DEFAULT_RIPPLE_COLOR)
+                                                .build();
 
-        rippleDuration = ExtendedStyleableObjectPropertyFactory.<Duration>builder()
-                                                               .name("rippleDuration")
-                                                               .bean(EFXRippleEffect.this)
-                                                               .type(Duration.class)
-                                                               .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-duration"))
-                                                               .defaultValue(DEFAULT_RIPPLE_DURATION)
-                                                               .build();
+        rippleDuration = EFXStyleableObjectProperty.<Duration>create()
+                                                   .name("rippleDuration")
+                                                   .bean(EFXRippleEffect.this)
+                                                   .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-duration"))
+                                                   .initialValue(DEFAULT_RIPPLE_DURATION)
+                                                   .build();
 
-        rippleInterpolator = ExtendedStyleableObjectPropertyFactory.<Interpolator>builder()
-                                                                   .name("rippleInterpolator")
-                                                                   .bean(EFXRippleEffect.this)
-                                                                   .type(Interpolator.class)
-                                                                   .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-interpolator"))
-                                                                   .defaultValue(DEFAULT_RIPPLE_INTERPOLATOR)
-                                                                   .build();
+        rippleInterpolator = EFXStyleableObjectProperty.<Interpolator>create()
+                                                       .name("rippleInterpolator")
+                                                       .bean(EFXRippleEffect.this)
+                                                       .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-interpolator"))
+                                                       .initialValue(DEFAULT_RIPPLE_INTERPOLATOR)
+                                                       .build();
 
-        rippleFillState = ExtendedStyleableObjectPropertyFactory.<State>builder()
-                                                                .name("rippleFillState")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(State.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-fill-state"))
-                                                                .defaultValue(DEFAULT_RIPPLE_FILL_STATE)
-                                                                .build();
+        rippleFillState = EFXStyleableObjectProperty.<EFXState>create()
+                                                    .name("rippleFillEFXState")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-fill-state"))
+                                                    .initialValue(DEFAULT_RIPPLE_FILL_EFX_STATE)
+                                                    .build();
 
-        rippleRadius = ExtendedStyleableDoublePropertyFactory.builder()
-                                                             .name("rippleRadius")
-                                                             .bean(EFXRippleEffect.this)
-                                                             .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-radius"))
-                                                             .defaultValue(DEFAULT_RIPPLE_RADIUS)
-                                                             .build();
+        rippleRadius = EFXStyleableDoubleProperty.create()
+                                                 .name("rippleRadius")
+                                                 .bean(EFXRippleEffect.this)
+                                                 .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-radius"))
+                                                 .initialValue(DEFAULT_RIPPLE_RADIUS)
+                                                 .build();
 
-        rippleStrokeWidth = ExtendedStyleableDoublePropertyFactory.builder()
-                                                                  .name("rippleStrokeWidth")
-                                                                  .bean(EFXRippleEffect.this)
-                                                                  .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-stroke-width"))
-                                                                  .defaultValue(DEFAULT_RIPPLE_STROKE_WIDTH)
-                                                                  .build();
+        rippleStrokeWidth = EFXStyleableDoubleProperty.create()
+                                                      .name("rippleStrokeWidth")
+                                                      .bean(EFXRippleEffect.this)
+                                                      .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-stroke-width"))
+                                                      .initialValue(DEFAULT_RIPPLE_STROKE_WIDTH)
+                                                      .build();
 
-        rippleStrokeColor = ExtendedStyleableObjectPropertyFactory.<Color>builder()
-                                                                  .name("rippleStrokeColor")
-                                                                  .bean(EFXRippleEffect.this)
-                                                                  .type(Color.class)
-                                                                  .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-stroke-color"))
-                                                                  .defaultValue(DEFAULT_RIPPLE_STROKE_COLOR)
-                                                                  .build();
+        rippleStrokeColor = EFXStyleableObjectProperty.<Color>create()
+                                                      .name("rippleStrokeColor")
+                                                      .bean(EFXRippleEffect.this)
+                                                      .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-stroke-color"))
+                                                      .initialValue(DEFAULT_RIPPLE_STROKE_COLOR)
+                                                      .build();
 
-        rippleDirection = ExtendedStyleableObjectPropertyFactory.<EFXRippleDirection>builder()
-                                                                .name("efxRippleDirection")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(EFXRippleDirection.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-direction"))
-                                                                .defaultValue(DEFAULT_RIPPLE_DIRECTION)
-                                                                .build();
+        rippleDirection = EFXStyleableObjectProperty.<EFXRippleDirection>create()
+                                                    .name("efxRippleDirection")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-direction"))
+                                                    .initialValue(DEFAULT_RIPPLE_DIRECTION)
+                                                    .build();
 
-        rippleFadeState = ExtendedStyleableObjectPropertyFactory.<State>builder()
-                                                                .name("rippleFadeState")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(State.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-fade-state"))
-                                                                .defaultValue(DEFAULT_RIPPLE_FADE_STATE)
-                                                                .build();
+        rippleFadeState = EFXStyleableObjectProperty.<EFXState>create()
+                                                    .name("rippleFadeEFXState")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-fade-state"))
+                                                    .initialValue(DEFAULT_RIPPLE_FADE_EFX_STATE)
+                                                    .build();
 
-        dropShadowBlurType = ExtendedStyleableObjectPropertyFactory.<BlurType>builder()
-                                                                   .name("dropShadowBlurType")
-                                                                   .bean(EFXRippleEffect.this)
-                                                                   .type(BlurType.class)
-                                                                   .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-blur-type"))
-                                                                   .defaultValue(DEFAULT_DROPSHADOW_BLUR_TYPE)
-                                                                   .build();
+        dropShadowBlurType = EFXStyleableObjectProperty.<BlurType>create()
+                                                       .name("dropShadowBlurType")
+                                                       .bean(EFXRippleEffect.this)
+                                                       .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-blur-type"))
+                                                       .initialValue(DEFAULT_DROPSHADOW_BLUR_TYPE)
+                                                       .build();
 
-        dropShadowColor = ExtendedStyleableObjectPropertyFactory.<Color>builder()
-                                                                .name("dropShadowColor")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(Color.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-color"))
-                                                                .defaultValue(DEFAULT_DROPSHADOW_COLOR)
-                                                                .build();
+        dropShadowColor = EFXStyleableObjectProperty.<Color>create()
+                                                    .name("dropShadowColor")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-color"))
+                                                    .initialValue(DEFAULT_DROPSHADOW_COLOR)
+                                                    .build();
 
-        dropShadowRadius = ExtendedStyleableDoublePropertyFactory.builder()
-                                                                 .name("dropShadowRadius")
-                                                                 .bean(EFXRippleEffect.this)
-                                                                 .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-radius"))
-                                                                 .defaultValue(DEFAULT_DROPSHADOW_RADIUS)
-                                                                 .build();
+        dropShadowRadius = EFXStyleableDoubleProperty.create()
+                                                     .name("dropShadowRadius")
+                                                     .bean(EFXRippleEffect.this)
+                                                     .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-radius"))
+                                                     .initialValue(DEFAULT_DROPSHADOW_RADIUS)
+                                                     .build();
 
-        dropShadowSpread = ExtendedStyleableDoublePropertyFactory.builder()
-                                                                 .name("dropShadowSpread")
-                                                                 .bean(EFXRippleEffect.this)
-                                                                 .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-spread"))
-                                                                 .defaultValue(DEFAULT_DROPSHADOW_SPREAD)
-                                                                 .build();
+        dropShadowSpread = EFXStyleableDoubleProperty.create()
+                                                     .name("dropShadowSpread")
+                                                     .bean(EFXRippleEffect.this)
+                                                     .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-spread"))
+                                                     .initialValue(DEFAULT_DROPSHADOW_SPREAD)
+                                                     .build();
 
-        dropShadowOffsetX = ExtendedStyleableDoublePropertyFactory.builder()
-                                                                  .name("dropShadowOffsetX")
-                                                                  .bean(EFXRippleEffect.this)
-                                                                  .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-offset-x"))
-                                                                  .defaultValue(DEFAULT_DROPSHADOW_OFFSET_X)
-                                                                  .build();
+        dropShadowOffsetX = EFXStyleableDoubleProperty.create()
+                                                      .name("dropShadowOffsetX")
+                                                      .bean(EFXRippleEffect.this)
+                                                      .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-offset-x"))
+                                                      .initialValue(DEFAULT_DROPSHADOW_OFFSET_X)
+                                                      .build();
 
-        dropShadowOffsetY = ExtendedStyleableDoublePropertyFactory.builder()
-                                                                  .name("dropShadowOffsetY")
-                                                                  .bean(EFXRippleEffect.this)
-                                                                  .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-offset-y"))
-                                                                  .defaultValue(DEFAULT_DROPSHADOW_OFFSET_Y)
-                                                                  .build();
+        dropShadowOffsetY = EFXStyleableDoubleProperty.create()
+                                                      .name("dropShadowOffsetY")
+                                                      .bean(EFXRippleEffect.this)
+                                                      .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-offset-y"))
+                                                      .initialValue(DEFAULT_DROPSHADOW_OFFSET_Y)
+                                                      .build();
 
-        dropShadowState = ExtendedStyleableObjectPropertyFactory.<State>builder()
-                                                                .name("dropShadowState")
-                                                                .bean(EFXRippleEffect.this)
-                                                                .type(State.class)
-                                                                .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-state"))
-                                                                .defaultValue(DEFAULT_DROPSHADOW_STATE)
-                                                                .build();
+        dropShadowState = EFXStyleableObjectProperty.<EFXState>create()
+                                                    .name("dropShadowEFXState")
+                                                    .bean(EFXRippleEffect.this)
+                                                    .cssMetaData(stylesManager.findCssMetaData("-efx-ripple-drop-shadow-state"))
+                                                    .initialValue(DEFAULT_DROPSHADOW_EFX_STATE)
+                                                    .build();
     }
 
     /**
-     * Retrieves the CSS metadata for the class.
+     * Returns a list of the CSS metadata for the class.
      *
-     * @return A list of {@code CssMetaData} objects representing the CSS properties that can be applied to this class.
+     * @return a list of the CSS metadata for the class.
      */
     public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {
         return stylesManager.getCssMetaDataList();
     }
 
     /**
-     * Returns a list of CssMetaData objects representing the CSS properties that can be applied to this class.
+     * Retrieves the list of CSS metadata for this class.
      *
-     * @return a list of CssMetaData objects representing the CSS properties
+     * @return the list of CSS metadata for this class
      */
     @Override
     public List<CssMetaData<? extends Styleable, ?>> getCssMetaData() {return getClassCssMetaData();}
+
+    //endregion Styleable Properties
 
     //region Getters and Setters
     //*****************************************************************
@@ -815,113 +955,113 @@ public class EFXRippleEffect extends Region {
     //*****************************************************************
 
     /**
-     * Retrieves the current state of the ripple effect.
+     * Retrieves the ripple state of the EFX object.
      *
-     * @return The current state of the ripple effect.
+     * @return The current ripple state of the EFX.
      */
-    public State getRippleState() {
+    public EFXState getRippleState() {
         return rippleState.get();
     }
 
     /**
-     * Returns the ripple state property of the EFXRippleEffect.
+     * Retrieves the ripple state property of this object.
      *
-     * @return The ripple state property.
+     * @return the ripple state property
      */
-    public StyleableObjectProperty<State> rippleStateProperty() {
+    public EFXStyleableObjectProperty<EFXState> rippleStateProperty() {
         return rippleState;
     }
 
     /**
-     * Sets the state of the ripple effect.
+     * Sets the ripple state.
      *
-     * @param rippleState
-     *         The state of the ripple effect. It can be either State.ENABLED or State.DISABLED.
+     * @param rippleEFXState
+     *         the new ripple state
      */
-    public void setRippleState(State rippleState) {
-        this.rippleState.set(rippleState);
+    public void setRippleState(EFXState rippleEFXState) {
+        this.rippleState.set(rippleEFXState);
     }
 
     /**
-     * Checks if the ripple effect is enabled.
+     * Returns whether the ripple effect is enabled or not.
      *
      * @return {@code true} if the ripple effect is enabled, {@code false} otherwise.
      */
     public boolean isRippleEnabled() {
-        return getRippleState() == State.ENABLED;
+        return getRippleState() == EFXState.ENABLED;
     }
 
     /**
-     * Retrieves the ripple shape.
+     * Returns the EFXRippleShape object associated with this method.
      *
-     * @return The ripple shape.
+     * @return the EFXRippleShape object representing the ripple shape
      */
     public EFXRippleShape getRippleShape() {
         return rippleShape.get();
     }
 
     /**
-     * Retrieves the value of the efxRippleShape property.
+     * Retrieves the ripple shape property.
      *
-     * @return the efxRippleShape property value
+     * @return the ripple shape property
      */
-    public StyleableObjectProperty<EFXRippleShape> rippleShapeProperty() {
+    public EFXStyleableObjectProperty<EFXRippleShape> rippleShapeProperty() {
         return rippleShape;
     }
 
     /**
-     * Sets the ripple shape for the view.
+     * Sets the ripple shape.
      *
      * @param efxRippleShape
-     *         the {@link EFXRippleShape} to set
+     *         the shape of the ripple.
      */
     public void setRippleShape(EFXRippleShape efxRippleShape) {
         this.rippleShape.set(efxRippleShape);
     }
 
     /**
-     * Retrieves the ripple clip shape.
+     * Retrieves the shape of the ripple clip at the current state.
      *
-     * @return The ripple clip shape.
+     * @return The shape of the ripple clip at the current state.
      */
     public EFXRippleShape getRippleClipShape() {
         return rippleClipShape.get();
     }
 
     /**
-     * Gets the styleable object property for the ripple clip shape.
+     * Retrieves the ripple clip shape property of this object.
      *
-     * @return The styleable object property for the ripple clip shape.
+     * @return The ripple clip shape property.
      */
-    public StyleableObjectProperty<EFXRippleShape> rippleClipShapeProperty() {
+    public EFXStyleableObjectProperty<EFXRippleShape> rippleClipShapeProperty() {
         return rippleClipShape;
     }
 
     /**
-     * Set the shape of the ripple clip.
+     * Sets the shape of the ripple clipping area.
      *
      * @param rippleClipShape
-     *         The shape of the ripple clip.
+     *         the shape of the ripple clipping area to set
      */
     public void setRippleClipShape(EFXRippleShape rippleClipShape) {
         this.rippleClipShape.set(rippleClipShape);
     }
 
     /**
-     * Returns the ripple color used in the ripple effect.
+     * Retrieves the color of the ripple effect.
      *
-     * @return The ripple color.
+     * @return The color of the ripple effect.
      */
     public Color getRippleColor() {
         return rippleColor.get();
     }
 
     /**
-     * Returns the ripple color property of the EFXRippleEffect.
+     * Returns the EFXStyleableObjectProperty representing the ripple color of the object.
      *
-     * @return The ripple color property.
+     * @return The EFXStyleableObjectProperty representing the ripple color of the object.
      */
-    public StyleableObjectProperty<Color> rippleColorProperty() {
+    public EFXStyleableObjectProperty<Color> rippleColorProperty() {
         return rippleColor;
     }
 
@@ -929,120 +1069,120 @@ public class EFXRippleEffect extends Region {
      * Sets the color of the ripple effect.
      *
      * @param rippleColor
-     *         The color to be set for the ripple effect.
+     *         the color of the ripple effect
      */
     public void setRippleColor(Color rippleColor) {
         this.rippleColor.set(rippleColor);
     }
 
     /**
-     * Retrieves the duration of the ripple effect animation.
+     * Retrieves the duration of the ripple effect.
      *
-     * @return The duration of the ripple effect animation.
+     * @return The duration of the ripple effect.
      */
     public Duration getRippleDuration() {
         return rippleDuration.get();
     }
 
     /**
-     * Returns the StyleableObjectProperty representing the ripple duration of the EFXRippleEffect.
+     * Retrieves the property representing the duration of the ripple effect.
      *
-     * @return The StyleableObjectProperty representing the ripple duration of the EFXRippleEffect.
+     * @return the property representing the duration of the ripple effect
      */
-    public StyleableObjectProperty<Duration> rippleDurationProperty() {
+    public EFXStyleableObjectProperty<Duration> rippleDurationProperty() {
         return rippleDuration;
     }
 
     /**
-     * Sets the duration of the ripple effect animation.
+     * Sets the duration of the ripple effect.
      *
      * @param rippleDuration
-     *         The duration of the ripple effect animation.
+     *         the duration of the ripple effect
      */
     public void setRippleDuration(Duration rippleDuration) {
         this.rippleDuration.set(rippleDuration);
     }
 
     /**
-     * Retrieves the RippleInterpolator property value.
+     * Returns the Ripple interpolator.
      *
-     * @return The RippleInterpolator property value.
+     * @return The Ripple interpolator.
      */
     public Interpolator getRippleInterpolator() {
         return rippleInterpolator.get();
     }
 
     /**
-     * Returns the styleable property for the ripple interpolator. The ripple interpolator defines the timing of the ripple effect animation.
+     * Returns the property representing the ripple interpolator for this object.
      *
-     * @return The styleable property for the ripple interpolator.
+     * @return The property object representing the ripple interpolator.
      */
-    public StyleableObjectProperty<Interpolator> rippleInterpolatorProperty() {
+    public EFXStyleableObjectProperty<Interpolator> rippleInterpolatorProperty() {
         return rippleInterpolator;
     }
 
     /**
-     * Sets the ripple interpolator for the EFXRippleEffect.
+     * Sets the Interpolator for the ripple effect on the component.
      *
      * @param rippleInterpolator
-     *         The interpolator to be set for the ripple effect.
+     *         the Interpolator to be set for the ripple effect
      */
     public void setRippleInterpolator(Interpolator rippleInterpolator) {
         this.rippleInterpolator.set(rippleInterpolator);
     }
 
     /**
-     * Retrieves the ripple fill state.
+     * Retrieves the current state of the ripple fill.
      *
-     * @return the current ripple fill state
+     * @return the EFXState object representing the state of the ripple fill
      */
-    public State getRippleFillState() {
+    public EFXState getRippleFillState() {
         return rippleFillState.get();
     }
 
     /**
-     * Retrieves the ripple fill state property which represents the fill state of the ripple effect.
+     * Retrieves the styleable object property representing the ripple fill state.
      *
-     * @return the ripple fill state property
+     * @return The styleable object property for ripple fill state
      */
-    public StyleableObjectProperty<State> rippleFillStateProperty() {
+    public EFXStyleableObjectProperty<EFXState> rippleFillStateProperty() {
         return rippleFillState;
     }
 
     /**
-     * Set the fill state of the ripple effect.
+     * Sets the state of the ripple fill effect.
      *
-     * @param rippleFillState
-     *         The fill state of the ripple effect.
+     * @param rippleFillEFXState
+     *         the EFXState to set as the ripple fill state
      */
-    public void setRippleFillState(State rippleFillState) {
-        this.rippleFillState.set(rippleFillState);
+    public void setRippleFillState(EFXState rippleFillEFXState) {
+        this.rippleFillState.set(rippleFillEFXState);
     }
 
     /**
-     * Determines whether the ripple fill state is enabled.
+     * Checks whether the ripple fill state is enabled.
      *
-     * @return {@code true} if the ripple fill state is enabled , {@code false} otherwise.
+     * @return true if the ripple fill state is enabled, false otherwise.
      */
     public boolean isRippleFillStateEnabled() {
-        return getRippleFillState() == State.ENABLED;
+        return getRippleFillState() == EFXState.ENABLED;
     }
 
     /**
-     * Retrieves the current ripple radius used in the ripple effect.
+     * Retrieves the radius of the ripple effect.
      *
-     * @return The current ripple radius.
+     * @return The radius of the ripple effect.
      */
     public double getRippleRadius() {
         return rippleRadius.get();
     }
 
     /**
-     * Retrieves the ripple radius property of the EFXRippleEffect. The ripple radius represents the radius of the ripple circle in pixels.
+     * Get the ripple radius property.
      *
-     * @return The ripple radius property.
+     * @return the ripple radius property.
      */
-    public StyleableDoubleProperty rippleRadiusProperty() {
+    public EFXStyleableDoubleProperty rippleRadiusProperty() {
         return rippleRadius;
     }
 
@@ -1050,372 +1190,365 @@ public class EFXRippleEffect extends Region {
      * Sets the radius of the ripple effect.
      *
      * @param rippleRadius
-     *         The radius of the ripple effect to be set.
+     *         the new radius of the ripple effect
      */
     public void setRippleRadius(double rippleRadius) {
         this.rippleRadius.set(rippleRadius);
     }
 
     /**
-     * Returns the width of the ripple stroke.
+     * Gets the width of the stroke for the ripple effect.
      *
-     * @return the width of the ripple stroke
+     * @return The width of the ripple stroke.
      */
     public double getRippleStrokeWidth() {
         return rippleStrokeWidth.get();
     }
 
     /**
-     * Gets the ripple stroke width property of this object.
      *
-     * @return the ripple stroke width property
      */
-    public StyleableDoubleProperty rippleStrokeWidthProperty() {
+    public EFXStyleableDoubleProperty rippleStrokeWidthProperty() {
         return rippleStrokeWidth;
     }
 
     /**
-     * Set the width of the stroke for the ripple effect.
+     * Sets the width of the ripple effect stroke.
      *
      * @param rippleStrokeWidth
-     *         the desired stroke width for the ripple effect
+     *         the width of the ripple effect stroke to be set
      */
     public void setRippleStrokeWidth(double rippleStrokeWidth) {
         this.rippleStrokeWidth.set(rippleStrokeWidth);
     }
 
     /**
-     * Returns the ripple stroke color.
+     * Retrieves the color used for the ripple stroke.
      *
-     * @return the ripple stroke color
+     * @return The color used for the ripple stroke.
      */
     public Color getRippleStrokeColor() {
         return rippleStrokeColor.get();
     }
 
     /**
-     * Retrieves the ripple stroke color property of the object.
+     * Returns the property representing the stroke color of the ripple effect.
      *
-     * @return the StyleableObjectProperty representing the ripple stroke color
+     * @return The property representing the stroke color.
      */
-    public StyleableObjectProperty<Color> rippleStrokeColorProperty() {
+    public EFXStyleableObjectProperty<Color> rippleStrokeColorProperty() {
         return rippleStrokeColor;
     }
 
     /**
-     * Sets the color of the stroke for the ripple effect.
+     * Sets the color for the ripple stroke.
      *
      * @param rippleStrokeColor
-     *         the color of the ripple stroke
+     *         The new color for the ripple stroke
      */
     public void setRippleStrokeColor(Color rippleStrokeColor) {
         this.rippleStrokeColor.set(rippleStrokeColor);
     }
 
     /**
-     * Determines if the ripple effect is set to move outward from the center of the UI element.
+     * Returns the ripple direction of the EFXRippleEffect.
      *
-     * @return {@code true} if the ripple effect is set to move outward, {@code false} otherwise.
+     * @return The ripple direction.
      */
     public boolean isRippleDirectionOut() {
         return getRippleDirection() == EFXRippleDirection.OUT;
     }
 
     /**
-     * Checks if the current ripple direction is inward.
+     * Checks if the ripple direction is set to EFXRippleDirection.IN.
      *
-     * @return {@code true} if the ripple direction is inward, {@code false} otherwise.
+     * @return true if the ripple direction is EFXRippleDirection.IN, otherwise false
      */
     public boolean isRippleDirectionIn() {
         return getRippleDirection() == EFXRippleDirection.IN;
     }
 
     /**
-     * Retrieves the current direction of the ripple effect.
+     * Retrieves the direction of the ripple effect.
      *
-     * @return The current direction of the ripple effect. It can be either {@code EFXRippleDirection.IN} or {@code EFXRippleDirection.OUT}.
-     *
-     * @see EFXRippleDirection
+     * @return The direction of the ripple effect.
      */
     public EFXRippleDirection getRippleDirection() {
         return rippleDirection.get();
     }
 
     /**
-     * Returns the ripple direction property of the EFXRippleEffect.
+     * Returns the styleable object property representing the ripple direction of the EFXRippleEffect.
      *
-     * <p>The ripple direction property specifies the direction of the ripple effect
-     * in animations or UI interactions. It can be used to control whether the ripple effect should move inward towards the center of the UI element or outward from the center. The direction can enhance the
-     * visual cue provided to users, indicating the type of action or transition occurring.</p>
-     *
-     * @return The ripple direction property.
-     *
-     * @see EFXRippleDirection
-     * @see EFXRippleEffect
+     * @return the ripple direction property
      */
-    public StyleableObjectProperty<EFXRippleDirection> rippleDirectionProperty() {
+    public EFXStyleableObjectProperty<EFXRippleDirection> rippleDirectionProperty() {
         return rippleDirection;
     }
 
     /**
-     * Sets the direction of the ripple effect.
+     * Sets the ripple direction of the EFXRippleEffect.
      *
      * @param efxRippleDirection
-     *         The direction of the ripple effect. Valid values are EFXRippleDirection.IN and EFXRippleDirection.OUT.
+     *         The ripple direction to set.
      */
     public void setRippleDirection(EFXRippleDirection efxRippleDirection) {
         this.rippleDirection.set(efxRippleDirection);
     }
 
     /**
-     * Retrieves the target node to which the ripple effect will be applied.
+     * Retrieves the target node associated with the ripple effect.
      *
-     * @return The target node.
+     * @return the target node
      */
     public Region getTargetNode() {
         return targetNode;
     }
 
     /**
-     * Retrieves the current status of the ripple fade.
+     * Retrieves the current fade state of the ripple effect.
      *
-     * @return The current status of the ripple fade.
+     * @return The current fade state of the ripple effect.
      */
-    public State getRippleFadeState() {
+    public EFXState getRippleFadeState() {
         return rippleFadeState.get();
     }
 
     /**
-     * Gets the ripple fade property.
+     * Returns the styleable property representing the fade state of the ripple effect.
      *
-     * @return the ripple fade property
+     * @return The styleable property representing the fade state.
      */
-    public StyleableObjectProperty<State> rippleFadeStateProperty() {
+    public EFXStyleableObjectProperty<EFXState> rippleFadeStateProperty() {
         return rippleFadeState;
     }
 
     /**
-     * Sets the ripple fade status.
+     * Sets the ripple fade state of the EFXRippleEffect.
      *
-     * @param rippleFadeState
-     *         the ripple fade status to set
+     * @param rippleFadeEFXState
+     *         the new ripple fade state to be set
      */
-    public void setRippleFadeState(State rippleFadeState) {
-        this.rippleFadeState.set(rippleFadeState);
+    public void setRippleFadeState(EFXState rippleFadeEFXState) {
+        this.rippleFadeState.set(rippleFadeEFXState);
     }
 
     /**
-     * Returns whether the ripple fade effect is enabled.
+     * Returns the current state of the ripple fade effect.
      *
-     * @return {@code true} if the ripple fade effect is enabled, otherwise {@code false}
+     * @return The current state of the ripple fade effect.
      */
     public boolean isRippleFadeEnabled() {
-        return getRippleFadeState() == State.ENABLED;
+        return getRippleFadeState() == EFXState.ENABLED;
     }
 
     /**
-     * Retrieves the type of blur applied to the drop shadow effect.
+     * Retrieves the blur type used for the drop shadow effect in the ripple effect.
      *
-     * @return the BlurType of the drop shadow effect
+     * @return The blur type used for the drop shadow effect.
+     *
+     * @see BlurType
      */
     public BlurType getDropShadowBlurType() {
         return dropShadowBlurType.get();
     }
 
     /**
-     * Returns the property representing the blur type of the drop shadow effect.
+     * Retrieves the property representing the blur type of the drop shadow effect for the ripple effect.
      *
-     * @return the property representing the blur type of the drop shadow effect
+     * @return The property representing the blur type of the drop shadow effect.
      */
-    public StyleableObjectProperty<BlurType> dropShadowBlurTypeProperty() {
+    public EFXStyleableObjectProperty<BlurType> dropShadowBlurTypeProperty() {
         return dropShadowBlurType;
     }
 
     /**
-     * Sets the blur type for the drop shadow effect.
+     * Sets the blur type of the drop shadow effect for the ripple effect.
      *
      * @param dropShadowBlurType
-     *         the blur type to be set
+     *         the blur type to set for the drop shadow effect
      */
     public void setDropShadowBlurType(BlurType dropShadowBlurType) {
         this.dropShadowBlurType.set(dropShadowBlurType);
     }
 
     /**
-     * Retrieves the drop shadow color.
+     * Retrieves the drop shadow color property of the EFXRippleEffect.
      *
-     * @return The drop shadow color.
+     * @return The drop shadow color property.
+     *
+     * @see Color
      */
     public Color getDropShadowColor() {
         return dropShadowColor.get();
     }
 
     /**
-     * Returns the drop shadow color property of this object.
+     * Retrieves the drop shadow color property.
      *
-     * @return the drop shadow color property
+     * @return The drop shadow color property.
      */
-    public StyleableObjectProperty<Color> dropShadowColorProperty() {
+    public EFXStyleableObjectProperty<Color> dropShadowColorProperty() {
         return dropShadowColor;
     }
 
     /**
-     * Sets the drop shadow color for this object.
+     * Sets the color of the drop shadow effect for the ripple effect.
      *
      * @param dropShadowColor
-     *         the color to set as the drop shadow color
+     *         the color to set for the drop shadow effect
      */
     public void setDropShadowColor(Color dropShadowColor) {
         this.dropShadowColor.set(dropShadowColor);
     }
 
     /**
-     * Retrieves the drop shadow radius value.
+     * Returns the drop shadow radius of the ripple effect.
      *
-     * @return The drop shadow radius.
+     * @return the drop shadow radius of the ripple effect.
      */
     public double getDropShadowRadius() {
         return dropShadowRadius.get();
     }
 
     /**
-     * Retrieves the dropShadowRadius property.
+     * Returns the property representing the drop shadow radius of the EFXRippleEffect.
      *
-     * @return The dropShadowRadius property
+     * @return The property representing the drop shadow radius.
      */
-    public StyleableDoubleProperty dropShadowRadiusProperty() {
+    public EFXStyleableDoubleProperty dropShadowRadiusProperty() {
         return dropShadowRadius;
     }
 
     /**
-     * Sets the drop shadow radius.
+     * Sets the radius of the drop shadow for the ripple effect.
      *
      * @param dropShadowRadius
-     *         the radius of the drop shadow
+     *         the radius of the drop shadow to be set
      */
     public void setDropShadowRadius(double dropShadowRadius) {
         this.dropShadowRadius.set(dropShadowRadius);
     }
 
     /**
-     * Retrieves the spread radius of the drop shadow effect applied to this object.
+     * Retrieves the spread value of the drop shadow effect applied to the ripple effect.
      *
-     * @return The spread radius as a double value.
+     * @return The spread value of the drop shadow effect.
      */
     public double getDropShadowSpread() {
         return dropShadowSpread.get();
     }
 
     /**
-     * Returns the StyleableDoubleProperty for the 'dropShadowSpread' property.
+     * Returns the styleable double property representing the drop shadow spread of the EFXRippleEffect.
      *
-     * @return the StyleableDoubleProperty for the 'dropShadowSpread' property
+     * @return the styleable double property for the drop shadow spread
      */
-    public StyleableDoubleProperty dropShadowSpreadProperty() {
+    public EFXStyleableDoubleProperty dropShadowSpreadProperty() {
         return dropShadowSpread;
     }
 
     /**
-     * Sets the spread value for the drop shadow effect.
+     * Sets the spread of the drop shadow.
      *
      * @param dropShadowSpread
-     *         the spread value of the drop shadow effect
+     *         The spread of the drop shadow
      */
     public void setDropShadowSpread(double dropShadowSpread) {
         this.dropShadowSpread.set(dropShadowSpread);
     }
 
     /**
-     * Retrieves the value of the drop shadow offset along the x-axis.
+     * Retrieves the offset on the x-axis of the drop shadow effect applied to the element.
      *
-     * @return The value of the drop shadow offset along the x-axis.
+     * @return the offset on the x-axis of the drop shadow effect
      */
     public double getDropShadowOffsetX() {
         return dropShadowOffsetX.get();
     }
 
     /**
-     * Returns the drop shadow offset X property of the node.
+     * Retrieves the EFXStyleableDoubleProperty for the drop shadow offset in the X direction.
      *
-     * @return the drop shadow offset X property.
+     * @return The EFXStyleableDoubleProperty for the drop shadow offset in the X direction.
      */
-    public StyleableDoubleProperty dropShadowOffsetXProperty() {
+    public EFXStyleableDoubleProperty dropShadowOffsetXProperty() {
         return dropShadowOffsetX;
     }
 
     /**
-     * Sets the offset of the drop shadow effect along the x-axis.
+     * Sets the horizontal offset of the drop shadow effect applied to the ripple effect.
      *
      * @param dropShadowOffsetX
-     *         the offset of the drop shadow effect along the x-axis
+     *         the horizontal offset of the drop shadow
      */
     public void setDropShadowOffsetX(double dropShadowOffsetX) {
         this.dropShadowOffsetX.set(dropShadowOffsetX);
     }
 
     /**
-     * Returns the offset in the Y direction for the drop shadow effect.
+     * Retrieves the offset in the Y-direction of the drop shadow effect applied to the ripple effect.
      *
-     * @return the offset in the Y direction for the drop shadow effect
+     * @return The offset in the Y-direction of the drop shadow effect.
      */
     public double getDropShadowOffsetY() {
         return dropShadowOffsetY.get();
     }
 
     /**
-     * Returns the JavaFX property representing the offset of the drop shadow effect in the y-axis direction.
+     * Returns the styleable double property for the drop shadow's Y offset.
      *
-     * @return The JavaFX property representing the drop shadow offset in the y-axis.
+     * @return the styleable double property for the drop shadow's Y offset
      */
-    public StyleableDoubleProperty dropShadowOffsetYProperty() {
+    public EFXStyleableDoubleProperty dropShadowOffsetYProperty() {
         return dropShadowOffsetY;
     }
 
     /**
-     * Sets the offset of the drop shadow effect along the Y-axis.
+     * Sets the offset in the y-direction for the drop shadow effect.
      *
      * @param dropShadowOffsetY
-     *         the offset value along the Y-axis
+     *         the offset in the y-direction for the drop shadow effect
      */
     public void setDropShadowOffsetY(double dropShadowOffsetY) {
         this.dropShadowOffsetY.set(dropShadowOffsetY);
     }
 
     /**
-     * Retrieves the current drop shadow state.
+     * Returns the current state of the drop shadow.
      *
-     * @return The drop shadow state.
+     * @return the current state of the drop shadow
      */
-    public State getDropShadowState() {
+    public EFXState getDropShadowState() {
         return dropShadowState.get();
     }
 
     /**
-     * Retrieves the drop shadow state property of the object.
+     * Retrieves the styleable property representing the drop shadow state for the EFXRippleEffect.
      *
-     * @return the drop shadow state property
+     * @return The styleable property representing the drop shadow state.
      */
-    public StyleableObjectProperty<State> dropShadowStateProperty() {
+    public EFXStyleableObjectProperty<EFXState> dropShadowStateProperty() {
         return dropShadowState;
     }
 
     /**
-     * Sets the drop shadow state for the object.
+     * Set the drop shadow state of the EFXRippleEffect.
      *
-     * @param dropShadowState
-     *         the new drop shadow state to be set
+     * @param dropShadowEFXState
+     *         The new drop shadow state.
      */
-    public void setDropShadowState(State dropShadowState) {
-        this.dropShadowState.set(dropShadowState);
+    public void setDropShadowState(EFXState dropShadowEFXState) {
+        this.dropShadowState.set(dropShadowEFXState);
     }
 
     /**
-     * Determines if the drop shadow is enabled.
+     * Returns whether the drop shadow effect is enabled or not.
      *
-     * @return {@code true} if the drop shadow is enabled, {@code false} otherwise.
+     * @return true if drop shadow is enabled, false otherwise
      */
     public boolean isDropShadowEnabled() {
-        return getDropShadowState() == State.ENABLED;
+        return getDropShadowState() == EFXState.ENABLED;
     }
 
     //endregion Getters and Setters

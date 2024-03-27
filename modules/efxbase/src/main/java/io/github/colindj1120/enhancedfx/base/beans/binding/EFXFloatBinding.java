@@ -18,134 +18,135 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.FloatExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.FloatExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.NumberExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.FloatBinding;
 
 /**
- * {@code EFXFloatBinding} is a part of the EnhancedFX library designed to facilitate the seamless integration of float-based
- * numeric expressions with an application's data model or UI state. It establishes a direct link between a {@link FloatBinding} and a
- * bean object, allowing for dynamic updates in response to changes in the application's state.
+ * {@code EFXFloatBinding} is a specialized binding class that wraps a {@link FloatBinding} and provides additional functionalities defined by {@link FloatExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>
- * This class also implements {@link FloatExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
+ * <p>It allows for enhanced manipulation and observation of {@code FloatBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * <h2>Key Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li><b>Float Numeric Expression Association:</b> Directly associates {@code FloatBinding} with a bean object, enabling
- *       real-time updates of UI components or logic based on the state of float expressions.</li>
- *   <li><b>Float Expression Utilities:</b> Implements {@link FloatExpressionFunctions}, offering a comprehensive suite of
- *       functionalities for float expressions, including arithmetic operations, comparisons, and conversion utilities.</li>
- *   <li><b>Contextual Bean Linkage:</b> The association with a bean object provides context, linking the float binding
- *       to a specific part of the application's model, enhancing clarity and maintainability.</li>
- *   <li><b>Dynamic Application State Observability:</b> Enhances the observability of float values within the application,
- *       allowing components and logic to react dynamically to changes in the associated float expressions.</li>
+ *     <li>Encapsulates a {@link FloatBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional float expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced float bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
- * <h2>Example Usage:</h2>
- * Demonstrating how {@code EFXFloatBinding} can be used to bind a UI component's property to a model's property:
+ * <h2>Usage Example:</h2>
  * <pre>{@code
- * FloatBinding opacityBinding = Bindings.createFloatBinding(() ->
- *     model.opacityProperty().get(), model.opacityProperty());
- * Object bean = model; // The model object with the opacity property
- * EFXFloatBinding association = EFXFloatBinding.create(opacityBinding, bean);
- * uiComponent.opacityProperty().bind(association.getBinding());
+ * FloatProperty property = new SimpleFloatProperty(2.0f);
+ * FloatBinding binding = property.add(3.0f);
+ * EFXFloatBinding efxBinding = EFXFloatBinding.create(myBean, binding);
+ *
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
  * }</pre>
- * </p>
+ *
+ * <p>In this example, an {@code EFXFloatBinding} is created by wrapping a {@link FloatBinding} with a negation operation. It then listens for changes to the float value, demonstrating how {@code
+ * EFXFloatBinding} can be used to enhance and observe float bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see FloatBinding
  * @see EFXBinding
+ * @see FloatBinding
  * @see FloatExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXFloatBinding implements EFXBinding<Number>, FloatExpressionFunctions {
+public class EFXFloatBinding extends EFXBinding<FloatBinding> implements FloatExpressionFunctions<FloatBinding>, NumberExpressionFunctions<FloatBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXFloatBinding}. This method establishes an association between a
-     * {@link FloatBinding} and a specific bean object. It encapsulates the relationship between the float binding and the underlying
-     * property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXFloatBinding}.
      *
-     * @param binding
-     *         the {@link FloatBinding} to be associated with the bean. This binding represents a numeric expression that evaluates to
-     *         a float value, depending on one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXFloatBinding} objects with a specific {@link FloatBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code FloatBinding}. This object typically represents the underlying model or entity
-     *         that the binding observes or depends upon.
-     *
-     * @return a new instance of {@code EFXFloatBinding} that encapsulates the relationship between the provided
-     *         {@code FloatBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXFloatBinding} has a valid bean reference.
-     */
-    public static EFXFloatBinding create(FloatBinding binding, Object bean) {
-        return new EFXFloatBinding(binding, bean);
-    }
-
-    /**
-     * The bean associated with the {@link FloatBinding} in this {@code EFXFloatBinding}. The bean represents the underlying
-     * model or object that influences the value of the {@code FloatBinding}. It provides a contextual link between the binding and the
-     * part of the application state it represents or observes.
-     */
-    private final Object bean;
-
-    /**
-     * The {@link FloatBinding} instance that is part of this association. This binding encapsulates a computed float value that, when
-     * observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core functional
-     * component of the association, providing the dynamic link between the application state and the UI or other dependent logic.
-     */
-    private final FloatBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXFloatBinding}. Called internally by the
-     * {@link #create(FloatBinding, Object)} factory method, it initializes the association with a specific {@code FloatBinding} and
-     * bean, performing a null check on the bean to ensure its validity.
-     *
+     *         The bean associated with the {@code FloatBinding}. This can be used for contextual information or binding management.
      * @param binding
-     *         the {@code FloatBinding} to associate.
+     *         The {@link FloatBinding} to be encapsulated by the {@code EFXFloatBinding}.
+     *
+     * @return An instance of {@code EFXFloatBinding} wrapping the provided {@code FloatBinding}.
+     */
+    public static EFXFloatBinding create(Object bean, FloatBinding binding) {
+        return new EFXFloatBinding(bean, binding);
+    }
+
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
+
+    /**
+     * Constructs an instance of {@code EFXFloatBinding}.
+     *
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, FloatBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXFloatBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code FloatBinding}.
+     * @param binding
+     *         The {@link FloatBinding} to be encapsulated.
      */
-    private EFXFloatBinding(FloatBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXFloatBinding.class);
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXFloatBinding(Object bean, FloatBinding binding) {
+        super(bean, binding);
+    }
+
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FloatBinding getObservableValue() {
+        return null;
     }
 
     /**
-     * Retrieves the {@link FloatBinding} associated with this {@code EFXFloatBinding}.
-     *
-     * @return the {@code FloatBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public FloatBinding getBinding() {
-        return this.binding;
+    @Override
+    public void setObservableValue(FloatBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Retrieves the bean associated with the {@code FloatBinding}. The bean represents the underlying property or object that the
-     * {@code FloatBinding} depends on.
-     *
-     * @return the bean object associated with the {@code FloatBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXFloatBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
     }
 
     /**
-     * Generates a string representation of this {@code EFXFloatBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXFloatBinding}.
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("FloatBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
+
+    //endregion Overridden Methods
 }

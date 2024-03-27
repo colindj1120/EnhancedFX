@@ -17,338 +17,187 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty;
 
-import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase;
-import io.github.colindj1120.enhancedfx.utils.consumers.TriConsumer;
-import javafx.css.CssMetaData;
-import javafx.css.StyleOrigin;
-import javafx.css.Styleable;
-import javafx.css.StyleableBooleanProperty;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.invalidatorsNullCheck;
-import static io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.base.EFXStyleablePropertyBase.nullCheck;
+import io.github.colindj1120.enhancedfx.base.beans.base.EFXStyleablePropertyBase;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 
 /**
- * The {@code EFXStyleableBooleanProperty} class extends {@code StyleableBooleanProperty} to provide enhanced functionality for JavaFX properties that are styleable using CSS. This implementation includes
- * additional callback mechanisms to react to property invalidation events, facilitating complex property change handling scenarios in JavaFX applications.
+ * Represents a styleable boolean property within the EnhancedFX framework, extending the functionality of {@link EFXStyleablePropertyBase} by specializing in booleans.
  *
- * <p>
- * <h2>Features include:</h2>
+ * <p>This class allows for the creation and management of styleable properties that can be used within JavaFX's CSS styling system, providing enhanced flexibility and utility for defining and manipulating
+ * styleable attributes.</p>
+ *
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>Void callback on invalidation, allowing for actions that don't directly depend on the property's value.</li>
- *     <li>Property callback on invalidation, enabling actions that require the current property instance.</li>
- *     <li>Cached value callback on invalidation, supporting actions that compare current and previous values.</li>
- *     <li>Customizable property name, bean reference, and associated CSS metadata, enhancing integration with
- *         JavaFX CSS styling.</li>
+ *     <li>Facilitates the creation and management of styleable boolean properties.</li>
+ *     <li>Allows for the boolean properties to be styled directly via CSS, enhancing UI customization.</li>
+ *     <li>Provides enhanced string representations, aiding in debugging and logging.</li>
  * </ul>
- * <br>
- * <p>
- * This class is designed to be constructed via its {@code Builder} pattern, promoting flexible configuration.
- * It supports direct application of CSS styles while providing hooks for custom behavior when the property's
- * value is invalidated or styled.
- * </p>
  *
- * <p>
- * <em>Example Usage:</em>
+ * <h2>Usage Example:</h2>
  * <pre>
- * EFXStyleableBooleanProperty myProperty = new EFXStyleableBooleanProperty.Builder()
- *         .bean(this)
- *         .name("myProperty")
- *         .cssMetaData(myCssMetaData)
- *         .invalidatedPropCallback(prop -> System.out.println("Property invalidated"))
+ * {@code
+ * EFXStyleableBooleanProperty visibleProperty = EFXStyleableBooleanProperty.create()
+ *         .name("visible")
+ *         .initialValue(true)
  *         .build();
+ *
+ * // Applying the property to a JavaFX node or component
+ * myComponent.styleableProperties().add(visibleProperty);
+ * }
+ *
  * </pre>
- * <p>
- * The {@code invalidated()} method is overridden to execute configured callbacks, providing a versatile mechanism
- * to react to changes. {@code applyStyle()} is also overridden to allow for additional actions when styles are applied,
- * while {@code getCssMetaData()}, {@code getBean()}, and {@code getName()} offer access to the property's metadata.
- * </p>
+ *
+ * <p>This example demonstrates creating a styleable boolean property for controlling the visibility of a component, which can then be manipulated through CSS.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see StyleableBooleanProperty
  * @see EFXStyleablePropertyBase
- * @see CssMetaData
- * @see Styleable
- * @see Consumer
- * @see TriConsumer
  */
-public class EFXStyleableBooleanProperty extends StyleableBooleanProperty implements EFXStyleablePropertyBase {
-    private final Consumer<Void>                                                    invalidatedVoidCallback;
-    private final Consumer<StyleableBooleanProperty>                                invalidatedPropCallback;
-    private final TriConsumer<StyleableBooleanProperty, Boolean, Consumer<Boolean>> invalidatedCachedCallback;
-    private final String                                                            name;
-    private final Object                                                            bean;
-    private final CssMetaData<? extends Styleable, Boolean>                         cssMetaData;
-    private       Boolean                                                           oldValue;
+public class EFXStyleableBooleanProperty extends EFXStyleablePropertyBase<EFXStyleableBooleanProperty, Boolean> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
 
     /**
-     * Initializes an {@code EFXStyleableBooleanProperty} with a specific default value and additional configuration provided by the {@code Builder}. This constructor extends the basic initialization by
-     * explicitly setting an initial value for the property, alongside configuring other features like invalidation callbacks and CSS metadata.
+     * Provides a static factory method to initialize a builder for {@code EFXStyleableBooleanProperty}.
      *
-     * <p>
-     * This variant is particularly useful when the property must start with a predefined boolean value rather than the superclass default. It adopts a comprehensive approach to property setup, incorporating:
-     * <ul>
-     *     <li>Custom invalidation callbacks for enhanced behavior on property changes.</li>
-     *     <li>Identification and styling configurations through the property's name, bean association, and CSS metadata.</li>
-     *     <li>An initial boolean value defining the property's starting state.</li>
-     * </ul>
-     * Such detailed configuration capabilities make this property suited for complex UI components requiring specific
-     * initial states and responsive, stylable behavior.
-     * </p>
+     * @return a new instance of {@link EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder}
+     */
+    public static  EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder create() {
+        return new EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder();
+    }
+
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
+
+    /**
+     * Constructs an instance of {@link EFXStyleableBooleanProperty} using the provided builder.
+     *
+     * <p>This constructor is protected to ensure that instances of {@code EFXStyleableBooleanProperty} are only created through the builder pattern, promoting a consistent and clear initialization process. The
+     * builder contains all necessary configurations for the property, including its name, initial value, CSS metadata, and style converter if specified.</p>
+     *
+     * <p>The constructor delegates to the superclass constructor of {@link EFXStyleablePropertyBase}, passing along the builder, which allows the base class to perform common initialization tasks and apply
+     * the configurations specified in the builder to the newly created property.</p>
+     *
+     * <p>It's important to note that this constructor is not intended to be used directly by client code. Instead, instances of {@code EFXStyleableBooleanProperty} should be created using the static
+     * {@code create()} method on {@code EFXStyleableBooleanProperty}, followed by builder method calls to configure the property, and finally calling {@code build()} on the builder to obtain the configured
+     * {@code EFXStyleableBooleanProperty} instance.</p>
      *
      * @param builder
-     *         The {@code Builder} providing configuration settings for this property.
-     * @param defaultValue
-     *         The default value to initialize the property with.
+     *         The {@code EFXStyleableBooleanPropertyBuilder} containing the configurations for this property. It must not be {@code null} and should be fully configured.
+     */
+    protected EFXStyleableBooleanProperty(EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder builder) {
+        super(builder);
+    }
+
+    //endregion Constructor
+
+    //region Overridden Functions
+    //*****************************************************************
+    // Overridden Functions
+    //*****************************************************************
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EFXStyleableBooleanProperty getProperty() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("""
+                             %s:
+                             %s
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
+    }
+
+    //endregion Overridden Functions
+
+    //region Builder
+    //*****************************************************************
+    // Builder
+    //*****************************************************************
+
+    /**
+     * The builder class for {@link EFXStyleableBooleanProperty}, inheriting the fluid builder pattern and functionality from {@link EFXStyleablePropertyBuilder}, and providing a method to build an instance of
+     * {@code EFXStyleableBooleanProperty}.
      *
-     * @throws IllegalArgumentException
-     *         if the builder or any critical configuration element is null.
-     */
-    private EFXStyleableBooleanProperty(Builder builder, boolean defaultValue) {
-        super(defaultValue);
-        nullCheck(builder, "EFXStyleableBooleanProperty Builder", this.getClass());
-        this.invalidatedVoidCallback = builder.invalidatedVoidCallback;
-        this.invalidatedPropCallback = builder.invalidatedPropCallback;
-        this.invalidatedCachedCallback = builder.invalidatedCachedCallback;
-        this.name = Objects.isNull(builder.name) ? DEFAULT_NAME : builder.name;
-        this.bean = builder.bean;
-        this.cssMetaData = builder.cssMetaData;
-        this.oldValue = defaultValue;
-
-        invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, this.getClass());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void invalidated() {
-        Optional.ofNullable(invalidatedVoidCallback)
-                .ifPresent(callback -> callback.accept(null));
-        Optional.ofNullable(invalidatedPropCallback)
-                .ifPresent(callback -> callback.accept(this));
-        Optional.ofNullable(invalidatedCachedCallback)
-                .ifPresent(callback -> callback.accept(this, oldValue, val -> oldValue = val));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void applyStyle(StyleOrigin origin, Boolean v) {
-        if (Objects.nonNull(origin)) {
-            super.applyStyle(origin, v);
-
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CssMetaData<? extends Styleable, Boolean> getCssMetaData() {
-        return cssMetaData;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getBean() {
-        return bean;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Checks if the value of this property is equal to the specified value.
-     *
-     * @param value The value to compare with the value of this property.
-     * @return {@code true} if the value of this property is equal to the specified value, {@code false} otherwise.
-     */
-    public boolean valueEquals(Boolean value) {
-        return getValue().equals(value);
-    }
-
-    /**
-     * The {@code Builder} class for {@code EFXStyleableBooleanProperty} provides a fluent interface for configuring and creating an instance of {@code EFXStyleableBooleanProperty}. It allows setting
-     * up custom callbacks for property invalidation, defining the property's name, bean, CSS metadata, and default value.
-     *
-     * <p>
-     * This builder class supports the following configuration methods:
+     * <h2>Capabilities:</h2>
      * <ul>
-     *     <li>{@code invalidatedVoidCallback(Consumer<Void>)}: Sets a callback to be called when the property is invalidated,
-     *     without needing the property's value.</li>
-     *     <li>{@code invalidatedPropCallback(Consumer<StyleableBooleanProperty>)}: Sets a callback with access to the
-     *     {@code StyleableBooleanProperty} when invalidated, enabling direct interaction with the property itself.</li>
-     *     <li>{@code invalidatedCachedCallback(TriConsumer<StyleableBooleanProperty, Boolean, Consumer<Boolean>>)}: Sets
-     *     a more complex callback that provides the property, its old value, and a consumer to set a new cached value.</li>
-     *     <li>{@code name(String)}: Specifies the name of the property, used for identifying it within the associated bean
-     *     and potentially in CSS.</li>
-     *     <li>{@code bean(Object)}: Sets the JavaFX bean this property is associated with, which can be any {@code Object}
-     *     that holds this property.</li>
-     *     <li>{@code cssMetaData(CssMetaData<? extends Styleable, Boolean>)}: Defines the CSS metadata for this property,
-     *     allowing it to be styled via CSS.</li>
-     *     <li>{@code defaultValue(Boolean)}: Sets the default value for the property, used when no other value is explicitly
-     *     set.</li>
+     *     <li>Fluent API design for building {@code EFXStyleableBooleanProperty} instances.</li>
+     *     <li>Customizable initial value, name, CSS meta-data, and style converter.</li>
      * </ul>
-     * The {@code build()} method creates an instance of {@code EFXStyleableBooleanProperty} with the configured
-     * settings. It checks for null values in essential fields to ensure the integrity of the property configuration.
-     * </p>
+     *
+     * <h2>Usage Example:</h2>
+     * <pre>
+     * {@code
+     * EFXStyleableBooleanProperty<Color> backgroundColor = EFXStyleableBooleanProperty.<Color>create()
+     *         .name("background-color")
+     *         .initialValue(Color.WHITE)
+     *         .styleConverter(ColorConverter.getInstance())
+     *         .build();
+     * }
+     * </pre>
+     *
+     *  <p>This example creates a {@code EFXStyleableBooleanProperty} for background color using the builder.</p>
      */
-    public static class Builder {
-        private Consumer<Void>                                                    invalidatedVoidCallback;
-        private Consumer<StyleableBooleanProperty>                                invalidatedPropCallback;
-        private TriConsumer<StyleableBooleanProperty, Boolean, Consumer<Boolean>> invalidatedCachedCallback;
-        private String                                                            name;
-        private Object                                                            bean;
-        private CssMetaData<? extends Styleable, Boolean>                         cssMetaData;
-        private Boolean                                                           defaultValue;
+    public static class EFXStyleableBooleanPropertyBuilder extends EFXStyleablePropertyBuilder<EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder, EFXStyleableBooleanProperty, Boolean> {
+        /**
+         * Constructs a new {@code EFXStyleableBooleanPropertyBuilder} instance with default settings.
+         *
+         * <p>This builder is used to create instances of {@link EFXStyleableBooleanProperty} through a fluent API design. Upon initialization, the builder's initial value is set to {@code null}, indicating that
+         * the {@link EFXStyleableBooleanProperty} created by this builder will not have a predefined initial value unless explicitly set via the builder's methods.</p>
+         *
+         * <p>This constructor initializes the builder in a state ready for setting up an {@code EFXStyleableBooleanProperty} instance. Properties such as the property name, CSS metadata, and the style
+         * converter can be configured using the provided builder methods.</p>
+         *
+         * <h2>Usage Example:</h2>
+         * <pre>
+         * {@code
+         * EFXStyleableBooleanPropertyBuilder<Color> builder = new EFXStyleableBooleanPropertyBuilder();
+         * EFXStyleableBooleanProperty<Color> colorProperty = builder
+         *         .name("text-color")
+         *         .initialValue(Color.BLACK)
+         *         .styleConverter(ColorConverter.getInstance())
+         *         .build();
+         * }
+         * </pre>
+         *
+         * <p>In this example, a new {@code EFXStyleableBooleanPropertyBuilder} is created to build a {@code EFXStyleableBooleanProperty} for a text color property. The property is configured with an initial
+         * value of {@code Color.BLACK} and uses a {@code ColorConverter} for CSS styling.</p>
+         */
+        public EFXStyleableBooleanPropertyBuilder() {
+            this.initialValue = null;
+        }
 
         /**
-         * Builder class for constructing {@link EFXStyleableBooleanProperty} instances.
-         *
-         * <p>
-         * This builder provides methods to configure and customize the property before finalizing its construction. It offers a fluent interface for intuitive and straightforward
-         * configuration.
-         * </p>
+         * {@inheritDoc}
          */
-        public Builder() {}
-
-        /**
-         * Sets the callback function invoked when the property is invalidated. The callback function does not take any arguments and does not return a value.
-         *
-         * @param invalidatedVoidCallback
-         *         The callback function to set.
-         *
-         * @return This builder instance.
-         */
-        public Builder invalidatedVoidCallback(Consumer<Void> invalidatedVoidCallback) {
-            this.invalidatedVoidCallback = invalidatedVoidCallback;
+        @Override
+        protected EFXStyleableBooleanProperty.EFXStyleableBooleanPropertyBuilder getBuilder() {
             return this;
         }
 
         /**
-         * Sets the callback function invoked when the property is invalidated.
+         * Finalizes the construction of {@link EFXStyleableBooleanProperty} instance.
          *
-         * @param invalidatedPropCallback
-         *         The callback function to be set
-         *
-         * @return The current instance of the Builder class
-         */
-        public Builder invalidatedPropCallback(Consumer<StyleableBooleanProperty> invalidatedPropCallback) {
-            this.invalidatedPropCallback = invalidatedPropCallback;
-            return this;
-        }
-
-        /**
-         * Sets the invalidated cached callback for the builder.
-         *
-         * @param invalidatedCachedCallback
-         *         The callback function that is invoked when the property is invalidated. It takes three parameters: StyleableBooleanProperty, Boolean, and Consumer<Boolean>.
-         *
-         * @return The builder object.
-         */
-        public Builder invalidatedCachedCallback(TriConsumer<StyleableBooleanProperty, Boolean, Consumer<Boolean>> invalidatedCachedCallback) {
-            this.invalidatedCachedCallback = invalidatedCachedCallback;
-            return this;
-        }
-
-        /**
-         * Sets the name of the object.
-         *
-         * @param name
-         *         the name to set
-         *
-         * @return the Builder instance
-         */
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * Sets the bean associated with the property and returns the current Builder instance.
-         *
-         * @param bean
-         *         the bean associated with the property
-         *
-         * @return the current Builder instance
-         */
-        public Builder bean(Object bean) {
-            this.bean = bean;
-            return this;
-        }
-
-        /**
-         * Sets the CSS metadata for the property.
-         *
-         * @param cssMetaData
-         *         the CSS metadata for the property
-         *
-         * @return the updated instance of Builder
-         */
-        public Builder cssMetaData(CssMetaData<? extends Styleable, Boolean> cssMetaData) {
-            this.cssMetaData = cssMetaData;
-            return this;
-        }
-
-        /**
-         * Sets the default value for the property and returns the current instance of the builder.
-         *
-         * @param defaultValue
-         *         The default value for the property.
-         *
-         * @return The current instance of the builder.
-         */
-        public Builder defaultValue(Boolean defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
-        /**
-         * Builds and returns a new {@code EFXStyleableBooleanProperty} instance based on the current configuration of this builder. This method ensures that all necessary parts and callbacks are properly
-         * set before creating the property. If any critical configuration is missing, an {@code IllegalArgumentException} is thrown, indicating the specific component that is missing.
-         * <p>
-         * Before creating the property, it performs null checks on the following essential parts:
-         * <ul>
-         *     <li>The bean associated with the property, ensuring it is not {@code null}.</li>
-         *     <li>The name of the property, ensuring it is provided.</li>
-         *     <li>The CSS metadata for the property, ensuring it is provided for CSS styling capabilities.</li>
-         * </ul>
-         * Additionally, it checks for the presence of callback functions that are invoked when the property is invalidated.
-         * If any of these callbacks are provided but are {@code null}, an exception is thrown to prevent runtime errors
-         * related to null invocations.
-         * <p>
-         * After validation, the method constructs the {@code EFXStyleableBooleanProperty} instance. If a default value
-         * has been specified using the builder, it is used to initialize the property; otherwise, the property is initialized
-         * with its default behavior.
-         *
-         * @return A fully configured {@code EFXStyleableBooleanProperty} instance.
-         *
-         * @throws IllegalArgumentException
-         *         if any required configuration is missing or if any provided callback is {@code null}.
+         * @return a new instance of {@code EFXStyleableBooleanProperty}
          */
         public EFXStyleableBooleanProperty build() {
-            invalidatorsNullCheck(this.invalidatedVoidCallback, this.invalidatedPropCallback, this.invalidatedCachedCallback, EFXStyleableBooleanProperty.class);
-            nullCheck(bean, "EFXStyleableBooleanProperty Bean", EFXStyleableBooleanProperty.class);
-            nullCheck(name, "EFXStyleableBooleanProperty Name", EFXStyleableBooleanProperty.class);
-            nullCheck(cssMetaData, "EFXStyleableBooleanProperty CssMetaData", EFXStyleableBooleanProperty.class);
-
-            return Optional.ofNullable(defaultValue)
-                           .map(v -> new EFXStyleableBooleanProperty(this, v))
-                           .orElse(new EFXStyleableBooleanProperty(this, false));
+            return new EFXStyleableBooleanProperty(this);
         }
     }
+
+    //endregion Builder
 }
 

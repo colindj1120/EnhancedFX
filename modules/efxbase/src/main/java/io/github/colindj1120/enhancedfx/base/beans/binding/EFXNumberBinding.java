@@ -17,140 +17,134 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.NumberExpressionFunctions;
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.NumberBindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.NumberExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.NumberBinding;
 
 /**
- * {@code EFXNumberBinding} class serves as a bridge linking a {@link NumberBinding} to a specific bean object, facilitating
- * the synchronization of UI components or other observers with the state of a numeric value that may depend on multiple observable
- * sources. This class is part of the EnhancedFX library, aimed at enhancing JavaFX application development by providing a more
- * intuitive and robust way to work with bindings.
+ * {@code EFXNumberBinding} is a specialized binding class that wraps a {@link NumberBinding} and provides additional functionalities as defined by {@link NumberExpressionFunctions} and
+ * {@link NumberBindingFunctions} interfaces. This class allows for the enhanced observation and manipulation of {@code NumberBinding} objects within the EnhancedFX framework.
  *
- * <p>NumberBindingAssociations are particularly useful in complex JavaFX UIs where the value of a UI component needs
- * to be kept in sync with underlying model data that can change over time or in response to user actions. By associating a
- * {@code NumberBinding} with a bean, developers can more easily track and manage these dependencies, ensuring that the UI accurately
- * reflects the current state of the application.</p>
- *
- * <p>
- * This class also implements {@link NumberExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
- *
- * <h2>Key Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li><b>Type Safety:</b> Operates with {@code NumberBinding} to ensure numeric value changes are properly managed and observed
- *     .</li>
- *     <li><b>Bean Association:</b> Links a {@code NumberBinding} to a specific bean, contextualizing the binding within the
- *     application's data model.</li>
- *     <li><b>Utility Methods:</b> Implements {@link NumberExpressionFunctions} to offer additional numeric operations and
- *     transformations.</li>
- *     <li><b>Extensibility:</b> Designed to be extended or used as-is for various application-specific requirements.</li>
+ *     <li>Encapsulates a {@link NumberBinding} instance, enabling advanced manipulation.</li>
+ *     <li>Implements additional number expression and number binding functionalities for extended operations.</li>
+ *     <li>Supports associating a bean with the binding for context and manageability.</li>
  * </ul>
  *
- * <p>
  * <h2>Usage Example:</h2>
- * Here's how you might use {@code EFXNumberBinding} to bind the numeric value of a model's property to a
- * label's text property in a JavaFX application:
  * <pre>{@code
- * NumberBinding numericValueBinding = Bindings.createDoubleBinding(() ->
- *     model.getNumericValue(), model.numericValueProperty());
- * Object bean = model; // The model object containing the numeric property
- * EFXNumberBinding association = EFXNumberBinding.create(numericValueBinding, bean);
- * label.textProperty().bind(association.getBinding().asString());
+ * IntegerProperty integerProperty = new SimpleIntegerProperty(10);
+ * NumberBinding squaredValueBinding = Bindings.multiply(integerProperty, integerProperty);
+ * EFXNumberBinding efxNumberBinding = EFXNumberBinding.create(myBean, squaredValueBinding);
+ *
+ * efxNumberBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New squared value: " + newValue);
+ * });
  * }</pre>
- * </>
+ *
+ * <p>In this example, an {@code EFXNumberBinding} is created to wrap a {@code NumberBinding} that represents the square of an {@code IntegerProperty}. The {@code EFXNumberBinding} then listens for changes
+ * to this squared value, illustrating how it can be used to observe and respond to changes in numerical bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see NumberBinding
  * @see EFXBinding
+ * @see NumberBinding
  * @see NumberExpressionFunctions
+ * @see NumberBindingFunctions
  */
-public class EFXNumberBinding implements EFXBinding<Number>, NumberExpressionFunctions {
+public class EFXNumberBinding extends EFXBinding<NumberBinding> implements NumberExpressionFunctions<NumberBinding>, NumberBindingFunctions<NumberBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXNumberBinding}. This method establishes an association between a
-     * {@link NumberBinding} and a specific bean object. It encapsulates the relationship between the number binding and the underlying
-     * property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXNumberBinding}.
      *
-     * @param binding
-     *         the {@link NumberBinding} to be associated with the bean. This binding represents a numeric expression that depends on
-     *         one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXNumberBinding} objects by encapsulating a given {@link NumberBinding} with an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code NumberBinding}. This object typically represents the underlying model or entity
-     *         that the binding observes or depends upon.
+     *         The bean associated with the {@code NumberBinding}, used for contextual information.
+     * @param binding
+     *         The {@link NumberBinding} to be wrapped by the {@code EFXNumberBinding}.
      *
-     * @return a new instance of {@code EFXNumberBinding} that encapsulates the relationship between the provided
-     *         {@code NumberBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXNumberBinding} has a valid bean reference.
+     * @return An instance of {@code EFXNumberBinding} wrapping the provided {@code NumberBinding}.
      */
-    public static EFXNumberBinding create(NumberBinding binding, Object bean) {
-        return new EFXNumberBinding(binding, bean);
+    public static EFXNumberBinding create(Object bean, NumberBinding binding) {
+        return new EFXNumberBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link NumberBinding} in this {@code EFXNumberBinding}. The bean represents the underlying
-     * model or object that influences the value of the {@code NumberBinding}. It provides a contextual link between the binding and
-     * the part of the application state it represents or observes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link NumberBinding} instance that is part of this association. This binding encapsulates a computed numeric value that,
-     * when observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core
-     * functional component of the association, providing the dynamic link between the application state and the UI or other dependent
-     * logic.
-     */
-    private final NumberBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXNumberBinding}. Called internally by the
-     * {@link #create(NumberBinding, Object)} factory method, it initializes the association with a specific {@code NumberBinding} and
-     * bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXNumberBinding}.
      *
-     * @param binding
-     *         the {@code NumberBinding} to associate.
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, NumberBinding)} for creating instances, ensuring consistency and clarity in how instances are
+     * instantiated.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code NumberBinding}.
+     * @param binding
+     *         The {@link NumberBinding} to be wrapped.
      */
-    private EFXNumberBinding(NumberBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXNumberBinding.class);
+    protected EFXNumberBinding(Object bean, NumberBinding binding) {
+        super(bean, binding);
         this.binding = binding;
-        this.bean = bean;
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link NumberBinding} associated with this {@code EFXNumberBinding}.
-     *
-     * @return the {@code NumberBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public NumberBinding getBinding() {
+    @Override
+    public NumberBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code NumberBinding}. The bean represents the underlying property or object that the
-     * {@code NumberBinding} depends on.
-     *
-     * @return the bean object associated with the {@code NumberBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public void setObservableValue(NumberBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXNumberBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXNumberBinding}.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXNumberBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("NumberBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
+
+    //endregion Overridden Methods
 }

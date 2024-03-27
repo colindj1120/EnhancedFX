@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2024 Colin Jokisch
- * This file is part of MaterialDesignUI (https://github.com/colindj1120/MaterialDesignUI).
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
  *
- * MaterialDesignUI is free software: you can redistribute it and/or modify
+ * EnhancedFX is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MaterialDesignUI is distributed in the hope that it will be useful,
+ * EnhancedFX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.base.collections;
 
@@ -23,6 +23,55 @@ import javafx.collections.ObservableList;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+/**
+ * Provides a property wrapper around a stack data structure, enabling observable modifications to a stack of elements.
+ *
+ * <p>It extends {@link ObservablePropertyCollection<T>}, allowing observers to track changes to the stack's contents via an underlying {@link ObservableList<T>}. This class encapsulates a {@link Stack<T>},
+ * offering traditional stack operations such as push, pop, and peek, while also ensuring that any modifications are reflected in the observable list and thus can be observed by listeners. It is particularly
+ * useful in JavaFX applications where changes to data structures need to be reflected in the UI without manual synchronization.</p>
+ *
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *   <li>Pushing elements onto the stack.</li>
+ *   <li>Popping elements from the stack, with an {@link EmptyStackException} thrown if the stack is empty.</li>
+ *   <li>Peeking at the top element of the stack without removing it.</li>
+ *   <li>Checking if the stack is empty.</li>
+ *   <li>Observing changes to the stack through the associated {@link ObservableList}.</li>
+ * </ul>
+ *
+ * <h2>Usage Example:</h2>
+ * <pre>{@code
+ * StackProperty<String> observableStack = new StackProperty<>();
+ * observableStack.push("Hello");
+ * observableStack.push("World");
+ *
+ * observableStack.getCollection().addListener((ListChangeListener.Change<? extends String> c) -> {
+ *     while (c.next()) {
+ *         if (c.wasAdded()) {
+ *             System.out.println("Added: " + c.getAddedSubList());
+ *         } else if (c.wasRemoved()) {
+ *             System.out.println("Removed: " + c.getRemoved());
+ *         }
+ *     }
+ * });
+ *
+ * System.out.println("Top of the stack: " + observableStack.peek()); // Output: Top of the stack: World
+ * observableStack.pop();
+ * System.out.println("After pop, Top of the stack: " + observableStack.peek()); // Output: After pop, Top of the stack: Hello
+ * }</pre>
+ *
+ * <p>This example demonstrates creating an `observableStack`, adding elements, and setting up a listener to observe changes. It illustrates pushing elements to the stack, peeking at the top element, and
+ * popping elements while observing the modifications to the stack.</p>
+ *
+ * @param <T>
+ *         the type of elements in the stack
+ *
+ * @author Colin Jokisch
+ * @version 1.0.0
+ * @see ObservablePropertyCollection
+ * @see Stack
+ * @see ObservableList
+ */
 public class StackProperty<T> extends ObservablePropertyCollection<T> {
     private final Stack<T> stack = new Stack<>();
 

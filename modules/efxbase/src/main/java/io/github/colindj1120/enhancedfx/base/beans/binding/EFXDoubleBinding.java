@@ -18,137 +18,135 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.DoubleExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.NumberBindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.DoubleExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.DoubleBinding;
 
 /**
- * {@code EFXDoubleBinding} is part of the EnhancedFX library and acts as a bridge between a {@link DoubleBinding} and a bean
- * object, facilitating a seamless integration of numeric expressions with the application's data model or UI state management. This
- * association enhances the ability to respond dynamically to changes in the application's state through numeric expressions that
- * evaluate to double values.
+ * {@code EFXDoubleBinding} is a specialized binding class that wraps a {@link DoubleBinding} and provides additional functionalities defined by {@link DoubleExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>
- * This class also implements {@link DoubleExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
+ * <p>It allows for enhanced manipulation and observation of {@code DoubleBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * <h2>Key Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li><b>Numeric Expression Association:</b> Directly associates {@code DoubleBinding} with a specific bean object,
- *       allowing numeric expressions to be closely tied to the application's state or model.</li>
- *   <li><b>Double Expression Utilities:</b> Implements {@link DoubleExpressionFunctions}, providing a rich set of functionalities
- *       for operations on numeric expressions, such as arithmetic operations, comparisons, and conversions.</li>
- *   <li><b>Bean Contextualization:</b> The associated bean object contextualizes the double binding within the application's
- *       model, enabling a clear representation of what part of the state or model the numeric expression observes or represents.</li>
- *   <li><b>Enhanced Observability:</b> Facilitates the observability of double values within the application, allowing UI components
- *       or other logic to react dynamically to changes in the associated numeric expressions.</li>
+ *     <li>Encapsulates a {@link DoubleBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional double expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced double bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
- * <h2>Example Usage:</h2>
- * An example illustrating the integration of {@code EFXDoubleBinding} with a UI component to reflect changes in a model's
- * property:
+ * <h2>Usage Example:</h2>
  * <pre>{@code
- * DoubleBinding volumeBinding = Bindings.createDoubleBinding(() ->
- *     audioModel.volumeProperty().get() * 100, audioModel.volumeProperty());
- * Object bean = audioModel; // Model object with the volume property
- * EFXDoubleBinding association = EFXDoubleBinding.create(volumeBinding, bean);
- * volumeSlider.valueProperty().bind(association.getBinding());
+ * DoubleProperty property = new SimpleDoubleProperty(2.0);
+ * DoubleBinding binding = property.add(3.0);
+ * EFXDoubleBinding efxBinding = EFXDoubleBinding.create(myBean, binding);
+ *
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
  * }</pre>
- * </p>
+ *
+ * <p>In this example, an {@code EFXDoubleBinding} is created by wrapping a {@link DoubleBinding} with a negation operation. It then listens for changes to the double value, demonstrating how {@code
+ * EFXDoubleBinding} can be used to enhance and observe double bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see DoubleBinding
  * @see EFXBinding
+ * @see DoubleBinding
  * @see DoubleExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXDoubleBinding implements EFXBinding<Number>, DoubleExpressionFunctions {
+public class EFXDoubleBinding extends EFXBinding<DoubleBinding> implements DoubleExpressionFunctions<DoubleBinding>, NumberBindingFunctions<DoubleBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXDoubleBinding}. This method establishes an association between a
-     * {@link DoubleBinding} and a specific bean object. It encapsulates the relationship between the double binding and the underlying
-     * property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXDoubleBinding}.
      *
-     * @param binding
-     *         the {@link DoubleBinding} to be associated with the bean. This binding represents a numeric expression that evaluates to
-     *         a double value, depending on one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXDoubleBinding} objects with a specific {@link DoubleBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code DoubleBinding}. This object typically represents the underlying model or entity
-     *         that the binding observes or depends upon.
+     *         The bean associated with the {@code DoubleBinding}. This can be used for contextual information or binding management.
+     * @param binding
+     *         The {@link DoubleBinding} to be encapsulated by the {@code EFXDoubleBinding}.
      *
-     * @return a new instance of {@code EFXDoubleBinding} that encapsulates the relationship between the provided
-     *         {@code DoubleBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXDoubleBinding} has a valid bean reference.
+     * @return An instance of {@code EFXDoubleBinding} wrapping the provided {@code DoubleBinding}.
      */
-    public static EFXDoubleBinding create(DoubleBinding binding, Object bean) {
-        return new EFXDoubleBinding(binding, bean);
+    public static EFXDoubleBinding create(Object bean, DoubleBinding binding) {
+        return new EFXDoubleBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link DoubleBinding} in this {@code EFXDoubleBinding}. The bean represents the underlying
-     * model or object that influences the value of the {@code DoubleBinding}. It provides a contextual link between the binding and
-     * the part of the application state it represents or observes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link DoubleBinding} instance that is part of this association. This binding encapsulates a computed double value that,
-     * when observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core
-     * functional component of the association, providing the dynamic link between the application state and the UI or other dependent
-     * logic.
-     */
-    private final DoubleBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXDoubleBinding}. Called internally by the
-     * {@link #create(DoubleBinding, Object)} factory method, it initializes the association with a specific {@code DoubleBinding} and
-     * bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXDoubleBinding}.
      *
-     * @param binding
-     *         the {@code DoubleBinding} to associate.
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, DoubleBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXDoubleBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code DoubleBinding}.
+     * @param binding
+     *         The {@link DoubleBinding} to be encapsulated.
      */
-    private EFXDoubleBinding(DoubleBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXDoubleBinding.class);
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXDoubleBinding(Object bean, DoubleBinding binding) {
+        super(bean, binding);
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link DoubleBinding} associated with this {@code EFXDoubleBinding}.
-     *
-     * @return the {@code DoubleBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public DoubleBinding getBinding() {
+    @Override
+    public DoubleBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code DoubleBinding}. The bean represents the underlying property or object that the
-     * {@code DoubleBinding} depends on.
-     *
-     * @return the bean object associated with the {@code DoubleBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public void setObservableValue(DoubleBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXDoubleBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXDoubleBinding}.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXDoubleBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("DoubleBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
+
+    //endregion Overridden Methods
 }

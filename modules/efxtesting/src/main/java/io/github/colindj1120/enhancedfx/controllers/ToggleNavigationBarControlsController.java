@@ -1,7 +1,7 @@
 package io.github.colindj1120.enhancedfx.controllers;
 
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleButton;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleNavigationBar;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXToggleButton;
+import io.github.colindj1120.enhancedfx.controls.complexcontrol.EFXToggleNavigationBar;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;

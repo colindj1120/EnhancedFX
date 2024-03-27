@@ -17,94 +17,175 @@
  */
 package io.github.colindj1120.enhancedfx.base.beans.binding.base;
 
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import javafx.beans.binding.Binding;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
- * The EFXBinding interface provides a structured way to associate a {@link Binding} with its corresponding bean, ensuring that
- * the relationship between a binding and its underlying property or properties is clearly defined and managed. This interface offers
- * utility methods for validation and retrieval of both the binding and its associated bean, facilitating a robust and type-safe way to
- * handle bindings in JavaFX.
+ * Provides a foundational abstract class for EnhancedFX bindings, encapsulating common functionality and utilities for managing {@link Binding} instances. This class serves as the base for creating custom
+ * binding implementations within the EnhancedFX framework, allowing for extended control and manipulation of bindings associated with JavaFX properties.
  *
- * <p>
- * <h2>Key features:</h2>
+ * <h2>Key Features:</h2>
  * <ul>
- *     <li><b>Type Safety:</b> Through generic typing and runtime type checks, it enforces the correct usage of bindings
- *     with their respective beans.</li>
- *     <li><b>Validation:</b> It provides methods to ensure non-null beans and correct instance types for bindings, throwing
- *     IllegalArgumentExceptions when validations fail. This prevents common errors such as null pointer exceptions and
- *     class cast exceptions when working with bindings.</li>
- *     <li><b>Retrieval:</b> Methods to get the current binding and its associated bean are provided, enabling easy access to
- *     these components for further manipulation or inspection.</li>
+ *     <li>Associates a bean object with the binding for contextual information and management.</li>
+ *     <li>Encapsulates a {@link Binding} instance, offering a framework for observing changes to JavaFX properties.</li>
+ *     <li>Provides abstract methods for retrieving and setting the observable value, enabling subclass implementations to define specific behaviors.</li>
  * </ul>
- * </p>generate javadocs for these
  *
- * <p>This interface is especially useful in complex JavaFX applications where bindings play a crucial role in UI logic and
- * data representation, providing a standardized way to manage and utilize bindings across the application.</p>
+ * <h2>Usage Example:</h2>
+ * <pre>{@code
+ * public class CustomStringBinding extends EFXBinding<StringBinding> {
+ *     public CustomStringBinding(Object bean, StringBinding binding) {
+ *         super(bean, binding);
+ *     }
+ *
+ *     @Override
+ *     public StringBinding getObservableValue() {
+ *         return binding;
+ *     }
+ *
+ *     @Override
+ *     public void setObservableValue(StringBinding value) {
+ *         this.binding = value;
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>This example demonstrates how to extend {@code EFXBinding} to create a custom binding implementation for a {@code StringBinding}. It highlights the requirement to implement methods for accessing and
+ * modifying the encapsulated {@code StringBinding}.</p>
  *
  * @param <T>
- *         the type of the value that the binding computes
+ *         the specific type of {@link Binding} being managed
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see Binding
  */
-public interface EFXBinding<T> {
+public abstract class EFXBinding<T extends Binding<?>> {
+    protected final Object bean;
+    protected       T      binding;
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * Checks if the provided bean is not null. Throws an {@link IllegalArgumentException} if the bean is null.
+     * Constructs an instance of {@code EFXBinding} with the specified bean and binding.
      *
      * @param bean
-     *         the bean to check for nullity
-     * @param clazz
-     *         the class where the check is being made, for error message context
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is null
-     */
-    default void checkBeanIsNotNull(Object bean, Class<?> clazz) {
-        String nullMessage = String.format("Bean cannot be null in %s", clazz.getSimpleName());
-        Optional.ofNullable(bean)
-                .orElseThrow(() -> new IllegalArgumentException(nullMessage));
-    }
-
-    /**
-     * Validates that a given binding is an instance of a specific class. If the binding is not an instance of the specified class, an
-     * {@link IllegalArgumentException} is thrown.
-     *
+     *         the bean associated with this binding, providing context or a reference to the owning object
      * @param binding
-     *         the binding to check
-     * @param expectedType
-     *         the class the binding is expected to be an instance of
-     * @param <U>
-     *         the type parameter of the expected binding class
-     *
-     * @return the casted binding if it's an instance of the expected type
-     *
-     * @throws IllegalArgumentException
-     *         if the binding is not an instance of the specified class
+     *         the {@link Binding} instance to be managed by this {@code EFXBinding}
      */
-    @SuppressWarnings("unchecked") // Suppress unchecked cast warning
-    default <U extends Binding<?>> U checkInstanceOf(Binding<?> binding, Class<U> expectedType) {
-        if (!expectedType.isInstance(binding)) {
-            throw new IllegalArgumentException("Binding must be an instance of " + expectedType.getSimpleName());
-        }
-        return (U) binding; // Perform the cast after the check
+    protected EFXBinding(final Object bean, T binding) {
+        EFXObjectUtils.isNotNull(bean, () -> String.format("The bean object must not be null in %s", this.getClass()
+                                                                                                         .getSimpleName()));
+        this.bean = bean;
+        this.binding = binding;
+    }
+
+    //endregion Constructor
+
+    //region Abstract Methods
+    //*****************************************************************
+    // Abstract Methods
+    //*****************************************************************
+
+    /**
+     * Retrieves the observable value managed by this {@code EFXBinding}.
+     *
+     * @return the current {@link Binding} instance
+     */
+    public abstract T getObservableValue();
+
+    /**
+     * Sets the observable value for this {@code EFXBinding}.
+     *
+     * @param value
+     *         the new {@link Binding} instance to manage
+     */
+    public abstract void setObservableValue(T value);
+
+    //endregion Abstract Methods
+
+    //region Concrete Methods
+    //*****************************************************************
+    // Concrete Methods
+    //*****************************************************************
+
+    /**
+     * Gets the bean associated with this binding.
+     *
+     * @return the bean object
+     */
+    public Object getBean() {
+        return bean;
+    }
+
+    //endregion Concrete Methods
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return super.hashCode() + Objects.hash(bean);
     }
 
     /**
-     * Retrieves the associated binding.
+     * Determines whether the specified object is equal to this {@code EFXBinding} instance. Equality is based on a comparison of the bean objects associated with the bindings and the observable values they
+     * manage. This method overrides the {@link Object#equals(Object)} method to provide a deep comparison suited to the enhanced binding functionalities within the EnhancedFX framework.
      *
-     * @return the {@link Binding} instance associated with this binding association
+     * <p>The equality check involves the following steps:</p>
+     * <ol>
+     *     <li>Verifying that the other object is not {@code null} and is an instance of {@code EFXBinding}.</li>
+     *     <li>Comparing the bean objects for equality. The bean object provides context for the binding and is considered a part of its identity.</li>
+     *     <li>Ensuring the observable value managed by this binding is of the same type as that managed by the other binding. This is a type-safety check to prevent class cast exceptions.</li>
+     *     <li>Comparing the observable values for equality. The actual binding instances (observable values) are compared using their {@code equals} method.</li>
+     * </ol>
+     *
+     * <p>This method aims to provide a comprehensive equality check that accounts for both the contextual information associated with the binding (the bean) and the functional aspect of the binding (the
+     * observable value).</p>
+     *
+     * @param obj
+     *         the reference object with which to compare
+     *
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise
      */
-    Binding<T> getBinding();
+    @Override
+    public boolean equals(Object obj) {
+        return Optional.ofNullable(obj)
+                       .filter(EFXBinding.class::isInstance)
+                       .map(EFXBinding.class::cast)
+                       .filter(other -> Objects.equals(this.bean, other.getBean()))
+                       .filter(other -> binding.getClass()
+                                               .isInstance(other.getObservableValue()))
+                       .map(other -> Objects.equals(this.binding, other.getObservableValue()))
+                       .orElse(false);
+    }
 
     /**
-     * Retrieves the bean associated with this binding. The bean typically represents the object on which the binding depends.
-     *
-     * @return the bean associated with the binding
+     * {@inheritDoc}
      */
-    Object getBean();
-}
+    @Override
+    public String toString() {
+        String bindingClassName = binding.getClass()
+                                         .getSimpleName();
+        return String.format("""
+                             EFXBinding {
+                                Bean=%s
+                                %s=%s
+                             }
+                             """, bean.toString(), bindingClassName, binding.toString());
+    }
 
+    //endregion Overridden Methods
+}

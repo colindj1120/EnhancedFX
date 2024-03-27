@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2024 Colin Jokisch
- * This file is part of MaterialDesignUI (https://github.com/colindj1120/MaterialDesignUI).
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
  *
- * MaterialDesignUI is free software: you can redistribute it and/or modify
+ * EnhancedFX is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MaterialDesignUI is distributed in the hope that it will be useful,
+ * EnhancedFX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialDesignUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.colindj1120.enhancedfx.base.collections.base;
 

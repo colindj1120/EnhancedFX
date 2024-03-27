@@ -86,37 +86,20 @@ public class AsymmetricRoundedRectangle extends Path {
     private final DoubleProperty lowerLeftHorizontalRadius  = new SimpleDoubleProperty(this, "lowerLeftHorizontalRadius");
     private final DoubleProperty lowerLeftVerticalRadius    = new SimpleDoubleProperty(this, "lowerLeftVerticalRadius");
 
-    /**
-     * Constructs an {@code AsymmetricRoundedRectangle} with specified width, height, and corner radii. This constructor initializes the rectangle at the origin (0,0).
-     *
-     * @param width
-     *         the width of the rectangle
-     * @param height
-     *         the height of the rectangle
-     * @param cornerRadii
-     *         the radii of each corner, allowing for asymmetric corner rounding
-     */
-    public AsymmetricRoundedRectangle(double width, double height, CornerRadii cornerRadii) {
-        setupAsymmetricRoundedRectangle(0.0, 0.0, width, height, cornerRadii);
+
+    public static AsymmetricRoundedRectangle create(double width, double height, CornerRadii cornerRadii) {
+        AsymmetricRoundedRectangle asymmetricRoundedRectangle = new AsymmetricRoundedRectangle();
+        asymmetricRoundedRectangle.setupAsymmetricRoundedRectangle(0.0, 0.0, width, height, cornerRadii);
+        return asymmetricRoundedRectangle;
     }
 
-    /**
-     * Constructs an {@code AsymmetricRoundedRectangle} with specified position, width, height, and corner radii.
-     *
-     * @param x
-     *         the X coordinate for the upper-left corner of the rectangle
-     * @param y
-     *         the Y coordinate for the upper-left corner of the rectangle
-     * @param width
-     *         the width of the rectangle
-     * @param height
-     *         the height of the rectangle
-     * @param cornerRadii
-     *         the radii of each corner, allowing for asymmetric corner rounding
-     */
-    public AsymmetricRoundedRectangle(double x, double y, double width, double height, CornerRadii cornerRadii) {
-        setupAsymmetricRoundedRectangle(x, y, width, height, cornerRadii);
+    public static AsymmetricRoundedRectangle create(double x, double y, double width, double height, CornerRadii cornerRadii) {
+        AsymmetricRoundedRectangle asymmetricRoundedRectangle = new AsymmetricRoundedRectangle();
+        asymmetricRoundedRectangle.setupAsymmetricRoundedRectangle(x, y, width, height, cornerRadii);
+        return asymmetricRoundedRectangle;
     }
+
+    private AsymmetricRoundedRectangle() {}
 
     /**
      * Initializes the {@code AsymmetricRoundedRectangle} with the given parameters and sets up the default styling and listeners.

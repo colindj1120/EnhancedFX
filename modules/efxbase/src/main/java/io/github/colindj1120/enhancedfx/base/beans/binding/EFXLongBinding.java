@@ -18,135 +18,135 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.LongExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.LongExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.NumberExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.LongBinding;
 
 /**
- * The {@code EFXLongBinding} class serves as a foundational component within the EnhancedFX framework, aimed at facilitating
- * the seamless integration of long numeric expressions with the broader application model or state. By establishing a robust link
- * between a {@link LongBinding} and its associated bean object, this class underscores the synergy between the dynamic updates in the
- * application's user interface (UI) or logic and the changes within the underlying data model.
+ * {@code EFXLongBinding} is a specialized binding class that wraps a {@link LongBinding} and provides additional functionalities defined by {@link LongExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>
- * This class also implements {@link LongExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
+ * <p>It allows for enhanced manipulation and observation of {@code LongBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * <h2>Key Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li><b>Direct Connection:</b> Forges a direct link between a {@code LongBinding} and its corresponding bean,
- *       enabling the binding to reactively represent changes in the underlying model or state.</li>
- *   <li><b>Long Expression Utilities:</b> Inherits from {@link LongExpressionFunctions}, offering an array of
- *       functionalities tailored for long expressions, enhancing ease of use and flexibility.</li>
- *   <li><b>Responsive UI Updates:</b> Facilitates the automatic and real-time update of UI components or logical
- *       operations in response to variations in the associated long values, thereby improving interactivity and user
- *       engagement.</li>
- *   <li><b>Improved Code Manageability:</b> Clarifies the relationship between bindings and their respective beans,
- *       promoting cleaner, more maintainable code architecture.</li>
+ *     <li>Encapsulates a {@link LongBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional long expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced long bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Example:</h2>
  * <pre>{@code
- * LongBinding userAgeBinding = Bindings.createLongBinding(() ->
- *     userProfile.ageProperty().get(), userProfile.ageProperty());
- * Object bean = userProfile; // Model object with the age property
- * EFXLongBinding association = EFXLongBinding.create(userAgeBinding, bean);
- * ageDisplayUIComponent.valueProperty().bind(association.getBinding());
+ * LongProperty property = new SimpleLongProperty(2);
+ * LongBinding binding = property.add(3);
+ * EFXLongBinding efxBinding = EFXLongBinding.create(myBean, binding);
+ *
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
  * }</pre>
- * </p>
+ *
+ * <p>In this example, an {@code EFXLongBinding} is created by wrapping a {@link LongBinding} with a negation operation. It then listens for changes to the long value, demonstrating how {@code
+ * EFXLongBinding} can be used to enhance and observe long bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see LongBinding
  * @see EFXBinding
+ * @see LongBinding
  * @see LongExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXLongBinding implements EFXBinding<Number>, LongExpressionFunctions {
+public class EFXLongBinding extends EFXBinding<LongBinding> implements LongExpressionFunctions<LongBinding>, NumberExpressionFunctions<LongBinding> {
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXLongBinding}. This method establishes an association between a
-     * {@link LongBinding} and a specific bean object. It encapsulates the relationship between the long binding and the underlying
-     * property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXLongBinding}.
      *
-     * @param binding
-     *         the {@link LongBinding} to be associated with the bean. This binding represents a numeric expression that evaluates to a
-     *         long value, depending on one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXLongBinding} objects with a specific {@link LongBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code LongBinding}. This object typically represents the underlying model or entity that
-     *         the binding observes or depends upon.
+     *         The bean associated with the {@code LongBinding}. This can be used for contextual information or binding management.
+     * @param binding
+     *         The {@link LongBinding} to be encapsulated by the {@code EFXLongBinding}.
      *
-     * @return a new instance of {@code EFXLongBinding} that encapsulates the relationship between the provided
-     *         {@code LongBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXLongBinding} has a valid bean reference.
+     * @return An instance of {@code EFXLongBinding} wrapping the provided {@code LongBinding}.
      */
-    public static EFXLongBinding create(LongBinding binding, Object bean) {
-        return new EFXLongBinding(binding, bean);
+    public static EFXLongBinding create(Object bean, LongBinding binding) {
+        return new EFXLongBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link LongBinding} in this {@code EFXLongBinding}. The bean represents the underlying
-     * model or object that influences the value of the {@code LongBinding}. It provides a contextual link between the binding and the
-     * part of the application state it represents or observes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link LongBinding} instance that is part of this association. This binding encapsulates a computed long value that, when
-     * observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core functional
-     * component of the association, providing the dynamic link between the application state and the UI or other dependent logic.
-     */
-    private final LongBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXLongBinding}. Called internally by the
-     * {@link #create(LongBinding, Object)} factory method, it initializes the association with a specific {@code LongBinding} and
-     * bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXLongBinding}.
      *
-     * @param binding
-     *         the {@code LongBinding} to associate.
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, LongBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXLongBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code LongBinding}.
+     * @param binding
+     *         The {@link LongBinding} to be encapsulated.
      */
-    private EFXLongBinding(LongBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXLongBinding.class);
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXLongBinding(Object bean, LongBinding binding) {
+        super(bean, binding);
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link LongBinding} associated with this {@code EFXLongBinding}.
-     *
-     * @return the {@code LongBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public LongBinding getBinding() {
+    @Override
+    public LongBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code LongBinding}. The bean represents the underlying property or object that the
-     * {@code LongBinding} depends on.
-     *
-     * @return the bean object associated with the {@code LongBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public void setObservableValue(LongBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXLongBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXLongBinding}.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXLongBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("LongBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
+
+    //endregion Overridden Methods
 }

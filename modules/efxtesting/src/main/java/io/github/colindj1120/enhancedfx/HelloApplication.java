@@ -3,10 +3,10 @@ package io.github.colindj1120.enhancedfx;
 import fr.brouillard.oss.cssfx.CSSFX;
 import io.github.colindj1120.enhancedfx.controllers.EnhancedTextFieldControlsController;
 import io.github.colindj1120.enhancedfx.controllers.ToggleNavigationBarControlsController;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXButton;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleButton;
-import io.github.colindj1120.enhancedfx.controls.control.efxlabeled.efxbuttons.EFXToggleNavigationBar;
-import io.github.colindj1120.enhancedfx.controls.control.efxtext.EFXTextField;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXButton;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.efxbuttons.EFXToggleButton;
+import io.github.colindj1120.enhancedfx.controls.complexcontrol.EFXToggleNavigationBar;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -37,7 +37,7 @@ public class HelloApplication extends Application {
     }
 
     private VBox getMDToggleNavigationBarVBox() {
-        EFXToggleNavigationBar toggleNavigationBar = new EFXToggleNavigationBar();
+        EFXToggleNavigationBar toggleNavigationBar = EFXToggleNavigationBar.create();
         EFXToggleButton        btn                 = toggleNavigationBar.addToggleButton("LADfadfadf", isSelected -> {});
         btn.setPrefSize(400, 400);
         //btn.setStyle("-fx-background-radius: 10 20 30 40; -fx-border-radius: 10 20 30 40;");
@@ -49,14 +49,14 @@ public class HelloApplication extends Application {
 
     @NotNull
     private VBox getCustomTextFieldVBox() {
-        EFXTextField textField = new EFXTextField();
+        EFXTextField textField = EFXTextField.create();
 
         return getvBox(new HBox(textField), 250, createTextFieldControls(textField));
     }
 
     @NotNull
     private VBox getEnhancedButtonVBox() {
-        EFXButton button = new EFXButton("Click me!");
+        EFXButton button = EFXButton.create("Click me!");
         button.setPrefSize(200, 200);
 
         //ETF etf = new ETF();

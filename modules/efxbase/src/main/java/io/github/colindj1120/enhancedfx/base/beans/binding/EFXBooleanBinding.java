@@ -18,143 +18,135 @@
 package io.github.colindj1120.enhancedfx.base.beans.binding;
 
 import io.github.colindj1120.enhancedfx.base.beans.binding.base.EFXBinding;
-import io.github.colindj1120.enhancedfx.base.beans.binding.base.BooleanExpressionFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.bindingfunctions.BindingFunctions;
+import io.github.colindj1120.enhancedfx.base.beans.binding.base.expressionfunctions.BooleanExpressionFunctions;
+import io.github.colindj1120.enhancedfx.utils.EFXStringUtils;
 import javafx.beans.binding.BooleanBinding;
 
 /**
- * {@code EFXBooleanBinding} serves as a connector between a {@link BooleanBinding} and a bean object, thereby creating a
- * meaningful link between the state of a boolean expression and the application's model or underlying data. Part of the EnhancedFX
- * library, this class enriches JavaFX development by simplifying the management of bindings that are critical for reactive UI
- * designs.
+ * {@code EFXBooleanBinding} is a specialized binding class that wraps a {@link BooleanBinding} and provides additional functionalities defined by {@link BooleanExpressionFunctions} and {@link BindingFunctions}
+ * interfaces.
  *
- * <p>This class allows developers to encapsulate the logic of boolean value changes within the UI, ensuring that any
- * changes in the observed properties or expressions directly reflect on the UI components or other areas of interest within the
- * application. It is particularly useful in scenarios where the UI needs to dynamically respond to changes in the application's state,
- * such as toggling visibility, enabling/disabling controls, or triggering other boolean conditions.</p>
+ * <p>It allows for enhanced manipulation and observation of {@code BooleanBinding} objects within the EnhancedFX framework.</p>
  *
- * <p>
- * This class also implements {@link BooleanExpressionFunctions} which provide they functionality to access all the StringBinding
- * functions directly.
- * </p>
- *
- * <p1>
- * <h2>Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li><b>Integration with Boolean Bindings:</b> Works with {@code BooleanBinding} to facilitate the observation of
- *     boolean expressions derived from observable values.</li>
- *     <li><b>Direct Association with Beans:</b> Directly associates a boolean binding with a specific bean, tying the
- *     binding's logic to a concrete part of the application's model or data.</li>
- *     <li><b>Enhanced Boolean Expression Utilities:</b> Implements {@link BooleanExpressionFunctions} to provide
- *     additional utilities for boolean expressions, such as logical operations and value transformations.</li>
- *     <li><b>Customizable:</b> Designed for flexibility, allowing it to be adapted or extended for various
- *     use cases across different domains.</li>
+ *     <li>Encapsulates a {@link BooleanBinding} instance for advanced manipulation.</li>
+ *     <li>Implements additional boolean expression and binding functional interfaces for extended operations.</li>
+ *     <li>Facilitates the creation of enhanced boolean bindings with associated beans for improved context and manageability.</li>
  * </ul>
- * </p>
  *
- * <p>
- * <h2>Example Usage:</h2>
- * Below is an example illustrating how to use {@code EFXBooleanBinding} in a JavaFX application to bind a
- * model property to a UI component's enabled state:
+ * <h2>Usage Example:</h2>
  * <pre>{@code
- * BooleanBinding conditionBinding = Bindings.createBooleanBinding(() ->
- *     model.isActiveProperty().get(), model.isActiveProperty());
- * Object bean = model; // Model object with the isActive property
- * EFXBooleanBinding association = EFXBooleanBinding.create(conditionBinding, bean);
- * button.disableProperty().bind(association.getBinding().not());
+ * BooleanProperty property = new SimpleBooleanProperty(false);
+ * BooleanBinding binding = property.not();
+ * EFXBooleanBinding efxBinding = EFXBooleanBinding.create(myBean, binding);
+ *
+ * efxBinding.addListener((observable, oldValue, newValue) -> {
+ *     System.out.println("New value: " + newValue);
+ * });
  * }</pre>
- * </p>
+ *
+ * <p>In this example, an {@code EFXBooleanBinding} is created by wrapping a {@link BooleanBinding} with a negation operation. It then listens for changes to the boolean value, demonstrating how {@code
+ * EFXBooleanBinding} can be used to enhance and observe boolean bindings.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see BooleanBinding
  * @see EFXBinding
+ * @see BooleanBinding
  * @see BooleanExpressionFunctions
+ * @see BindingFunctions
  */
-public class EFXBooleanBinding implements EFXBinding<Boolean>, BooleanExpressionFunctions {
+public class EFXBooleanBinding extends EFXBinding<BooleanBinding> implements BooleanExpressionFunctions<BooleanBinding>, BindingFunctions<Boolean, BooleanBinding> {
+
+    //region Static Factory Method
+    //*****************************************************************
+    // Static Factory Method
+    //*****************************************************************
+
     /**
-     * Factory method to create a new {@code EFXBooleanBinding}. This method establishes an association between a
-     * {@link BooleanBinding} and a specific bean object. It encapsulates the relationship between the boolean binding and the
-     * underlying property or model it represents or observes.
+     * Static factory method to create an instance of {@code EFXBooleanBinding}.
      *
-     * @param binding
-     *         the {@link BooleanBinding} to be associated with the bean. This binding represents a boolean expression that depends on
-     *         one or more observables.
+     * <p>This method provides a convenient way to instantiate {@code EFXBooleanBinding} objects with a specific {@link BooleanBinding} and an associated bean.</p>
+     *
      * @param bean
-     *         the bean object related to the {@code BooleanBinding}. This object typically represents the underlying model or entity
-     *         that the binding observes or depends upon.
+     *         The bean associated with the {@code BooleanBinding}. This can be used for contextual information or binding management.
+     * @param binding
+     *         The {@link BooleanBinding} to be encapsulated by the {@code EFXBooleanBinding}.
      *
-     * @return a new instance of {@code EFXBooleanBinding} that encapsulates the relationship between the provided
-     *         {@code BooleanBinding} and the bean.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}, ensuring that each {@code EFXBooleanBinding} has a valid bean reference.
+     * @return An instance of {@code EFXBooleanBinding} wrapping the provided {@code BooleanBinding}.
      */
-    public static EFXBooleanBinding create(BooleanBinding binding, Object bean) {
-        return new EFXBooleanBinding(binding, bean);
+    public static EFXBooleanBinding create(Object bean, BooleanBinding binding) {
+        return new EFXBooleanBinding(bean, binding);
     }
 
-    /**
-     * The bean associated with the {@link BooleanBinding} in this {@code EFXBooleanBinding}. The bean represents the
-     * underlying model or object that influences the value of the {@code BooleanBinding}. It provides a contextual link between the
-     * binding and the part of the application state it represents or observes.
-     */
-    private final Object bean;
+    //endregion Static Factory Method
+
+    //region Constructor
+    //*****************************************************************
+    // Constructor
+    //*****************************************************************
 
     /**
-     * The {@link BooleanBinding} instance that is part of this association. This binding encapsulates a computed boolean value that,
-     * when observed, reflects changes in the application state, often based on the state of the {@code bean}. It is the core
-     * functional component of the association, providing the dynamic link between the application state and the UI or other dependent
-     * logic.
-     */
-    private final BooleanBinding binding;
-
-    /**
-     * Private constructor to instantiate a {@code EFXBooleanBinding}. Called internally by the
-     * {@link #create(BooleanBinding, Object)} factory method, it initializes the association with a specific {@code BooleanBinding}
-     * and bean, performing a null check on the bean to ensure its validity.
+     * Constructs an instance of {@code EFXBooleanBinding}.
      *
-     * @param binding
-     *         the {@code BooleanBinding} to associate.
+     * <p>This constructor is protected to enforce the usage of the static factory method {@link #create(Object, BooleanBinding)} for instance creation, providing a clear and consistent way to instantiate
+     * {@code EFXBooleanBinding}.</p>
+     *
      * @param bean
-     *         the bean object related to the binding.
-     *
-     * @throws IllegalArgumentException
-     *         if the bean is {@code null}.
+     *         The bean associated with this {@code BooleanBinding}.
+     * @param binding
+     *         The {@link BooleanBinding} to be encapsulated.
      */
-    private EFXBooleanBinding(BooleanBinding binding, Object bean) {
-        checkBeanIsNotNull(bean, EFXBooleanBinding.class);
-        this.binding = binding;
-        this.bean = bean;
+    protected EFXBooleanBinding(Object bean, BooleanBinding binding) {
+        super(bean, binding);
     }
 
+    //endregion Constructor
+
+    //region Overridden Methods
+    //*****************************************************************
+    // Overridden Methods
+    //*****************************************************************
+
     /**
-     * Retrieves the {@link BooleanBinding} associated with this {@code EFXBooleanBinding}.
-     *
-     * @return the {@code BooleanBinding} instance associated with this association.
+     * {@inheritDoc}
      */
-    public BooleanBinding getBinding() {
+    @Override
+    public BooleanBinding getObservableValue() {
         return this.binding;
     }
 
     /**
-     * Retrieves the bean associated with the {@code BooleanBinding}. The bean represents the underlying property or object that the
-     * {@code BooleanBinding} depends on.
-     *
-     * @return the bean object associated with the {@code BooleanBinding}.
+     * {@inheritDoc}
      */
-    public Object getBean() {
-        return this.bean;
+    @Override
+    public void setObservableValue(BooleanBinding value) {
+        this.binding = value;
     }
 
     /**
-     * Generates a string representation of this {@code EFXBooleanBinding}, including the binding's and bean's string
-     * representations.
-     *
-     * @return a string representation of this {@code EFXBooleanBinding}.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EFXBooleanBinding efxBinding) {
+            return super.equals(efxBinding);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("BooleanBinding{%s}, Bean{%s}", this.binding.toString(), this.bean.toString());
+        return String.format("""
+                             %s {
+                                %s
+                             }
+                             """, getClass().getSimpleName(), EFXStringUtils.addSpacesToEveryLine(super.toString(), EFXStringUtils.IndentationLevel.LEVEL_1));
     }
 
+    //endregion Overridden Methods
 }
