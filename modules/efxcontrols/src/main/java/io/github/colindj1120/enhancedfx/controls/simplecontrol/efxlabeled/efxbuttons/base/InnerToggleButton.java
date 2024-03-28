@@ -23,34 +23,51 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 
 /**
- * The {@code InnerToggleButton} interface defines common functionalities for an inner {@link ToggleButton} control. It extends {@link InnerButtonBase} to provide toggle-specific behavior to custom button
- * implementations. By encapsulating the behavior specific to toggle buttons, this interface allows for a consistent API across custom controls that internally use a {@link ToggleButton}.
+ * This interface extends {@link InnerButtonBase} to provide specific functionalities for {@link ToggleButton} controls within JavaFX.
+ *
+ * <p>It encapsulates common toggle button operations such as managing the selected state, associating with a {@link ToggleGroup}, and toggling the state. This enables a more intuitive and flexible way to work
+ * with toggle buttons in JavaFX applications.</p>
  *
  * <h2>Capabilities:</h2>
- * <p>
  * <ul>
- *     <li>Toggle Selection: Allows querying and modifying the selected state of the inner toggle button.</li>
- *     <li>Toggle Group Association: Facilitates adding or removing the toggle button from a {@link ToggleGroup}, enabling single selection within a group.</li>
- *     <li>Property Access: Exposes the {@code selectedProperty} and {@code toggleGroupProperty} for binding or direct manipulation.</li>
- *     <li>EFXState Toggle: Provides a method to programmatically toggle the selected state, switching between selected and deselected.</li>
+ *     <li>Managing the selected state: Query and modify whether the toggle button is selected.</li>
+ *     <li>Toggle group association: Associate the toggle button with a {@link ToggleGroup} to create mutually exclusive selection groups.</li>
+ *     <li>State toggling: Easily toggle the selected state between on and off.</li>
  * </ul>
- * </p>
  *
- * <p>
- * This interface ensures that any control implementing it can act as a toggle button or incorporate toggle button functionality seamlessly. It abstracts away the direct manipulation of the
- * {@link ToggleButton}'s properties and actions, promoting a cleaner, higher-level interface for component interaction.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * InnerToggleButton<ToggleButton> myToggleButton = // instantiation of InnerToggleButton
+ * myToggleButton.setSelected(true); // Selects the toggle button
+ * myToggleButton.setToggleGroup(myToggleGroup); // Associates the toggle button with a toggle group
+ * myToggleButton.toggle(); // Toggles the selected state
+ * }
+ * </pre>
+ *
+ * <p>This interface is part of the EnhancedFX library, aimed at providing extended functionalities and utilities for JavaFX controls, making the development of rich and interactive JavaFX applications more
+ * convenient and efficient.</p>
  *
  * @param <T>
- *         the specific type of {@link ToggleButton} that is being wrapped or used internally
+ *         the specific type of {@link ToggleButton} being enhanced by this interface
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see InnerButtonBase
  * @see ToggleButton
- * @see ToggleGroup
  */
 public interface InnerToggleButton<T extends ToggleButton> extends InnerButtonBase<T> {
+    /*
+     * Methods Available:
+     *  - BooleanProperty selectedProperty()
+     *  - boolean isSelected()
+     *  - void setSelected(boolean value)
+     *  - ObjectProperty<ToggleGroup> toggleGroupProperty()
+     *  - ToggleGroup getToggleGroup()
+     *  - void setToggleGroup(ToggleGroup value)
+     *  - void toggle()
+     */
+
     /**
      * Provides access to the {@code selectedProperty} of the {@link ToggleButton}.
      *

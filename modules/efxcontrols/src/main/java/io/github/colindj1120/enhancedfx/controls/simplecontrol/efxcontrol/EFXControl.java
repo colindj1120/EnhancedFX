@@ -17,11 +17,11 @@
  */
 package io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol;
 
-import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.base.EFXControlBase;
 import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
-import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.base.EFXControlBase;
 import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -34,32 +34,72 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Abstract class EFXControl provides a partial implementation for Controls used in the EnhancedFX library. The class contains common setup, state management, custom property definitions and efxTheme
- * management functionalities that apply to all controls derived from EFXControl.
+ * The {@code EFXControl} class extends {@code EFXControlBase} to provide a generic framework for creating enhanced controls within the EnhancedFX UI toolkit.
  *
- * <p>
- * This class contains both abstract and concrete methods. The concrete methods implement functionalities that are shared across all types of controls in the EnhancedFX library. On the other hand, the abstract
- * methods represent functionalities that are unique to each type of control and as such must be provided by each subclass.
- * </p>
+ * <p>It incorporates advanced theme management, CSS styling capabilities, and event handling mechanisms to facilitate the development of rich, interactive user interface components.</p>
  *
- * <p>
- * An instance of EFXControl has access to a static `StyleablePropertiesManager` and `StringProperty` that provides a themeResourceDirectory. Each instance of the class is associated with a specific
- * Control and comes with methods to hook up the control with its desired properties, behaviors and its efxTheme changes.
- * </p>
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *     <li><em>Dynamic Theme Support:</em> Seamlessly switch between light and dark themes, or any custom themes defined within the {@code EFXTheme} enum, without needing to restart the application.</li>
+ *     <li><em>Automated Style Management:</em> Utilizes a {@code StyleablePropertiesManager} to manage CSS metadata and styleable properties, simplifying the process of applying and updating CSS styles
+ *     dynamically.</li>
+ *     <li><em>Event Handling:</em> Implements a structured approach to adding focus and theme change listeners, ensuring controls react appropriately to user interactions and theme changes.</li>
+ *     <li><em>Resource Validation:</em> Provides utility methods for validating the existence of stylesheet paths associated with selected themes, preventing runtime errors due to missing resources.</li>
+ * </ul>
  *
- * <p>
- * EFXControl contributes towards making EnhancedFX a highly customizable and easily themeable JavaFX UI control library. It supports dynamic efxTheme changes by automatically mapping stylesheets to controls
- * based on the currently selected efxTheme. The themeResourceDirectory can be globally changed to switch the look and feel of all controls derived from EFXControl in a JavaFX application.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <em>Here's a simple usage example that demonstrates how to create a custom control extending {@code EFXControl}:</em>
+ * <pre>
+ * {@code
+ * public class MyCustomControl extends EFXControl<Button> {
+ *     private Button button = new Button("Click Me!");
  *
- * @param <T>
- *         the type of Control this EFXControl wraps.
+ *     public MyCustomControl() {
+ *         super();
+ *         // Additional initialization here
+ *     }
+ *
+ *     @Override
+ *     protected EFXControl<?> getControl() {
+ *         return this;
+ *     }
+ *
+ *     @Override
+ *     protected void setupControl() {
+ *         // Set up the control, e.g., attach event listeners
+ *         button.setOnAction(event -> System.out.println("Button clicked!"));
+ *         getChildren().add(button); // Add the button as a child of this control
+ *     }
+ *
+ *     @Override
+ *     protected void setupStyleableProperties() {
+ *         // Define custom styleable properties if necessary
+ *     }
+ *
+ *     @Override
+ *     protected void updatePseudoClassStates() {
+ *         // Update CSS pseudo-class states as needed
+ *     }
+ *
+ *     @Override
+ *     public Button getInnerControl() {
+ *         return button; // Return the inner control
+ *     }
+ * }
+ * }
+ * </pre>
+ *
+ * <p>This example showcases the basic structure of a custom control extending {@code EFXControl}. The developer is responsible for implementing the abstract methods to specify the behavior, appearance, and
+ * internal components of the control.</p>
+ *
+ * <p>By leveraging the capabilities of {@code EFXControl}, developers can create versatile and dynamically-styled controls with full support for the EnhancedFX theming system, enhancing the overall user
+ * experience of JavaFX applications.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see Control
- * @see CustomControlConfigurator
- * @see StyleablePropertiesManager
+ * @see EFXControlBase
+ * @see EFXTheme
  */
 public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     private static final StyleablePropertiesManager stylesManager = new StyleablePropertiesManager(Control.getClassCssMetaData());
@@ -82,10 +122,8 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     /**
      * Constructs an instance of EFXControl.
      *
-     * <p>
-     * This constructor calls the `super()` method to initialize the parent `Control`. It then sets up the styleable properties, configures the control, and updates the pseudo class states by calling the
-     * respective methods: `setupStyleableProperties()`, `setupControl()`, and `updatePseudoClassStates()`.
-     * </p>
+     * <p>This constructor calls the `super()` method to initialize the parent `Control`. It then sets up the styleable properties, configures the control, and updates the pseudo class states by calling the
+     * respective methods: `setupStyleableProperties()`, `setupControl()`, and `updatePseudoClassStates()`.</p>
      */
     protected EFXControl() {
         super();
@@ -99,25 +137,20 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     /**
      * Sets up the control with appropriate configuration for custom behavior.
      *
-     * <p>
-     * This involves initializing a {@link CustomControlConfigurator} for the control, attaching listeners to focus and efxTheme change events. These listeners handle the effects of these changes on the control's
-     * appearance.
-     * </p>
+     * <h2>Function Steps:</h2>
+     * <em>This process is divided into several key steps to ensure the control is fully configured for its intended use within the EnhancedFX framework:</em>
+     * <ol>
+     *     <li><em>Control Configurator Initialization:</em> A {@link CustomControlConfigurator} instance is initialized for the control. This configurator acts as a bridge, linking the control with its
+     *     associated properties and behaviors. It simplifies the control's setup process by automating common setup tasks.</li>
+     *     <li><em>Focus Change Listener Attachment:</em> The configurator attaches a listener to the control's focus property via the method call {@code addFocusedChangeListener
+     *     (this::handleCustomControlFocusChange)}. This listener is responsible for executing the {@code handleCustomControlFocusChange} method whenever the control's focus state changes, allowing for
+     *     custom focus behavior.</li>
+     *     <li><em>Theme Change Listener Attachment:</em> Similarly, the method call {@code addStringPropertyChangeListener(themeResourceDirectory, this::loadNewTheme)} attaches a listener to the {@code
+     *     themeResourceDirectory} StringProperty. This ensures that any changes to the theme resource directory trigger the loading of a new theme, with the {@code loadNewTheme} method adapting the
+     *     control's appearance according to the new stylesheet defined at the {@code themeResourceDirectory} path.</li>
+     * </ol>
      *
-     * <p>
-     * The configurator is a tool to connect the control with its associated properties and behaviors. It simplifies control setup by handling mundane tasks that would otherwise need to be done manually for
-     * each control.
-     * </p>
-     *
-     * <p>
-     * The method call {@code addFocusedChangeListener(this::handleCustomControlFocusChange)} attaches a listener to the control's focus property. When the control gains or loses focus, this listener executes
-     * the {@code handleCustomControlFocusChange} method.
-     * </p>
-     *
-     * <p>
-     * The method call {@code addStringPropertyChangeListener(themeResourceDirectory, this::loadNewTheme)} attaches a listener to the {@code themeResourceDirectory} StringProperty. When the value of the
-     * property changes, this listener loads a new efxTheme. The new efxTheme is defined as a stylesheet located at {@code themeResourceDirectory} path.
-     * </p>
+     * <p>Through these steps, the control is fully prepared to respond to focus and theme changes, demonstrating EnhancedFX's ability to dynamically adjust control behavior and appearance.
      */
     protected void setupControl() {
         CustomControlConfigurator.create(getControl())
@@ -135,10 +168,8 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     /**
      * Handles the focus change event of a custom control.
      *
-     * <p>
-     * When a custom control gains focus, it delegates the focus to its inner control. In essence, this method checks if the custom control is now focused. If so, it requests the inner control to take the
-     * focus.
-     * </p>
+     * <p>When a custom control gains focus, it delegates the focus to its inner control. In essence, this method checks if the custom control is now focused. If so, it requests the inner control to take the
+     * focus.</p>
      *
      * @param observableValue
      *         The ObservableValue which value was changed.
@@ -161,18 +192,45 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     // Getters and Setters
     //*****************************************************************
 
+    /**
+     * Retrieves the CSS directory path of the selected theme.
+     *
+     * @return The CSS directory path of the selected theme.
+     */
     public static String getSelectedThemeCssDirectory() {
-        return selectedTheme.get().getThemeCssDirectory();
+        return selectedTheme.get()
+                            .getThemeCssDirectory();
     }
 
+    /**
+     * Returns the currently selected theme.
+     *
+     * @return The currently selected theme.
+     */
     public static EFXTheme getSelectedTheme() {
         return selectedTheme.get();
     }
 
+    /**
+     * Retrieves the selectedThemeCssDirectoryProperty.
+     *
+     * @return The ObjectProperty representing the selected theme CSS directory.
+     *
+     * @since 1.0
+     */
     public static ObjectProperty<EFXTheme> selectedThemeCssDirectoryProperty() {
         return selectedTheme;
     }
 
+    /**
+     * Sets the directory for the CSS stylesheets associated with the provided EFXTheme.
+     *
+     * @param efxTheme
+     *         The EFXTheme to set the CSS directory for.
+     *
+     * @throws IllegalArgumentException
+     *         if efxTheme is null.
+     */
     public static void setThemeCssDirectory(EFXTheme efxTheme) {
         EFXObjectUtils.isNotNull(efxTheme, () -> "EFXTheme cannot be null.");
 
@@ -186,8 +244,41 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     // EFXTheme Helper Functions
     //*****************************************************************
 
+    /**
+     * Assists in the process of transitioning the current control to a new theme by dynamically updating its associated stylesheets.
+     *
+     * <p>This method encapsulates the validation of necessary parameters, the retrieval of stylesheet paths based on theme information, and the replacement of the old theme's stylesheet with that of the new
+     * theme.</p>
+     *
+     * <h2>Key Function Steps:</h2>
+     * <ol>
+     *     <li><em>Validation of Inputs:</em> Ensures that none of the parameters ({@code efxStylesheetsObj}, {@code oldEFXTheme}, {@code newEFXTheme}) are null, using {@code EFXObjectUtils}. Each parameter
+     *     has a specific check to provide a clear error message if the validation fails.</li>
+     *     <li><em>Retrieval of Stylesheet Paths:</em> Utilizes the {@code efxStylesheetsObj} to fetch the stylesheet paths corresponding to both the old and new themes. The paths are derived from each
+     *     theme's CSS directory, ensuring that only valid resources are referenced.</li>
+     *     <li><em>Update of Stylesheets:</em> Accesses the control's current stylesheet collection. If the control and its stylesheets are valid (not null), the method proceeds to remove the stylesheet
+     *     associated with the old theme and add the one associated with the new theme. This operation is critical for applying the visual aspects of the new theme to the control.</li>
+     *     <li><em>Error Handling:</em> In cases where the control or its stylesheet list is unexpectedly null, an {@code IllegalStateException} is thrown, indicating a fundamental issue that prevents the
+     *     theme update process from proceeding.</li>
+     * </ol>
+     *
+     * <p>This method plays a crucial role in facilitating dynamic theme changes within the EnhancedFX framework, enabling controls to adapt their appearance seamlessly in response to user preferences or
+     * application-wide theme adjustments.</p>
+     *
+     * @param efxStylesheetsObj
+     *         An instance of {@link EFXStylesheets} providing access to the stylesheet paths for different themes.
+     * @param oldEFXTheme
+     *         The currently applied theme, which is to be replaced.
+     * @param newEFXTheme
+     *         The new theme to apply to the control.
+     *
+     * @throws NullPointerException
+     *         If any of the method parameters are null, detailed error messages are provided to aid in diagnosing the cause of the null reference.
+     * @throws IllegalStateException
+     *         If the control or its stylesheet list is null, preventing the theme update process.
+     */
     protected void loadNewThemeHelper(EFXStylesheets efxStylesheetsObj, EFXTheme oldEFXTheme, EFXTheme newEFXTheme) {
-        // Validate inputs using EFXObjectUtils for null or empty checks
+        // Validate inputs using EFXObjectUtils for null
         EFXObjectUtils.isNotNull(efxStylesheetsObj, () -> "EFXStylesheets object cannot be null.");
         EFXObjectUtils.isNotNull(oldEFXTheme, () -> "Old efxTheme name cannot be null.");
         EFXObjectUtils.isNotNull(newEFXTheme, () -> "New efxTheme name cannot be null.");
@@ -203,7 +294,6 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
                     // Since getStyleSheet throws an exception if the resource doesn't exist, there's no need for further existence checks here.
                     stylesheets.remove(oldStylesheetPath);
                     stylesheets.add(newStylesheetPath); // Add the new stylesheet
-
                 }, () -> {
                     throw new IllegalStateException("Control or its stylesheet list cannot be null.");
                 });
@@ -212,11 +302,9 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
     /**
      * Validates the existence of a stylesheet path for the specified efxTheme and class.
      *
-     * <p>
-     * This method ensures that the stylesheet associated with the given efxTheme exists within the application's resources. It uses the {@code efxStylesheetsObj} to resolve the stylesheet path for the specified
-     * efxTheme, throwing an exception if the efxTheme directory is null, empty, or the resolved stylesheet path does not exist. This method is critical for verifying resource integrity before attempting to load or
-     * apply efxTheme-related stylesheets.
-     * </p>
+     * <p>This method ensures that the stylesheet associated with the given efxTheme exists within the application's resources. It uses the {@code efxStylesheetsObj} to resolve the stylesheet path for the
+     * specified efxTheme, throwing an exception if the efxTheme directory is null, empty, or the resolved stylesheet path does not exist. This method is critical for verifying resource integrity before
+     * attempting to load or apply efxTheme-related stylesheets.</p>
      *
      * @param efxStylesheetsObj
      *         The {@link EFXStylesheets} object used to resolve stylesheet paths.
@@ -226,7 +314,7 @@ public abstract class EFXControl<T extends Control> extends EFXControlBase<T> {
      * @return The validated stylesheet path in external form, guaranteed to exist.
      *
      * @throws IllegalStateException
-     *         if the efxTheme directory is null, empty, or the resolved stylesheet path does not exist, indicating a configuration or resource placement error.
+     *         If the efxTheme directory is null, empty, or the resolved stylesheet path does not exist, indicating a configuration or resource placement error.
      */
     protected String checkStylesheetPathExists(EFXStylesheets efxStylesheetsObj, Class<?> clazz) {
         // Ensure that efxStylesheetsObj and clazz are not null

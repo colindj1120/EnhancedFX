@@ -17,11 +17,11 @@
  */
 package io.github.colindj1120.enhancedfx.base.factory.property.base;
 
+import io.github.colindj1120.enhancedfx.utils.EFXObjectUtils;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -119,11 +119,7 @@ public interface CustomPropertyConfig<T, R extends PropertyConfiguratorBase<T>> 
      * @return the configurator instance for chaining
      */
     default R addChangeListenerForSpecificValue(T specificValue, Runnable action) {
-        getProperty().addListener((obs, oldValue, newValue) -> {
-            if (Objects.equals(newValue, specificValue)) {
-                action.run();
-            }
-        });
+        getProperty().addListener((obs, oldValue, newValue) -> EFXObjectUtils.executeBasedOnEquality(newValue, specificValue, action, () -> {}));
         return getConfigurator();
     }
 
@@ -138,11 +134,7 @@ public interface CustomPropertyConfig<T, R extends PropertyConfiguratorBase<T>> 
      * @return the configurator instance for chaining
      */
     default R addChangeListenerValidator(Predicate<T> validator, Consumer<T> onInvalidValue) {
-        getProperty().addListener((obs, oldValue, newValue) -> {
-            if (!validator.test(newValue)) {
-                onInvalidValue.accept(newValue);
-            }
-        });
+        getProperty().addListener((obs, oldValue, newValue) -> EFXObjectUtils.executeBasedOnPredicate(validator, newValue, ignored -> {}, onInvalidValue));
         return getConfigurator();
     }
 
@@ -297,9 +289,7 @@ public interface CustomPropertyConfig<T, R extends PropertyConfiguratorBase<T>> 
      * @return the configurator instance for chaining
      */
     default <U> R syncWith(Property<U> sourceProperty, Function<U, T> transformation) {
-        sourceProperty.addListener((obs, oldValue, newValue) -> {
-            getProperty().setValue(transformation.apply(newValue));
-        });
+        sourceProperty.addListener((obs, oldValue, newValue) -> getProperty().setValue(transformation.apply(newValue)));
         return getConfigurator();
     }
 

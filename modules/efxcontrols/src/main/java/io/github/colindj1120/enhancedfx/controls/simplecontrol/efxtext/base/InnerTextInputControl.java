@@ -23,38 +23,132 @@ import javafx.scene.control.*;
 import javafx.scene.text.Font;
 
 /**
- * {@code InnerTextInputControl} is an interface that defines the essential functionalities of a {@link TextInputControl} within the context of a larger text control component, such as a custom text
- * field or text area in JavaFX. This interface extends {@code InnerTextControl} and is specifically designed to enhance and extend the capabilities of standard JavaFX text input controls by adding
- * additional utility methods and properties.
+ * Defines the core functionality required by text input controls within the EnhancedFX framework, extending the {@link InnerBase} interface.
  *
- * <p>Implementations of this interface are responsible for providing methods to interact with the
- * underlying {@code TextInputControl}, such as getting and setting text, handling font properties, managing prompt text, and dealing with text formatting and selection.</p>
+ * <p>This interface abstracts common behaviors and properties across different types of text input controls, such as {@link TextField} and {@link TextArea},providing a unified API for manipulating text, font,
+ * prompt text, and other attributes.</p>
  *
- * <p>Key functionalities provided by this interface include:</p>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li>Font manipulation: Get, set, and observe changes to the font of the text input control.</li>
- *   <li>Prompt text management: Set and retrieve the prompt text displayed in the control.</li>
- *   <li>Text handling: Methods for getting and setting the text, including text property bindings.</li>
- *   <li>Editing and selection: Provide capabilities for text selection, editing, and formatting.</li>
- *   <li>Undo/Redo operations: Support for undoing and redoing text changes.</li>
- *   <li>Tooltip and context menu support: Methods for setting and retrieving tooltips and context menus.</li>
+ *     <li>Text manipulation: Get and set the text content of the control.</li>
+ *     <li>Font styling: Change the font used within the text input control.</li>
+ *     <li>Prompt text: Manage placeholder text displayed when the control is empty.</li>
+ *     <li>Text formatter: Utilize a {@link TextFormatter} to format and validate text input.</li>
+ *     <li>Editable state: Configure whether the text input is editable by the user.</li>
+ *     <li>Selection handling: Get and modify the current text selection.</li>
+ *     <li>Clipboard operations: Support cut, copy, paste, and other clipboard actions.</li>
+ *     <li>Undo/redo support: Provide undo and redo functionality for text changes.</li>
+ *     <li>Tooltip and context menu: Associate tooltips and custom context menus with the control.</li>
+ *     <li>Text navigation and manipulation: Methods to navigate and manipulate text programmatically.</li>
  * </ul>
  *
- * <p>This interface is particularly useful in scenarios where a {@code TextInputControl} needs to be
- * embedded within a larger custom component, allowing the outer component to control and interact
- * with the text input functionalities effectively.</p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * InnerTextInputControl<TextInputControl> myTextInput = // instantiation of an InnerTextInputControl implementation
+ * myTextInput.setText("Hello, world!");
+ * myTextInput.setFont(Font.font("Arial", 16));
+ * myTextInput.setPromptText("Enter something...");
+ * myTextInput.setEditable(true);
+ * myTextInput.copy();
+ * myTextInput.selectAll();
+ * myTextInput.undo();
+ * }
+ * </pre>
+ *
+ * <p>This example demonstrates basic usage of the {@code InnerTextInputControl} interface to set text content, apply font styling,configure prompt text, and perform various text operations such as selecting
+ * all text and undoing the last action.</p>
+ *
+ * <p>Note: Implementations of {@code InnerTextInputControl} should ensure they properly delegate these operations to the underlying {@link TextInputControl} instance,respecting the control's specific
+ * characteristics and constraints.</p>
  *
  * @param <T>
  *         the type of {@link TextInputControl} this interface is meant to support, such as {@link TextField} or {@link TextArea}.
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see InnerTextControl
+ * @see InnerBase
  * @see TextInputControl
  * @see TextField
  * @see TextArea
  */
 public interface InnerTextInputControl<T extends TextInputControl> extends InnerBase<T> {
+    /*
+     * Methods Available:
+     *  - ObjectProperty<Font> fontProperty()
+     *  - void setFont(Font value)
+     *  - Font getFont()
+     *  - StringProperty promptTextProperty()
+     *  - String getPromptText()
+     *  - void setPromptText(String value)
+     *  - ObjectProperty<TextFormatter<?>> textFormatterProperty()
+     *  - TextFormatter<?> getTextFormatter()
+     *  - void setTextFormatter(TextFormatter<?> value)
+     *  - String getText()
+     *  - void setText(String value)
+     *  - StringProperty textProperty()
+     *  - int getLength()
+     *  - ReadOnlyIntegerProperty lengthProperty()
+     *  - boolean isEditable()
+     *  - void setEditable(boolean value)
+     *  - BooleanProperty editableProperty()
+     *  - IndexRange getSelection()
+     *  - ReadOnlyObjectProperty<IndexRange> selectionProperty()
+     *  - String getSelectedText()
+     *  - ReadOnlyStringProperty selectedTextProperty()
+     *  - int getAnchor()
+     *  - ReadOnlyIntegerProperty anchorProperty()
+     *  - int getCaretPosition()
+     *  - ReadOnlyIntegerProperty caretPositionProperty()
+     *  - boolean isUndoable()
+     *  - ReadOnlyBooleanProperty undoableProperty()
+     *  - boolean isRedoable()
+     *  - ReadOnlyBooleanProperty redoableProperty()
+     *  - ObjectProperty<Tooltip> tooltipProperty()
+     *  - void setTooltip(Tooltip value)
+     *  - Tooltip getTooltip()
+     *  - ObjectProperty<ContextMenu> contextMenuProperty()
+     *  - void setContextMenu(ContextMenu value)
+     *  - ContextMenu getContextMenu()
+     *  - String getText(int start, int end)
+     *  - void appendText(String text)
+     *  - void insertText(int index, String text)
+     *  - void deleteText(IndexRange range)
+     *  - void deleteText(int start, int end)
+     *  - void replaceText(IndexRange range, String text)
+     *  - void replaceText(int start, int end, String text)
+     *  - void cut()
+     *  - void copy()
+     *  - void paste()
+     *  - void selectBackward()
+     *  - void selectForward()
+     *  - void previousWord()
+     *  - void nextWord()
+     *  - void endOfNextWord()
+     *  - void selectPreviousWord()
+     *  - void selectNextWord()
+     *  - void selectEndOfNextWord()
+     *  - void selectAll()
+     *  - void home()
+     *  - void end()
+     *  - void selectHome()
+     *  - void selectEnd()
+     *  - boolean deletePreviousChar()
+     *  - boolean deleteNextChar()
+     *  - void forward()
+     *  - void backward()
+     *  - void positionCaret(int pos)
+     *  - void selectPositionCaret(int pos)
+     *  - void selectRange(int anchor, int caretPosition)
+     *  - void extendSelection(int pos)
+     *  - void clear()
+     *  - void deselect()
+     *  - void replaceSelection(String replacement)
+     *  - void undo()
+     *  - void redo()
+     *  - void commitValue()
+     *  - void cancelEdit()
+     */
 
     /**
      * Retrieves the font property associated with the text field.
@@ -211,7 +305,7 @@ public interface InnerTextInputControl<T extends TextInputControl> extends Inner
     default ReadOnlyStringProperty selectedTextProperty() {return getInnerControl().selectedTextProperty();}
 
     /**
-     * Returns the anchor value of the textField. The anchor value determines the position within the text field where new text is inserted.
+     * Returns the anchor value of the textField. The anchor value determines the position within the text field where the new text is inserted.
      *
      * @return The anchor value of the textField, which represents the insertion position.
      */
@@ -396,8 +490,9 @@ public interface InnerTextInputControl<T extends TextInputControl> extends Inner
     default void paste() {getInnerControl().paste();}
 
     /**
-     * Selects the text in the text field starting from the current caret position and moving backwards. The selected text will be in the highlighted or highlighted in reverse order depending on the
-     * selected theme. Calling this method will update the highlight of the text field.
+     * Selects the text in the text field starting from the current caret position and moving backwards.
+     *
+     * <p>The selected text will be in the highlighted or highlighted in reverse order depending on the selected theme. Calling this method will update the highlight of the text field.</p>
      *
      * @throws UnsupportedOperationException
      *         if the text field does not support selecting text in reverse order.
@@ -420,8 +515,10 @@ public interface InnerTextInputControl<T extends TextInputControl> extends Inner
     default void nextWord() {getInnerControl().nextWord();}
 
     /**
-     * Moves the cursor to the end of the next word in the text field. This method should be called when the user wants to move the cursor to the end of the next word in the text field. After calling
-     * this method, the cursor will be positioned at the end of the next word.
+     * Moves the cursor to the end of the next word in the text field.
+     *
+     * <p>This method should be called when the user wants to move the cursor to the end of the next word in the text field. After calling this method, the cursor will be positioned at the end of the next
+     * word.</p>
      */
     default void endOfNextWord() {getInnerControl().endOfNextWord();}
 

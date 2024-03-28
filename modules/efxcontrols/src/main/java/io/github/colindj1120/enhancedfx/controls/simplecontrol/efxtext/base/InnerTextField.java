@@ -25,27 +25,25 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 
 /**
- * {@code InnerTextField} is an interface that extends {@link InnerTextInputControl} specifically for the {@link javafx.scene.control.TextField} control. It provides additional functionalities
- * tailored to a TextField, enhancing its capabilities within a larger custom component context.
+ * {@link InnerTextField} is an interface that extends {@link InnerTextInputControl} specifically for the {@link javafx.scene.control.TextField} control.
  *
- * <p>Key functionalities provided by this interface include:</p>
+ * <p>It provides additional functionalities tailored to a TextField, enhancing its capabilities within a larger custom component context.</p>
+ *
+ * <h2>Key functionalities:</h2>
  * <ul>
- *   <li>Preferred column count management: Methods to get, set, and observe changes to the preferred
- *       number of columns in the text field. This affects the width of the text field based on the number
- *       of characters it is expected to display.</li>
- *   <li>Action event handling: Facilities for setting and retrieving an event handler for 'onAction' events,
- *       which are typically triggered when the user presses the Enter key while the text field has focus.</li>
- *   <li>Text alignment: Methods to set and retrieve the text alignment within the text field, allowing
- *       customization of how text is visually presented.</li>
+ *     <li>Preferred column count management: Methods to get, set, and observe changes to the preferred number of columns in the text field. This affects the width of the text field based on the number of
+ *         characters it is expected to display.</li>
+ *     <li>Action event handling: Facilities for setting and retrieving an event handler for 'onAction' events, which are typically triggered when the user presses the Enter key while the text field has
+ *         focus.</li>
+ *     <li>Text alignment: Methods to set and retrieve the text alignment within the text field, allowing customization of how text is visually presented.</li>
  * </ul>
  *
- * <p>This interface is particularly useful in scenarios where a {@code TextField} is embedded within a
- * custom composite component, and there's a need to directly manipulate or respond to specific
- * TextField properties or behaviors. Implementers of this interface can provide concrete functionality
- * to these abstract methods, enabling seamless integration and control of a TextField's features.</p>
+ * <p>This interface is particularly useful in scenarios where a {@code TextField} is embedded within a custom composite component, and there's a need to directly manipulate or respond to specific TextField
+ * properties or behaviors. Implementers of this interface can provide concrete functionality to these abstract methods, enabling seamless integration and control of a TextField's features.</p>
  *
- * <p>Usage examples:</p>
+ * <h2>Usage examples:</h2>
  * <pre>
+ * {@code
  * public class CustomTextFieldComponent implements InnerTextField {
  *     // Implementation of methods...
  * }
@@ -54,17 +52,29 @@ import javafx.scene.control.TextField;
  * customComponent.setPrefColumnCount(10);
  * customComponent.setOnAction(event -> System.out.println("Action performed!"));
  * customComponent.setTextFieldAlignment(Pos.CENTER_RIGHT);
+ * }
  * </pre>
  *
- * <p>{@code InnerTextField} enhances the flexibility and reusability of {@code TextField} controls in
- * complex JavaFX UI applications, making it easier to create sophisticated and user-friendly text input interfaces.</p>
+ * <p>{@code InnerTextField} enhances the flexibility and reusability of {@code TextField} controls in complex JavaFX UI applications, making it easier to create sophisticated and user-friendly text input
+ * interfaces.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see TextField
  * @see InnerTextInputControl
  */
-public  interface  InnerTextField<T extends TextField> extends InnerTextInputControl<T> {
+public interface InnerTextField<T extends TextField> extends InnerTextInputControl<T> {
+    /*
+     * Methods Available:
+     *  - BooleanProperty selectedProperty()
+     *  - boolean isSelected()
+     *  - void setSelected(boolean value)
+     *  - ObjectProperty<ToggleGroup> toggleGroupProperty()
+     *  - ToggleGroup getToggleGroup()
+     *  - void setToggleGroup(ToggleGroup value)
+     *  - void toggle()
+     */
+
     /**
      * Returns the property for the preferred column count of the text field.
      *
@@ -131,5 +141,10 @@ public  interface  InnerTextField<T extends TextField> extends InnerTextInputCon
      */
     default Pos getAlignment() {return getInnerControl().getAlignment();}
 
+    /**
+     * Retrieves the characters currently entered in the text field.
+     *
+     * @return a CharSequence representing the characters currently entered in the text field
+     */
     default CharSequence getCharacters() {return getInnerControl().getCharacters();}
 }

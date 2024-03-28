@@ -20,12 +20,9 @@ package io.github.colindj1120.enhancedfx.controls.css.base;
 /**
  * Defines the contract for implementing styles within the EnhancedFX framework, offering a standardized approach to naming and accessing stylesheet resources across various themes.
  *
- * <p>
- * The {@code EFXStyle} interface is crucial for the theming system of EnhancedFX, allowing for dynamic switching of visual themes and the consistent application of styles to UI components. Implementing this
- * interface enables an object to represent a specific style or set of styles, complete with a unique name and the ability to fetch the corresponding stylesheet URL based on the current theme.
- * </p>
+ * <p>The {@code EFXStyle} interface is crucial for the theming system of EnhancedFX, allowing for dynamic switching of visual themes and the consistent application of styles to UI components. Implementing
+ * this interface enables an object to represent a specific style or set of styles, complete with a unique name and the ability to fetch the corresponding stylesheet URL based on the current theme.</p>
  *
- * <p>
  * <h2>Methods:</h2>
  * <ul>
  *     <li>{@code getStyleName} - Retrieves the name of the style, serving as a unique identifier within the system. This name can be used for logging, debugging, or dynamically applying styles at runtime.</li>
@@ -33,10 +30,8 @@ package io.github.colindj1120.enhancedfx.controls.css.base;
  *     the application to adapt its appearance dynamically in response to user preferences or other triggers.</li>
  * </ul>
  *
- * <p>
- * Implementing classes or enums should provide specific logic for these methods, ensuring that styles can be effectively managed and applied within the EnhancedFX styling architecture. This approach
- * promotes modularity, reusability, and ease of maintenance in the design and implementation of UI themes.
- * </p>
+ * <p>Implementing classes or enums should provide specific logic for these methods, ensuring that styles can be effectively managed and applied within the EnhancedFX styling architecture. This approach
+ * promotes modularity, reusability, and ease of maintenance in the design and implementation of UI themes.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0

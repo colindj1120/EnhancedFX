@@ -24,28 +24,35 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 
 /**
- * The InnerTextArea interface extends InnerTextInputControl and provides additional properties and methods specific to TextArea components. It represents a customizable text area control with
- * additional functionality for handling paragraphs, wrapping text, setting preferred column and row counts, and controlling scroll behavior.
+ * {@link InnerTextArea} extends the {@link InnerTextInputControl} interface to provide additional functionality specific to {@link TextArea} components within the EnhancedFX framework. This interface
+ * facilitates the manipulation and observation of properties and behaviors unique to text areas, such as text wrapping, preferred column and row counts, and scroll position management.
  *
- * <p>
- * This interface defines methods to access and manipulate various properties of a TextArea, such as the paragraphs, wrap text property, preferred column and row counts, and scroll position. By
- * implementing this interface, a class can extend the functionality of a TextArea component and customize its behavior according to specific requirements.
- * </p>
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *     <li>Text wrapping: Control whether text wraps to the next line or is truncated.</li>
+ *     <li>Preferred column and row counts: Specify the ideal dimensions of the text area in terms of columns and rows.</li>
+ *     <li>Scroll position management: Directly manipulate the horizontal and vertical scroll positions.</li>
+ *     <li>Paragraph handling: Access the text content of the text area divided into paragraphs.</li>
+ * </ul>
  *
- * <p>
- * Implementations of this interface should ensure that they provide proper implementations for all methods inherited from the InnerTextInputControl interface, in addition to the methods defined in
- * this interface. The InnerTextArea interface serves as a contract for classes that wish to provide extended functionality for TextArea components within EnhancedFX.
- * </p>
- *
- * <p>
- * <em>Example usage:</em>
- * <pre>{@code
- * // Create a custom TextArea component with EnhancedFX features
- * public class CustomTextArea extends TextArea implements InnerTextArea<CustomTextArea> {
- *     // Implement custom functionality here
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * InnerTextArea<TextArea> myTextArea = new EnhancedTextArea();
+ * myTextArea.setWrapText(true);
+ * myTextArea.setPrefColumnCount(20);
+ * myTextArea.setPrefRowCount(5);
+ * myTextArea.setScrollTop(100);
+ * myTextArea.setScrollLeft(50);
+ * ObservableList<CharSequence> paragraphs = myTextArea.getParagraphs();
  * }
- * }</pre>
- * </p>
+ * </pre>
+ *
+ * <p>This example demonstrates how to use the {@code InnerTextArea} interface to configure a {@link TextArea} with specific behaviors and properties, such as enabling text wrapping, setting preferred
+ * dimensions, and adjusting scroll positions. Additionally, it shows how to access the text area's content by paragraphs, providing a foundation for further text processing or analysis.</p>
+ *
+ * <p>Note: Implementations of {@code InnerTextArea} should ensure compatibility with the underlying {@link TextArea} component, respecting its limitations and design choices while providing enhanced
+ * functionality and customization options through the EnhancedFX framework.</p>
  *
  * @param <T>
  *         the type of TextArea
@@ -56,6 +63,26 @@ import javafx.scene.control.TextArea;
  * @see TextArea
  */
 public interface InnerTextArea<T extends TextArea> extends InnerTextInputControl<T> {
+    /*
+     * Methods Available:
+     *  - ObservableList<CharSequence> getParagraphs()
+     *  - BooleanProperty wrapTextProperty()
+     *  - boolean isWrapText()
+     *  - void setWrapText(boolean value)
+     *  - IntegerProperty prefColumnCountProperty()
+     *  - int getPrefColumnCount()
+     *  - void setPrefColumnCount(int value)
+     *  - IntegerProperty prefRowCountProperty()
+     *  - int getPrefRowCount()
+     *  - void setPrefRowCount(int value)
+     *  - DoubleProperty scrollTopProperty()
+     *  - double getScrollTop()
+     *  - void setScrollTop(double value)
+     *  - DoubleProperty scrollLeftProperty()
+     *  - double getScrollLeft()
+     *  - void setScrollLeft(double value)
+     */
+
     /**
      * Returns the paragraphs in the text area.
      *
@@ -64,8 +91,8 @@ public interface InnerTextArea<T extends TextArea> extends InnerTextInputControl
     default ObservableList<CharSequence> getParagraphs() {return getInnerControl().getParagraphs();}
 
     /**
-     * Returns the BooleanProperty representing the "wrap text" property of the field. When the "wrap text" property is set to true, the text in the field will wrap onto the next line if it exceeds
-     * the width of the field. Otherwise, it will be truncated.
+     * Returns the BooleanProperty representing the "wrap text" property of the field. When the "wrap text" property is set to true, the text in the field will wrap onto the next line if it exceeds the width of
+     * the field. Otherwise, it will be truncated.
      *
      * @return The BooleanProperty representing the "wrap text" property of the field.
      */
@@ -79,8 +106,8 @@ public interface InnerTextArea<T extends TextArea> extends InnerTextInputControl
     default boolean isWrapText() {return getInnerControl().isWrapText();}
 
     /**
-     * Sets the wrap text property of the field. If set to true, the text will be wrapped to fit within the width of the field. If set to false, the text will not be wrapped and may extend beyond the
-     * visible area of the field.
+     * Sets the wrap text property of the field. If set to true, the text will be wrapped to fit within the width of the field. If set to false, the text will not be wrapped and may extend beyond the visible
+     * area of the field.
      *
      * @param value
      *         the boolean value indicating whether to wrap the text or not
@@ -88,8 +115,7 @@ public interface InnerTextArea<T extends TextArea> extends InnerTextInputControl
     default void setWrapText(boolean value) {getInnerControl().setWrapText(value);}
 
     /**
-     * Returns the IntegerProperty representing the preferred number of columns in the TextArea. This property is delegated to the `prefColumnCountProperty()` method of the underlying `TextArea`
-     * field.
+     * Returns the IntegerProperty representing the preferred number of columns in the TextArea. This property is delegated to the `prefColumnCountProperty()` method of the underlying `TextArea` field.
      *
      * @return the IntegerProperty representing the preferred number of columns in the TextArea
      */

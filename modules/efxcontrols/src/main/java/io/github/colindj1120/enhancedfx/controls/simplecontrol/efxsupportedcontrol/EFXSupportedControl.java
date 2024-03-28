@@ -23,10 +23,10 @@ import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
 import io.github.colindj1120.enhancedfx.base.enums.EFXState;
 import io.github.colindj1120.enhancedfx.base.factory.CssFactory;
 import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.EFXControl;
-import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcontrol.base.SupportingTextPosition;
 import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
 import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.EFXControl;
+import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcontrol.base.SupportingTextPosition;
 import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import io.github.colindj1120.enhancedfx.utils.converters.styleconverters.DoubleStyleConverter;
 import javafx.beans.Observable;
@@ -41,36 +41,62 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Provides a base class for enhanced controls with additional support for dynamic styling, supporting text, and responsive theme changes. {@code EFXSupportedControl} extends the functionality of
- * {@code EFXControl} by introducing mechanisms to manage supporting text visibility and positioning, as well as enhancing the control's ability to adapt to theme changes dynamically.
+ * The {@code EFXSupportedControl} abstract class extends {@code EFXControl} to introduce additional features and behaviors tailored for controls that support additional textual content and customizable
+ * positioning.
  *
- * <p>
- * This abstract class introduces several protected fields and methods that subclasses can leverage to implement specific behavior related to supporting text and styling. The class utilizes JavaFX CSS and
- * pseudo-classes to allow for styling customization through external stylesheets, enabling a flexible design that can be easily adjusted to fit the needs of different UI themes.
- * </p>
+ * <p>It leverages CSS and pseudo-classes to provide a versatile and dynamic approach to styling and behavior customization.</p>
  *
- * <p>
- * <h2>Key Features:</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>Dynamic styling through CSS and pseudo-classes, enabling responsive UI design.</li>
- *     <li>Support for enabling, disabling, and positioning supporting text associated with the control, providing additional context or guidance to the user.</li>
- *     <li>EFXTheme responsiveness, allowing controls to adapt to theme changes without the need for manual reconfiguration.</li>
+ *     <li><strong>Supporting Text:</strong> Allows embedding additional text within the control, enhancing its informational capacity.</li>
+ *     <li><strong>Customizable Text Position:</strong> Offers the ability to customize the position of the supporting text relative to the control, with predefined positions (top, bottom, left, right).</li>
+ *     <li><strong>Dynamic Theming Support:</strong> Seamlessly integrates with the EnhancedFX theming system, ensuring that the control and its supporting text adhere to the current theme.</li>
+ *     <li><strong>State-driven Styling:</strong> Utilizes pseudo-classes to reflect the state of the control, including whether supporting text is enabled or disabled, and its position.</li>
  * </ul>
- * </p>
  *
- * <p>
- * Subclasses are expected to provide implementations for abstract methods such as {@code getControl()}, which should return the specific control instance, and {@code setupControl()}, which is intended to
- * configure the control upon initialization. Additionally, subclasses may override and extend the functionality provided by this class to suit their specific requirements.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * public class MyCustomEFXControl extends EFXSupportedControl<Button> {
+ *     public MyCustomEFXControl() {
+ *         super();
+ *         setSupportingText("Optional Info");
+ *         setSupportingTextPosition(SupportingTextPosition.BOTTOM);
+ *         setSupportingTextState(EFXState.ENABLED);
+ *     }
  *
- * @param <T>
- *         the type of control being enhanced, extending {@link Control}
+ *     @Override
+ *     protected EFXSupportedControl<?> getControl() {
+ *         return this;
+ *     }
+ *
+ *     @Override
+ *     protected void setupStyleableProperties() {
+ *         super.setupStyleableProperties();
+ *         // Additional styleable property setup can be performed here.
+ *     }
+ *
+ *     @Override
+ *     protected void setupControl() {
+ *         super.setupControl();
+ *         // Control-specific setup including supporting text configuration.
+ *     }
+ *
+ *     @Override
+ *     public Button getInnerControl() {
+ *         // Return the Button control wrapped by this EFXSupportedControl
+ *         return new Button("My Custom Button");
+ *     }
+ * }
+ * }
+ * </pre>
+ *
+ * <p>This example demonstrates how to extend {@code EFXSupportedControl} to create a custom control that uses the additional capabilities provided by this class. Developers can further customize the
+ * control's appearance and behavior by overriding and implementing the abstract methods defined by {@code EFXControl} and {@code EFXSupportedControl}.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see EFXControl
- * @see Control
- * @see Styleable
  */
 public abstract class EFXSupportedControl<T extends Control> extends EFXControl<T> {
     private static final String ENHANCED_SUPPORTING_TEXT_STYLE = "enhanced-supporting-text";
@@ -159,14 +185,28 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
     /**
      * Constructs an instance of EFXSupportedControl.
      *
-     * <p>
-     * This constructor calls the `super()` method to initialize the parent class constructor.
-     * </p>
+     * <p>This constructor calls the `super()` method to initialize the parent class constructor. </p>
      */
     protected EFXSupportedControl() {
         super();
     }
 
+    /**
+     * Initializes the custom control by invoking the initialization routine of the parent class and setting up additional properties specific to this control.
+     *
+     * <p>This overridden method ensures that the control is ready for use immediately after instantiation, with all necessary setup and configuration in place.</p>
+     *
+     * <h2>Key aspects include:</h2>
+     * <ul>
+     *     <li><strong>Parent Initialization:</strong> Calls the {@code initialize()} method of the superclass to ensure that any setup required by the base class is performed. This may include setting up
+     *     default styles, event listeners, or other foundational aspects of the control.</li>
+     *     <li><strong>Supporting Text Property Initialization:</strong> Initializes the {@code supportingText} property, a {@link SimpleStringProperty}, which is intended to hold additional information or
+     *     context about the control's current state. The property is initialized with an empty string, indicating no supporting text by default.</li>
+     * </ul>
+     *
+     * <p>This method is part of the control's lifecycle and is automatically called during the control's construction process. It is not intended to be called directly from outside the control's
+     * implementation.</p>
+     */
     @Override
     protected void initialize() {
         super.initialize();
@@ -187,6 +227,16 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
     @Override
     protected abstract EFXSupportedControl<?> getControl();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param obs
+     *         The observable object that triggered the theme change. This parameter allows for the implementation of observer patterns and can be used to react to specific changes in theme-related properties.
+     * @param oldEFXTheme
+     *         The previous theme that was applied to the control.
+     * @param newEFXTheme
+     *         The new theme that is being applied to the control.
+     */
     @Override
     protected void loadNewTheme(Observable obs, EFXTheme oldEFXTheme, EFXTheme newEFXTheme) {
         loadNewThemeHelper(EFXStylesheets.ENHANCED_SUPPORTED_CONTROL, oldEFXTheme, newEFXTheme);
@@ -196,14 +246,11 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
      * This method builds upon {@code setupStyleableProperties} from the superclass, and sets up the styleable properties for this subclass instance. It is responsible for initializing the
      * {@code supportingTextEFXState} and {@code supportingTextPosition} properties of this object's state.
      *
-     * <p>
-     * The {@code supportingTextEFXState} property represents the state of supporting text in the graphical interface, such as being enabled or disabled. It holds a value of the {@code EFXState} enumeration.
-     * </p>
-     *
-     * <p>
-     * The {@code supportingTextPosition} property represents the position of supporting text in the interface, such as being on the left or right. It holds a value of the {@code SupportingTextPosition}
-     * enumeration.
-     * </p>
+     * <h2>Properties:</h2>
+     * <ul>
+     *     <li>{@code supportingTextEFXState}: Represents the position of supporting text in the interface. It holds a value of the {@code SupportingTextPosition} enumeration.</li>
+     *     <li>{@code supportingTextPosition}: Represents the position of supporting text in the interface. It holds a value of the {@code SupportingTextPosition} enumeration.</li>
+     * </ul>
      *
      * <p>
      * <em>Both properties are initialized with:</em>
@@ -216,13 +263,9 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
      * </ul>
      * </p>
      *
-     * <p>
-     * This process uses the {@code ExtendedStyleableObjectPropertyFactory.builder()} to configure and initialize the property.
-     * </p>
+     * <p>This process uses the {@code ExtendedStyleableObjectPropertyFactory.builder()} to configure and initialize the property.</p>
      *
-     * <p>
-     * This subclass method adds styleable properties relevant to the specifics of this subclass, supplementing and complementing those set up via the superclass method.
-     * </p>
+     * <p>This subclass method adds styleable properties relevant to the specifics of this subclass, supplementing and complementing those set up via the superclass method.</p>
      */
     protected void setupStyleableProperties() {
         supportingTextState = EFXStyleableObjectProperty.<EFXState>create()
@@ -343,7 +386,7 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
     /**
      * Retrieves the current state of the supporting text.
      *
-     * @return The current state of the supporting text as a EFXState object. Possible values are ENABLED and DISABLED.
+     * @return The current state of the supporting text as an EFXState object. Possible values are ENABLED and DISABLED.
      */
     public EFXState getSupportingTextState() {
         return supportingTextState.get();
@@ -516,12 +559,47 @@ public abstract class EFXSupportedControl<T extends Control> extends EFXControl<
     // Styleable Properties
     //*****************************************************************
 
+    /**
+     * Handles invalidation of the supporting text state for the control.
+     *
+     * <p>This method updates the pseudo-class state based on the current state of the supporting text, enabling or disabling the supporting text visually.</p>
+     *
+     * <p>When the supporting text state changes, this method checks the new state against {@code EFXState.ENABLED}. If the state matches, it implies that supporting text should be visible and accordingly
+     * updates the pseudo-class state to true, making the supporting text visible. Conversely, if the state does not match, the pseudo-class state is set to false, hiding the supporting text.</p>
+     *
+     * <p>This method ensures that the visual representation of the control is consistent with its internal state, particularly in regard to the visibility of supporting text.</p>
+     *
+     * @param prop
+     *         The {@code EFXStyleableObjectProperty} representing the supporting text state. This property holds the current state and triggers this method upon invalidation.
+     */
     private void supportingTextStateInvalidated(EFXStyleableObjectProperty<EFXState> prop) {
         EFXState efxState = prop.get();
         pseudoClassStateChanged(SUPPORTING_TEXT_ENABLED_PSEUDO_CLASS, efxState.equals(EFXState.ENABLED));
     }
 
-   protected void supportingTextPositionInvalidated(EFXStyleableObjectProperty<SupportingTextPosition> prop, SupportingTextPosition oldValue, Consumer<SupportingTextPosition> oldValueSetter) {
+    /**
+     * Validates and potentially updates the position of the supporting text based on the given property.
+     *
+     * <p>This method enforces the rule that supporting text position can only be set when supporting text is enabled.</p>
+     *
+     * <p>If supporting text is disabled ({@code isSupportingTextEnabled()} returns false), and an attempt is made to set its position, this method will revert the change and throw an
+     * {@code IllegalArgumentException}. This ensures that the control's state remains consistent and that supporting text position changes are only made when supporting text is actually enabled and
+     * visible.</p>
+     *
+     * <p>In cases where the position can be legally set (i.e., supporting text is enabled), this method delegates the responsibility of updating the old value to the provided {@code oldValueSetter} consumer,
+     * allowing for additional actions or state updates to be performed in response to the change.</p>
+     *
+     * @param prop
+     *         The {@code EFXStyleableObjectProperty} representing the supporting text position. This property triggers the method upon invalidation.
+     * @param oldValue
+     *         The previous value of the supporting text position before the invalidation occurred. This value is restored if the method determines that the position change is invalid.
+     * @param oldValueSetter
+     *         A {@code Consumer} that accepts a {@code SupportingTextPosition} value, used to perform additional actions when the old value needs to be updated legally.
+     *
+     * @throws IllegalArgumentException
+     *         if an attempt is made to set the supporting text position while supporting text is disabled.
+     */
+    protected void supportingTextPositionInvalidated(EFXStyleableObjectProperty<SupportingTextPosition> prop, SupportingTextPosition oldValue, Consumer<SupportingTextPosition> oldValueSetter) {
         if (!isSupportingTextEnabled()) {
             if (prop.isBound()) {
                 prop.unbind();

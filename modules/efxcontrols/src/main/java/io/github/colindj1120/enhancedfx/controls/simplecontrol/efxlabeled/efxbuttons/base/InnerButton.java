@@ -21,44 +21,55 @@ import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Button;
 
 /**
- * The {@code InnerButton} interface defines essential functionalities for an inner {@link Button} control. It extends {@link InnerButtonBase} to add button-specific properties and actions, enabling custom
- * controls to incorporate standard button functionalities seamlessly.
+ * Defines an interface to enhance the functionality of {@link Button} controls by providing methods to manipulate their default and cancel properties, as well as a method to programmatically trigger the
+ * button's action.
+ *
+ * <p>This interface builds upon {@link InnerButtonBase}, adding button-specific capabilities to the foundational functionalities provided by the base interface.</p>
  *
  * <h2>Capabilities:</h2>
- * <p>
  * <ul>
- *     <li>Default Button Configuration: Supports setting and querying whether the button acts as the default button, which is activated upon pressing the Enter key.</li>
- *     <li>Cancel Button Configuration: Allows setting and determining if the button serves as the cancel button, activated with the Escape key.</li>
- *     <li>Property Access: Exposes properties for the default and cancel button states, facilitating bindings and state observation.</li>
- *     <li>Action Invocation: Provides a method to programmatically trigger the button's action, mimicking a user click or activation.</li>
+ *     <li>Marking a button as a default button, which will be activated when the user presses the Enter key.</li>
+ *     <li>Marking a button as a cancel button, which will be activated when the user presses the Escape key.</li>
+ *     <li>Programmatically firing the button's action event, simulating a user click.</li>
  * </ul>
- * </p>
  *
- * <p>
- * This interface ensures a consistent API for custom controls leveraging button functionalities, abstracting the direct manipulation of a {@link Button}'s properties and providing a clean, intuitive way to
- * integrate button behavior into custom components.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * InnerButton<Button> myButton = // instantiation of InnerButton
+ * myButton.setDefaultButton(true); // Marks the button as a default button
+ * myButton.setCancelButton(false); // Ensures the button is not treated as a cancel button
+ * myButton.fire(); // Programmatically clicks the button
+ * }
+ * </pre>
  *
- * <p>
- * Implementers can easily add standard button behavior to their controls, ensuring user interactions and accessibility features like keyboard activation are handled consistently with native JavaFX
- * components.
- * </p>
+ * <p>This interface is particularly useful for customizing button behaviors in complex user interfaces, allowing developers to easily assign roles to buttons and invoke their actions programmatically,
+ * enhancing the user experience and streamlining UI interactions.</p>
  *
  * @param <T>
- *         the specific type of {@link Button} that is being wrapped or used internally
+ *         the specific type of {@link Button} being enhanced by this interface
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see InnerButtonBase
  * @see Button
+ * @see InnerButtonBase
  */
 public interface InnerButton<T extends Button> extends InnerButtonBase<T> {
+    /*
+     * Methods Available:
+     *  - void setDefaultButton(boolean value)
+     *  - boolean isDefaultButton()
+     *  - BooleanProperty defaultButtonProperty()
+     *  - void setCancelButton(boolean value)
+     *  - boolean isCancelButton()
+     *  - BooleanProperty cancelButtonProperty()
+     *  - void fire()
+     */
+
     /**
      * Sets the default button property of the inner control.
      *
-     * <p>
-     * When the default button property is set to true, the inner control will respond to the "Enter" key being pressed, triggering its default action.
-     * </p>
+     * <p>When the default button property is set to true, the inner control will respond to the "Enter" key being pressed, triggering its default action.</p>
      *
      * @param value
      *         true to set the default button property to true, false otherwise
@@ -104,14 +115,10 @@ public interface InnerButton<T extends Button> extends InnerButtonBase<T> {
     /**
      * Fires the inner control associated with this button.
      *
-     * <p>
-     * Calling this method simulates a user interaction with the button, causing the associated inner control to perform its action. This is useful when programmatically triggering the action of a button, such
-     * as when implementing custom keyboard shortcuts or automated tests.
-     * </p>
+     * <p>Calling this method simulates a user interaction with the button, causing the associated inner control to perform its action. This is useful when programmatically triggering the action of a button,
+     * such as when implementing custom keyboard shortcuts or automated tests.</p>
      *
-     * <p>
-     * This method delegates to the {@code fire()} method of the inner control, invoking any registered {@code onAction} event handler and executing any accessible actions defined for the control.
-     * </p>
+     * <p>This method delegates to the {@code fire()} method of the inner control, invoking any registered {@code onAction} event handler and executing any accessible actions defined for the control.</p>
      *
      * @see InnerButtonBase#fire()
      */

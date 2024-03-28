@@ -17,10 +17,10 @@
  */
 package io.github.colindj1120.enhancedfx.controls.skins.base;
 
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.label.LabelConfigurator;
+import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.EFXTextField;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.EFXTextBase;
-import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
-import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.builtin.label.LabelConfigurator;
 import io.github.colindj1120.enhancedfx.utils.*;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -39,43 +39,40 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Serves as an abstract base skin for enhanced text input controls within the EnhancedFX framework, providing common functionality and styling that adheres to Material Design principles. This base skin is
- * designed to be extended by specific skins for different types of text input controls, such as {@link EFXTextField}, offering a unified approach to handling text input aesthetics and interactions.
+ * EFXTextBaseSkin is an abstract class that defines the basic structure and behavior of skins for controls extending {@link EFXTextBase}.
  *
- * <p>
- * <h2>Included Elements:</h2>
+ * <p>This skin implementation focuses on enhancing text-based controls with additional features such as character count display and icon placements (leading and trailing).</p>
+ *
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>A supporting text label, which can be used to display helper text or error messages related to the input from
- *     {@link EFXSupportedControlSkin}.</li>
- *     <li>A character count label, which indicates the number of entered characters and can enforce a maximum character limit
- *     .</li>
+ *     <li>Automatic layout management for leading and trailing icons.</li>
+ *     <li>Character count display with dynamic visibility based on the control's state.</li>
+ *     <li>Customizable appearance and behavior through properties and CSS.</li>
+ *     <li>Responds to font changes in the associated control to maintain visual consistency across related UI components.</li>
+ *     <li>Ensures text content does not exceed a specified maximum character count, with the ability to update layout based on character count constraints.</li>
  * </ul>
- * <br>
- * These elements are integrated into the skin to provide immediate feedback to users, improving usability and ensuring a
- * consistent visual language across the application.
- * </p>
  *
- * <p>
- * <h2>Key Features:</h2>
- * <ul>
- *     <li>Automatic management of text input properties such as padding, border, and background, ensuring they align with
- *     Material Design specifications.</li>
- *     <li>Dynamic response to text input changes, with support for enforcing character limits and updating auxiliary labels
- *     accordingly.</li>
- *     <li>Flexible support for additional information display, enabling developers to easily incorporate helper text and
- *     character count feedback into their text input controls.</li>
- * </ul>
- * </p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ *     EFXTextBase<?> myCustomTextField = new MyCustomTextField();
+ *     EFXTextBaseSkin<?> myCustomTextFieldSkin = new MyCustomTextFieldSkin(myCustomTextField);
+ *     myCustomTextField.setSkin(myCustomTextFieldSkin);
  *
- * <p>
- * Implementing classes are expected to provide specific layout calculations and adjustments to fit the unique requirements
- * of each control type, while leveraging the common functionality provided by {@code EFXTextBaseSkin}.
- * </p>
+ *     myCustomTextField.setMaxCharCount(50);
+ *     myCustomTextField.setLeadingIcon(new ImageView(myIconImage));
+ *     myCustomTextField.setTrailingIcon(new ImageView(myTrailingIconImage));
+ *     myCustomTextField.setAlwaysFloatingLabel(true);
+ * }
+ * </pre>
  *
- * <p>
- * Usage of this skin within custom controls allows for a consistent implementation of Material Design principles across text
- * inputs, simplifying the development process and ensuring a high-quality user experience.
- * </p>
+ * <p>This class requires subclasses to implement the {@link #initialize()} method to set up any additional components or behavior specific to the custom control skin. It also provides methods to handle font
+ * changes and text updates in a manner that aligns with the extended features of the {@link EFXTextBase} controls.</p>
+ *
+ * <p>Subclasses are encouraged to override the layout methods to customize the positioning of the inner text control, icons, and character count label to match specific design requirements.</p>
+ *
+ * <p>Note: This skin automatically adds the necessary listeners and bindings to the control properties to react to changes in real-time, ensuring the UI remains consistent and functional across user
+ * interactions.</p>
  *
  * @param <T>
  *         The type of the {@link EFXTextBase} control this skin is associated with, ensuring type safety and seamless integration with the JavaFX skinning mechanism.
@@ -95,6 +92,26 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
     protected boolean skipMaxCharacterCountLayout = false;
 
+    /**
+     * Initializes the control skin by setting up essential parts, including character count labels and icons.
+     *
+     * <p>This method extends the base class initialization process to include setup routines specific to the control skin being implemented.</p>
+     *
+     * <p>
+     * <em>The method performs the following actions in order:</em>
+     * <ol>
+     *     <li>It calls {@code super.initialize()} to ensure that any initialization logic defined in the superclass is executed. This is crucial for maintaining the proper initialization hierarchy and
+     *         ensuring that the skin is correctly set up according to the framework's requirements.</li>
+     *     <li>It invokes {@code setupCharacterCountLabel()} to configure the character count label. This setup includes binding properties to the control's state, adjusting visibility based on the control's
+     *         current configuration, and ensuring the label correctly reflects the number of characters entered versus the maximum allowed.</li>
+     *     <li>It calls {@code setupIcons()} to configure any leading or trailing icons associated with the control. This includes positioning the icons relative to the control and ensuring they are properly
+     *         displayed based on the control's current state and configuration.</li>
+     * </ol>
+     * </p>
+     *
+     * <p>This override is part of the skin's customization process, allowing developers to add or modify components that are part of the control's appearance and behavior. It is an essential step in
+     * creating a control skin that meets specific design requirements.</p>
+     */
     @Override
     protected void initialize() {
         super.initialize();
@@ -102,10 +119,29 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         this.setupIcons();
     }
 
+    /**
+     * Constructs an {@code EFXTextBaseSkin} instance for the specified control.
+     *
+     * <p>This constructor initializes the skin with the control that it will be associated with. It calls the superclass constructor with the control as an argument, ensuring that the base skin
+     * functionalities are properly initialized.</p>
+     *
+     * @param control
+     *         The control for which this skin is being created. This control should not be {@code null}.
+     */
     protected EFXTextBaseSkin(T control) {
         super(control);
     }
 
+    /**
+     * Produces a {@code ChangeListener<Font>} that updates the font of supporting text labels within a control.
+     *
+     * <p>This listener is designed to synchronize font changes in the control with its associated labels, maintaining visual consistency.</p>
+     *
+     * @param control
+     *         The control whose font change this listener will handle.
+     *
+     * @return A {@code ChangeListener<Font>} that updates the font of supporting and character count labels when the control's font changes.
+     */
     @NotNull
     protected ChangeListener<Font> handleFontChange(T control) {
         return (observable, oldFont, newFont) -> {
@@ -118,6 +154,17 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         };
     }
 
+    /**
+     * Generates a {@code ChangeListener<String>} that reacts to text changes within the control.
+     *
+     * <p>This listener ensures that the text content does not exceed the specified maximum character count, reverting to the old text if necessary. It also requests a layout update based on specific
+     * conditions related to the character count.</p>
+     *
+     * @param control
+     *         The control whose text changes this listener will handle.
+     *
+     * @return A {@code ChangeListener<String>} that enforces maximum character count constraints and potentially requests layout updates.
+     */
     @NotNull
     protected ChangeListener<String> handleTextChanged(T control) {
         return (observable, oldText, newText) -> {
@@ -154,6 +201,14 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         };
     }
 
+    /**
+     * Configures the character count label for a control.
+     *
+     * <p>This method sets up bindings and listeners for the character count label to reflect changes in the control's state, such as the current character count relative to the maximum allowed characters.</p>
+     *
+     * <p>The label's visibility and text content are dynamically updated based on the control's current character count and whether the maximum character count feature is enabled. It also configures the
+     * label's background, managed state, and style class.</p>
+     */
     private void setupCharacterCountLabel() {
         EFXTextBase<?> control = getSkinnable();
 
@@ -172,8 +227,7 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         CustomControlConfigurator.create(control)
                                  .addObjectPropertyInvalidationListener(control.maxCharCountPosProperty(), layoutInvalidListener)
                                  .addObjectPropertyInvalidationListener(control.maxCharCountStateProperty(), layoutInvalidListener)
-                                 .addObjectPropertyChangeListener(control.maxCharCountProperty(),
-                                                                  trimTextToMaxCountIfRequired(control));
+                                 .addObjectPropertyChangeListener(control.maxCharCountProperty(), trimTextToMaxCountIfRequired(control));
     }
 
     /**
@@ -191,10 +245,15 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
     /**
      * Returns a ChangeListener that handles the change of an icon in a node.
      *
-     * <p>This listener removes the old icon from the children of the node if the new icon is null.</p>
-     * <p>If the new icon is not null, it removes the old icon and adds the new icon to the children of the node.</p>
-     * <p>If the old icon is null and the new icon is not null, it adds the new icon to the children of the node.</p>
-     * <p>Finally, it requests layout for the skinnable node.</p>
+     * <p>
+     * <em>Steps:</em>
+     * <ol>
+     *     <li>This listener removes the old icon from the children of the node if the new icon is null.</li>
+     *     <li>If the new icon is not null, it removes the old icon and adds the new icon to the children of the node.</li>
+     *     <li>If the old icon is null and the new icon is not null, it adds the new icon to the children of the node.</li>
+     *     <li>Finally, it requests layout for the skinnable node.</li>
+     * </ol>
+     * </p>
      *
      * @return a ChangeListener that handles the change of an icon
      */
@@ -214,12 +273,35 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         };
     }
 
+    /**
+     * Creates a {@code StringExpression} representing the current character count and the maximum character count for a given {@link EFXTextBase} control.
+     *
+     * <p>This expression is typically used for displaying the character count information to the user, formatted as "current/maximum".</p>
+     *
+     * @param control
+     *         The {@code EFXTextBase} control for which the character count expression is created.
+     *
+     * @return A {@code StringExpression} that binds to the control's current character length and maximum character count, formatted as a string.
+     */
     private StringExpression createCharacterCountExpression(EFXTextBase<?> control) {
-        ReadOnlyIntegerProperty controlLengthProperty            = control.lengthProperty();
-//        IntegerProperty         controlMaxCharacterCountProperty = control.maxCharCountProperty();
-        return Bindings.concat(controlLengthProperty.asString(), "/", control.maxCharCountProperty().asString());
+        ReadOnlyIntegerProperty controlLengthProperty = control.lengthProperty();
+        return Bindings.concat(controlLengthProperty.asString(), "/", control.maxCharCountProperty()
+                                                                             .asString());
     }
 
+    /**
+     * Returns a {@code ChangeListener<Number>} that, when attached to a control's maximum character count property, trims the text within the control to the maximum allowed character count if necessary.
+     *
+     * <p>This listener ensures that the text content of the control does not exceed the newly set maximum character count.</p>
+     *
+     * <p>When the maximum character count is decreased, and the current text length exceeds this new maximum, the text is automatically trimmed to fit within the updated limit. This method is particularly
+     * useful for dynamically updating the maximum character count constraints of a control and enforcing these constraints.</p>
+     *
+     * @param control
+     *         The {@code EFXTextBase} control to which the maximum character count constraint applies.
+     *
+     * @return A {@code ChangeListener<Number>} that enforces the maximum character count constraint by trimming the text if it exceeds the maximum allowed characters.
+     */
     private ChangeListener<Number> trimTextToMaxCountIfRequired(EFXTextBase<?> control) {
         return (obs, oldMax, newMax) -> {
             TextInputControl innerField = control.getInnerControl();
@@ -231,19 +313,54 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Computes the minimum width of the control.
+     *
+     * <p>This implementation provides a basic calculation that considers only the left and right insets, essentially setting the minimum width to the sum of these insets.</p>
+     *
+     * <p>This method's simplistic approach assumes that the control does not have a minimum width requirement beyond its insets. Subclasses may override this method to incorporate the widths of contained
+     * elements or to apply a different calculation logic based on specific needs.</p>
+     *
+     * @param height
+     *         The height of the control. This parameter is not directly used in the calculation but is part of the method signature for overriding purposes.
+     * @param topInset
+     *         The top inset of the control. This parameter is not directly used in the calculation but is part of the method signature.
+     * @param rightInset
+     *         The right inset of the control. This value is added to the left inset to calculate the minimum width.
+     * @param bottomInset
+     *         The bottom inset of the control. This parameter is not directly used in the calculation but is part of the method signature.
+     * @param leftInset
+     *         The left inset of the control. This value is added to the right inset to calculate the minimum width.
+     *
+     * @return The calculated minimum width of the control, which is determined as the sum of the left and right insets.
      */
     @Override
-    protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset,
-                                     double leftInset) {
+    protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
         return leftInset + 0 + rightInset;
     }
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Calculates the preferred width of the control based on its content, including any leading and trailing icons.
+     *
+     * <p>This method considers the width of these icons in addition to the preferred width of the control's inner content and insets.</p>
+     *
+     * @param height
+     *         The height of the control. This parameter is not directly used but is part of the method signature for overriding purposes.
+     * @param topInset
+     *         The top inset of the control.
+     * @param rightInset
+     *         The right inset of the control.
+     * @param bottomInset
+     *         The bottom inset of the control.
+     * @param leftInset
+     *         The left inset of the control.
+     *
+     * @return The calculated preferred width of the control, incorporating the widths of any leading and trailing icons, the preferred width of the inner control, and the horizontal insets.
      */
     @Override
-    protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset,
-                                      double leftInset) {
+    protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
         T control = getSkinnable();
 
         double leadingWidth  = EFXNodeUtils.getNodeWidth(control.getLeadingIcon());
@@ -255,13 +372,30 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
     /**
      * {@inheritDoc}
+     *
+     * <p>Calculates the preferred height of the control, taking into account the heights of any leading and trailing icons.</p>
+     *
+     * <p>The method compares the combined height of the control's inner content with the maximum height of the icons, ensuring the control's preferred height is sufficient to accommodate both.</p>
+     *
+     * @param width
+     *         The width of the control. This parameter is not directly used but is part of the method signature for overriding purposes.
+     * @param topInset
+     *         The top inset of the control.
+     * @param rightInset
+     *         The right inset of the control. This parameter is not directly used but is part of the method signature.
+     * @param bottomInset
+     *         The bottom inset of the control.
+     * @param leftInset
+     *         The left inset of the control. This parameter is not directly used but is part of the method signature.
+     *
+     * @return The calculated preferred height of the control, which is the greatest of the combined height of the control's inner content (plus top and bottom insets) and the maximum icon height.
      */
     @Override
     protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        EFXTextBase<?> control       = getSkinnable();
-        double         leadingHeight = EFXNodeUtils.getNodeHeight(control.getLeadingIcon());
-        double            trailingHeight = EFXNodeUtils.getNodeHeight(control.getTrailingIcon());
-        double            iconMax        = topInset + Math.max(leadingHeight, trailingHeight) + bottomInset;
+        EFXTextBase<?> control        = getSkinnable();
+        double         leadingHeight  = EFXNodeUtils.getNodeHeight(control.getLeadingIcon());
+        double         trailingHeight = EFXNodeUtils.getNodeHeight(control.getTrailingIcon());
+        double         iconMax        = topInset + Math.max(leadingHeight, trailingHeight) + bottomInset;
 
         double height = topInset + control.getInnerControl()
                                           .prefHeight(-1) + bottomInset;
@@ -271,6 +405,19 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
 
     /**
      * {@inheritDoc}
+     * <p>
+     * Lays out the children of the control, including positioning and sizing any leading and trailing icons, the control's inner content, and the character count label if present.
+     *
+     * <p>This method orchestrates the spatial arrangement of the control's components within the available width and height.</p>
+     *
+     * @param x
+     *         The X coordinate of the layout area's origin.
+     * @param y
+     *         The Y coordinate of the layout area's origin.
+     * @param w
+     *         The width of the layout area.
+     * @param h
+     *         The height of the layout area.
      */
     @Override
     protected void layoutChildren(double x, double y, double w, double h) {
@@ -281,17 +428,42 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
         layoutCharacterCountLabel(x, w, h);
     }
 
+    /**
+     * Lays out the inner control of the skin, adjusting its size and position based on the presence and size of any leading and trailing icons.
+     *
+     * <p>This method calculates the available space for the inner control by considering the width of the icons and positioning the control accordingly within the provided layout bounds.</p>
+     *
+     * @param x
+     *         The X coordinate of the layout area's origin.
+     * @param y
+     *         The Y coordinate of the layout area's origin.
+     * @param w
+     *         The width of the layout area.
+     * @param h
+     *         The height of the layout area.
+     */
     private void layoutInnerField(double x, double y, double w, double h) {
         T control = getSkinnable();
 
         double xOffset = EFXNodeUtils.getNodeWidth(control.getLeadingIcon(), LEADING_ICON_OFFSET);
-
         double wOffset = EFXNodeUtils.getNodeWidth(control.getTrailingIcon(), TRAILING_ICON_OFFSET);
 
         control.getInnerControl()
                .resizeRelocate(x + xOffset, y, w - xOffset - wOffset, h);
     }
 
+    /**
+     * Positions and sizes the leading icon of the control, if present. The icon is aligned vertically in the center of the available space and placed at the start of the control.
+     *
+     * @param x
+     *         The X coordinate of the layout area's origin.
+     * @param y
+     *         The Y coordinate of the layout area's origin.
+     * @param w
+     *         The width of the layout area.
+     * @param h
+     *         The height of the layout area.
+     */
     private void layoutLeadingIcon(double x, double y, double w, double h) {
         T control = getSkinnable();
         Optional.ofNullable(control.getLeadingIcon())
@@ -303,6 +475,21 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
                 });
     }
 
+    /**
+     * Positions and sizes the trailing icon of the control, if present.
+     *
+     * <p>The icon is aligned vertically in the center of the available space and placed at the end of the control. This method calculates the correct position of the trailing icon to ensure it is visibly
+     * separated from the control's content and other components.</p>
+     *
+     * @param x
+     *         The X coordinate of the layout area's origin.
+     * @param y
+     *         The Y coordinate of the layout area's origin.
+     * @param w
+     *         The width of the layout area.
+     * @param h
+     *         The height of the layout area.
+     */
     private void layoutTrailingIcon(double x, double y, double w, double h) {
         T control = getSkinnable();
         Optional.ofNullable(control.getTrailingIcon())
@@ -337,8 +524,7 @@ public abstract class EFXTextBaseSkin<T extends EFXTextBase<?>> extends EFXSuppo
             } else {
                 characterCountLabelY = 0 - EFXInsetUtils.getTopBorderInset(control) - characterCountLabelHeight;
             }
-            characterCountLabel.resizeRelocate(characterCountLabelX, characterCountLabelY, characterCountLabelWidth,
-                                               characterCountLabelHeight);
+            characterCountLabel.resizeRelocate(characterCountLabelX, characterCountLabelY, characterCountLabelWidth, characterCountLabelHeight);
         }
     }
 }

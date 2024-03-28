@@ -22,13 +22,13 @@ import io.github.colindj1120.enhancedfx.base.beans.efxstyleableproperty.EFXStyle
 import io.github.colindj1120.enhancedfx.base.css.StyleablePropertiesManager;
 import io.github.colindj1120.enhancedfx.base.factory.CssFactory;
 import io.github.colindj1120.enhancedfx.base.factory.controlconfigurators.custom.customcontrol.CustomControlConfigurator;
+import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
+import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxcontrol.base.EFXControlBase;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.EFXTextBase;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.FloatMode;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.InnerTextField;
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.efxtext.base.TextMode;
-import io.github.colindj1120.enhancedfx.controls.css.EFXStylesheets;
-import io.github.colindj1120.enhancedfx.controls.css.EFXTheme;
 import io.github.colindj1120.enhancedfx.controls.skins.EFXTextFieldSkin;
 import io.github.colindj1120.enhancedfx.utils.EFXPropertyUtils;
 import javafx.beans.Observable;
@@ -51,8 +51,7 @@ import java.util.function.Consumer;
  * An extended version of {@link TextField} that incorporates additional styling and functionality based on the Material Design principles for JavaFX applications. This class is part of the EnhancedFX library,
  * which aims to provide a richer set of UI components and utilities.
  *
- * <p>
- * <em>The {@code EFXTextField} enhances the standard {@link TextField} by introducing features such as:</em>
+ * <h2>Key Features:</h2>
  * <ul>
  *     <li>Floating labels: Labels that transition above the text field when it is focused or contains text.</li>
  *     <li>Customizable floating modes: Allows the floating label to be configured as always floating, floating inside, or floating above the text field.</li>
@@ -61,21 +60,16 @@ import java.util.function.Consumer;
  *     <li><b>Enhanced Skinning:</b> Utilizes a custom skin, {@link EFXTextFieldSkin}, to apply the enhanced features and styling, ensuring a cohesive user experience across different EnhancedFX
  *     components.</li>
  * </ul>
- * </p>
  *
- * <p>
- * To customize the appearance and behavior of the {@code EFXTextField}, CSS can be used in conjunction with the exposed styleable properties. This allows developers to create a consistent look and feel
- * across their application while adhering to Material Design guidelines.
- * </p>
+ * <p>To customize the appearance and behavior of the {@code EFXTextField}, CSS can be used in conjunction with the exposed styleable properties. This allows developers to create a consistent look and feel
+ * across their application while adhering to Material Design guidelines.</p>
  *
- * <p>
- * The implementation ensures backward compatibility with existing {@link TextField} usage patterns, making it easy to integrate into existing projects. It extends {@code EFXTextBase}, inheriting its
- * rich set of features and further extending them to meet the specific needs of a text field component.
- * </p>
+ * <p>The implementation ensures backward compatibility with existing {@link TextField} usage patterns, making it easy to integrate into existing projects. It extends {@code EFXTextBase}, inheriting its rich
+ * set of features and further extending them to meet the specific needs of a text field component.</p>
  *
  * <h2>Usage Example</h2>
- * <p>
  * <pre>
+ * {@code
  *     EFXTextField textField = new EFXTextField();
  *     textField.setPromptText("Username");
  *     textField.setFloatingText("Username");
@@ -83,13 +77,11 @@ import java.util.function.Consumer;
  *     textField.setAlwaysFloating(true);
  *     // Apply custom CSS if needed
  *     textField.getStyleClass().add("custom-text-field");
+ * }
  * </pre>
- * </p>
  *
- * <p>
- * For styling and additional configuration, refer to the EnhancedFX CSS documentation. This class supports several pseudo-classes for state management and offers a comprehensive set of CSS properties for
- * customization.
- * </p>
+ * <p>For styling and additional configuration, refer to the EnhancedFX CSS documentation. This class supports several pseudo-classes for state management and offers a comprehensive set of CSS properties for
+ * customization.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -135,15 +127,31 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
         //endregion Float Mode
     }
 
+    /**
+     * Factory method to create a new instance of {@code EFXTextField} with default text.
+     *
+     * @return A new instance of {@code EFXTextField} with no initial text.
+     */
     public static EFXTextField create() {
-        EFXTextField efxTextField = EFXControlBase.create(EFXTextField.class);
-        CustomControlConfigurator.create(efxTextField)
-                                 .initializeEFXBooleanBinding(efxTextField.getFloatAnimationEnabledBinding(), efxTextField, association -> efxTextField.isFloatAnimationEnabled = association)
-                                 .addBooleanPropertyInvalidationListener(efxTextField.alwaysFloating, invalidated -> efxTextField.requestLayout());
-
-        return efxTextField;
+        return EFXTextField.create("");
     }
 
+    /**
+     * Creates a new instance of {@code EFXTextField} with specified initial text.
+     *
+     * <p>This method serves as a factory method for creating {@code EFXTextField} objects, allowing for customization of the text field's initial text content.</p>
+     *
+     * <p>During the creation process, this method initializes the text field with the provided text and configures essential properties and bindings that dictate the control's behavior, such as floating label
+     * animation and always floating label state.</p>
+     *
+     * <p>The method leverages {@code CustomControlConfigurator} to fluently apply configurations such as initializing boolean bindings and adding property invalidation listeners. These configurations enable
+     * dynamic responses to property changes, enhancing the control's interactivity and visual feedback.</p>
+     *
+     * @param text
+     *         The initial text to set in the {@code EFXTextField}.
+     *
+     * @return A newly created instance of {@code EFXTextField} initialized with the specified text.
+     */
     public static EFXTextField create(String text) {
         EFXTextField efxTextField = EFXControlBase.create(EFXTextField.class);
 
@@ -151,15 +159,30 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
 
         CustomControlConfigurator.create(efxTextField)
                                  .initializeEFXBooleanBinding(efxTextField.getFloatAnimationEnabledBinding(), efxTextField, association -> efxTextField.isFloatAnimationEnabled = association)
-                                 .addBooleanPropertyInvalidationListener(efxTextField.alwaysFloating, invalidated -> efxTextField.requestLayout());
+                                 .addBooleanPropertyInvalidationListener(efxTextField.alwaysFloating, ignored -> efxTextField.requestLayout());
 
         return efxTextField;
     }
 
+    /**
+     * Constructs an instance of EFXTextField.
+     *
+     * <p>This constructor calls the `super()` method to initialize the parent class constructor. </p>
+     */
     protected EFXTextField() {
         super();
     }
 
+    /**
+     * Initializes the {@code EFXTextField}, setting up default properties and behaviors.
+     *
+     * <p>This override of the {@code initialize} method provides specific initializations for the {@code EFXTextField}, like setting up default values for the floating text and the always floating state.</p>
+     *
+     * <p>The {@code floatingText} property is initialized with an empty string, indicating that no floating text is displayed by default. The {@code alwaysFloating} property is initialized to {@code false},
+     * meaning that the floating label behavior (if enabled) will activate only when the text field is focused or contains text.</p>
+     *
+     * <p>This method is called during the construction process of the {@code EFXTextField} and ensures that the text field is appropriately configured with its unique features upon instantiation.</p>
+     */
     @Override
     protected void initialize() {
         super.initialize();
@@ -184,6 +207,16 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param obs
+     *         The observable object that triggered the theme change. This parameter allows for the implementation of observer patterns and can be used to react to specific changes in theme-related properties.
+     * @param oldEFXTheme
+     *         The previous theme that was applied to the control.
+     * @param newEFXTheme
+     *         The new theme that is being applied to the control.
+     */
     @Override
     protected void loadNewTheme(Observable obs, EFXTheme oldEFXTheme, EFXTheme newEFXTheme) {
         loadNewThemeHelper(EFXStylesheets.ENHANCED_TEXT_FIELD, oldEFXTheme, newEFXTheme);
@@ -193,9 +226,10 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
      * This method builds upon {@code setupStyleableProperties} from the superclass, and sets up the styleable properties for the {@code EFXTextField} control. It is responsible for initializing the
      * {@code floatMode} property.
      *
-     * <p>
-     * The {@code floatMode} property represents the floating state of the text field, like being disabled or bordered on the graphical interface. It holds a value of the {@code FloatMode} enumeration.
-     * </p>
+     * <h2>Properties:</h2>
+     * <ul>
+     *     <li>{@code floatMode}: Represents the floating state of the text field. It holds a value of the {@code FloatMode} enumeration.</li>
+     * </ul>
      *
      * <p>
      * <em>The properties are initialized with:</em>
@@ -208,13 +242,7 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
      * </ul>
      * </p>
      *
-     * <p>
-     * This (floatMode) process uses the {@code ExtendedStyleableObjectPropertyFactory.builder()} to configure and initialize the property.
-     * </p>
-     *
-     * <p>
-     * This method adds styleable properties specifically relevant to the EFXTextField control, supplementing and complementing those set up via the superclass method.
-     * </p>
+     * <p>This method adds styleable properties specifically relevant to the EFXTextField control, supplementing and complementing those set up via the superclass method.</p>
      */
     @Override
     protected void setupStyleableProperties() {
@@ -229,27 +257,20 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
     }
 
     /**
-     * This method builds upon {@code setupControl} from the superclass, and configures the initial setup for the custom text field control. This method extends the setup process defined in its parent class,
-     * focusing on applying a specific stylesheet and setting initial style properties and bindings for the control.
+     * This method builds upon {@code setupControl} from the superclass, and configures the initial setup for the custom text field control.
      *
      * <p>
      * <em>The method performs the following actions to ensure the control is correctly initialized:</em>
      * <ul>
-     *     <li>Verifies the existence of a stylesheet specific to {@code ENHANCED_TEXT_FIELD} and retrieves its path. This stylesheet is crucial for applying the custom appearance and behaviors defined for
-     *     the enhanced text field.</li>
+     *     <li>Verifies the existence of a stylesheet specific to {@code ENHANCED_TEXT_FIELD} and retrieves its path.</li>
      *     <li>Creates a {@link CustomControlConfigurator} instance for this control, allowing for fluent configuration and application of styles and behaviors.</li>
      *     <li>Sets a predefined style class {@code ENHANCED_TEXT_FIELD_STYLE} to apply base styling rules from the stylesheet.</li>
      *     <li>Adds the stylesheet located at the verified path, ensuring the control adheres to the visual design specified in the CSS file.</li>
-     *     <li>Binds a boolean property to enable or disable float animation through a custom association binding, allowing for dynamic updates based on control state or global settings.</li>
-     *     <li>Adds an invalidation listener to the {@code alwaysFloating} boolean property, ensuring the layout is requested whenever this property's value changes. This is critical for maintaining the
-     *     correct appearance and behavior of the floating label feature.</li>
      * </ul>
      * </p>
      *
-     * <p>
-     * This setup method is vital for ensuring that the enhanced text field is not only visually appealing but also functionally rich, supporting features like float animation and responsive styling
-     * adjustments.
-     * </p>
+     * <p>This setup method is vital for ensuring that the enhanced text field is not only visually appealing but also functionally rich, supporting features like float animation and responsive styling
+     * adjustments.</p>
      *
      * @implNote The method relies on {@code checkStylesheetPathExists} to ensure the stylesheet path is valid and accessible. This is a critical step to prevent runtime errors due to missing resources.
      *         The {@code CustomNodeConfigurator} is used to apply configuration settings succinctly, showcasing an efficient and readable way to set up custom controls.
@@ -311,18 +332,16 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
      * <p>
      * <em>The float animation is considered to be enabled in the following scenario:</em>
      * <ul>
-     *      <li> The {@code floatMode} of this text field is not disabled. The Floating label is a pattern where the placeholder text is transformed into a title for the form field when a field is selected
-     *      or filled out.</li>
-     *      <li> The {@code alwaysFloating} property is not true. This property specifies whether the label of this field should always be showing as if it's floating, regardless of where the field is filled
-     *      or focused.</li>
-     *      <li> Both {@code getText()} and {@code getPromptText()} methods return an empty string.</li>
+     *      <li>The {@code floatMode} of this text field is not disabled. The Floating label is a pattern where the placeholder text is transformed into a title for the form field when a field is selected
+     *          or filled out.</li>
+     *      <li>The {@code alwaysFloating} property is not true. This property specifies whether the label of this field should always be showing as if it's floating, regardless of where the field is filled
+     *          or focused.</li>
+     *      <li>Both {@code getText()} and {@code getPromptText()} methods return an empty string.</li>
      * </ul>
      * </p>
      *
-     * <p>
-     * The returned BooleanBinding is built by the {@code Bindings.createBooleanBinding()} method. The binding depends on the {@code floatMode}, {@code alwaysFloating} properties, as well as the text and
-     * promptText properties of this text field. Thus, any changes to these properties will cause the binding to be recalculated.
-     * </p>
+     * <p>The returned BooleanBinding is built by the {@code Bindings.createBooleanBinding()} method. The binding depends on the {@code floatMode}, {@code alwaysFloating} properties, as well as the text and
+     * promptText properties of this text field. Thus, any changes to these properties will cause the binding to be recalculated.</p>
      *
      * @return A BooleanBinding indicating whether the float animation should be enabled.
      */
@@ -485,6 +504,37 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
     // StyleableProperties Invalidate Functions
     //*****************************************************************
 
+    /**
+     * Handles the invalidation of the float mode property for an EFXTextField.
+     *
+     * <p>This method ensures that the float mode is compatible with the current text mode of the field. Specifically, it prevents setting the float mode to {@code FloatMode.BORDER} when the text mode is
+     * filled, enforcing consistent visual styling.</p>
+     *
+     * <p>When an incompatible mode change is attempted, the method reverts the float mode to its previous value and throws an {@code IllegalArgumentException} to signal the error. Additionally, this method
+     * updates the pseudo-class states associated with the float mode to reflect the current mode accurately.</p>
+     *
+     * <p>
+     * <em>Pseudo-class states changed:</em>
+     * <ul>
+     *     <li>{@code FLOAT_MODE_DISABLED_PSEUDO_CLASS} - Applied when float mode is disabled.</li>
+     *     <li>{@code FLOAT_MODE_BORDER_PSEUDO_CLASS} - Applied when float mode is set to border.</li>
+     *     <li>{@code FLOAT_MODE_INSIDE_PSEUDO_CLASS} - Applied when float mode is set to inside.</li>
+     *     <li>{@code FLOAT_MODE_ABOVE_PSEUDO_CLASS} - Applied when float mode is set to above.</li>
+     * </ul>
+     * </p>
+     *
+     * <p>This method is crucial for maintaining the visual coherence of the text field by preventing incompatible configurations between text and float modes.</p>
+     *
+     * @param prop
+     *         The {@code EFXStyleableObjectProperty} representing the float mode.
+     * @param oldValue
+     *         The previous value of the float mode property.
+     * @param oldValueSetter
+     *         A {@code Consumer} that accepts the previous float mode value, allowing it to be restored if needed.
+     *
+     * @throws IllegalArgumentException
+     *         if the float mode is set to {@code FloatMode.BORDER} when the text mode is filled.
+     */
     private void floatModeInvalidated(EFXStyleableObjectProperty<FloatMode> prop, FloatMode oldValue, Consumer<FloatMode> oldValueSetter) {
         FloatMode mode = prop.get();
         if (isTextModeFilled() && mode.equals(FloatMode.BORDER)) {
@@ -505,6 +555,26 @@ public class EFXTextField extends EFXTextBase<TextField> implements InnerTextFie
         }
     }
 
+    /**
+     * Overrides the {@code textModeInvalidated} method to include validation against the current float mode.
+     *
+     * <p>Specifically, it prevents setting the text mode to filled if the float mode is currently set to border.</p>
+     *
+     * <p>This method enforces that the text mode and float mode are compatible, maintaining the visual integrity of the text field. If an attempt is made to set an incompatible text mode, the method reverts
+     * the text mode to its previous value and throws an {@code IllegalArgumentException}.</p>
+     *
+     * <p>The compatibility check is essential for ensuring that the text field's appearance remains coherent and as expected according to the design choices made via properties.</p>
+     *
+     * @param prop
+     *         The {@code EFXStyleableObjectProperty} representing the text mode.
+     * @param oldValue
+     *         The previous value of the text mode property.
+     * @param oldValueSetter
+     *         A {@code Consumer} that accepts the previous text mode value, enabling it to be reverted if necessary.
+     *
+     * @throws IllegalArgumentException
+     *         if the text mode is set to filled when the float mode is border.
+     */
     @Override
     protected void textModeInvalidated(EFXStyleableObjectProperty<TextMode> prop, TextMode oldValue, Consumer<TextMode> oldValueSetter) {
         if (isTextModeFilled() && isFloatModeBorder()) {

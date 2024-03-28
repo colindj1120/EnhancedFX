@@ -22,18 +22,14 @@ import javafx.scene.control.Control;
 /**
  * Represents a functional interface that provides a contract for retrieving the inner control of a larger control structure in a JavaFX application.
  *
- * <p>
- * This interface defines a single abstract method, `getInnerControl()`, which returns an object of type `T` extending `javafx.scene.control.Control`. The specific type `T` denotes the type of the inner control
- * managed by the implementing class. "Inner" controls are typically embedded components within a larger control or container control.
- * </p>
+ * <p>This interface defines a single abstract method, `getInnerControl()`, which returns an object of type `T` extending `javafx.scene.control.Control`. The specific type `T` denotes the type of the inner
+ * control managed by the implementing class. "Inner" controls are typically embedded components within a larger control or container control.</p>
  *
- * <p>
- * Being a functional interface ensures that `InnerBase` can be used in contexts expecting a functional programming style such as lambda expressions or method references. Classes or interfaces implementing
- * `InnerBase` are expected to provide a concrete implementation for the `getInnerControl()` method.
- * </p>
+ * <p>Being a functional interface ensures that `InnerBase` can be used in contexts expecting a functional programming style such as lambda expressions or method references. Classes or interfaces implementing
+ * `InnerBase` are expected to provide a concrete implementation for the `getInnerControl()` method.</p>
  *
  * @param <T>
- *         a subclass of `javafx.scene.control.Control` that represents the type of the inner control
+ *         a subclass of {@link Control} that represents the type of the inner control
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -44,9 +40,7 @@ public interface InnerBase<T extends Control> {
     /**
      * Retrieves the inner control of a larger control structure.
      *
-     * <p>
-     * An inner control is a component embedded within a parent control. The specific type of the inner control, represented by `T`, is determined by the implementing class.
-     * </p>
+     * <p>An inner control is a component embedded within a parent control. The specific type of the inner control, represented by `T`, is determined by the implementing class.</p>
      *
      * @return the inner control of the parent control
      */

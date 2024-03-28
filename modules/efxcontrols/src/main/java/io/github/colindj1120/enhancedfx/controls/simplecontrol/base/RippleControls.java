@@ -43,7 +43,8 @@ import javafx.util.Duration;
  * </ul>
  *
  * <h2>Usage Example:</h2>
- * <pre>{@code
+ * <pre>
+ * {@code
  * public class MyCustomControl extends Region implements RippleControls {
  *     private EFXRippleEffect rippleEffect = new EFXRippleEffect(this);
  *
@@ -61,7 +62,8 @@ import javafx.util.Duration;
  *
  *     // Additional methods and logic specific to the control
  * }
- * }</pre>
+ * }
+ * </pre>
  *
  * <p>In this example, {@code MyCustomControl} implements {@code RippleControls} to provide a customized ripple effect. The control initializes the ripple effect with specific properties like color, shape,
  * and duration.</p>
@@ -97,7 +99,7 @@ public interface RippleControls {
     /**
      * Retrieves the current state of the ripple effect.
      *
-     * @return The current state of the ripple effect as a EFXState object.
+     * @return The current state of the ripple effect as an EFXState object.
      *
      * @see EFXState
      */

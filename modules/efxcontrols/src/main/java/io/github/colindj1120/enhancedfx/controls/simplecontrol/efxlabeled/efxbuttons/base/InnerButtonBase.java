@@ -28,49 +28,53 @@ import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
 
 /**
- * Provides an interface to define the essential functionalities of an inner button base, extending the capabilities of {@link InnerLabeled}. This interface is designed to be implemented by classes
- * that wish to encapsulate a {@link ButtonBase} control, providing a unified API to access and modify common button properties and behaviors. It serves as a foundational component in building a more
- * complex UI control hierarchy, especially in contexts where button-like behavior is desired, but direct inheritance from ButtonBase is not feasible or desired.
+ * {@link InnerButtonBase} extends the {@link InnerLabeled} interface to provide foundational functionalities specific to {@link ButtonBase} controls within JavaFX like {@link Button} and {@link ToggleButton}.
  *
- * <p>
- * Through this interface, implementers can access and manipulate properties such as the button's armed state, action event handlers, and execute accessible actions, thereby offering a flexible
- * mechanism for interacting with the underlying button control. It facilitates the creation of composite controls that need button functionalities, enabling developers to maintain a clear separation
- * of concerns and enhance the reusability of UI components within the EnhancedFX library.
- * </p>
+ * <p>This includes handling of action events, arming and disarming the button, and executing accessible actions, thereby enhancing the button's interactivity and accessibility features.</p>
  *
- * <p>
- * <em>Key functionalities exposed by this interface include:</em>
+ * <h2>Capabilities:</h2>
  * <ul>
- *     <li>Querying and setting the armed state of the button.</li>
- *     <li>Managing the on-action event handler, allowing for custom actions to be defined when the button is activated.</li>
- *     <li>Directly invoking the button's action through the {@code fire()} method, simulating a user interaction.</li>
- *     <li>Executing accessible actions, enhancing the accessibility of the control by supporting actions defined by {@link AccessibleAction}.</li>
+ *     <li>Arming and disarming: Controls the button's armed state, indicating readiness to fire an action event.</li>
+ *     <li>Action event handling: Allows setting and retrieving an action event handler that is called when the button is activated.</li>
+ *     <li>Accessible action execution: Supports executing predefined accessible actions, enhancing the control's accessibility.</li>
+ *     <li>Firing: Programmatically triggers the button's action event, simulating a user click.</li>
  * </ul>
- * </p>
  *
- * <p>
- * Implementers are expected to delegate these functionalities to an inner {@link ButtonBase} instance, encapsulated within the control. This approach promotes composition over inheritance,
- * providing a more versatile and modular way to construct the control's functionality.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <pre>
+ * {@code
+ * InnerButtonBase<ButtonBase> myButtonBase = // instantiation of InnerButtonBase
+ * myButtonBase.setOnAction(event -> System.out.println("Button clicked!"));
+ * myButtonBase.arm(); // Arms the button, indicating it's ready to perform its action
+ * myButtonBase.fire(); // Programmatically clicks the button, firing its action event
+ * myButtonBase.disarm(); // Disarms the button after the action is performed
+ * }
+ * </pre>
  *
- * <p>
- * Usage of this interface is particularly suited to scenarios where custom button-like controls are needed, but extending existing JavaFX button controls is not practical. It enables developers to
- * embed and manage a {@link ButtonBase} instance as part of their custom control's implementation, leveraging the rich feature set of JavaFX buttons while adding unique behaviors and styles as
- * required.
- * </p>
+ * <p>This interface is crucial for developers seeking to create rich, interactive, and accessible user interfaces by leveraging advanced button functionalities provided by JavaFX.</p>
  *
  * @param <T>
- *         The specific type of {@link ButtonBase} that this InnerButtonBase is encapsulating, such as {@link Button} or {@link ToggleButton}, allowing for type-specific button functionalities to be
- *         accessed and modified.
+ *         the type of {@link ButtonBase} being enhanced by this interface
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see InnerLabeled
  * @see ButtonBase
- * @see Button
- * @see ToggleButton
+ * @see InnerLabeled
  */
 public interface InnerButtonBase<T extends ButtonBase> extends InnerLabeled<T> {
+    /*
+     * Methods Available:
+     *  - ReadOnlyBooleanProperty armedProperty()
+     *  - boolean isArmed()
+     *  - ObjectProperty<EventHandler<ActionEvent>> onActionProperty()
+     *  - void setOnAction(EventHandler<ActionEvent> value)
+     *  - EventHandler<ActionEvent> getOnAction()
+     *  - void arm()
+     *  - void disarm()
+     *  - void fire()
+     *  - void executeAccessibleAction(AccessibleAction action, Object... parameters)
+     */
+
     /**
      * Returns the armed property of the inner control.
      *
@@ -108,7 +112,7 @@ public interface InnerButtonBase<T extends ButtonBase> extends InnerLabeled<T> {
     default EventHandler<ActionEvent> getOnAction() {return getInnerControl().getOnAction();}
 
     /**
-     * Arms the inner control. This sets the "armed" state of the control to true.
+     * Arms the inner control. This sets the "armed" state of control to true.
      *
      * @see InnerButtonBase#arm()
      */

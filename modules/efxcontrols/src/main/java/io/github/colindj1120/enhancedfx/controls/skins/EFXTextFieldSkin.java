@@ -55,53 +55,53 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * The skin class for the {@code EFXTextFieldSkin} control.
+ * The {@code EFXTextFieldSkin} class extends {@code EFXTextBaseSkin} to provide a specialized skin for {@link EFXTextField}, incorporating advanced UI features such as floating label animations and dynamic
+ * visual adjustments based on control state.
  *
- * <p>
- * It customizes the appearance and behavior of the text field. This skin extends EFXTextBaseSkin and provides additional functionality for handling floating text labels, icons, animations, and layout
- * customization.
- * </p>
+ * <p>This skin enhances the standard text field by introducing interactive behaviors that improve user experience and interface dynamism.</p>
  *
- * <p>
- * The {@code EFXTextFieldSkin} class is responsible for creating a custom skin for the EFXTextField control. It enhances the standard text field by adding features such as floating text labels, icons,
- * animations, and advanced layout management. This class extends {@link EFXTextBaseSkin} to leverage existing functionality for handling text input and styling.
- * </p>
- *
- * <p>
- * The skin provides methods to set up the text field, floating text label, icons, and animations. It also handles layout calculations for the inner text field, leading and trailing icons, and the floating text
- * label. By extending {@link EFXTextBaseSkin}, it inherits basic functionality for managing text input and applying styles.
- * </p>
- *
- * <p>
- * <em>Key Features:</em>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li>Floating text labels for providing context and enhancing user experience.</li>
- *   <li>Support for leading and trailing icons to visually enhance the text field.</li>
- *   <li>Configurable animations for smooth transitions between states.</li>
- *   <li>Advanced layout management to ensure proper alignment and spacing of elements.</li>
+ *     <li><b>Floating Label Animation:</b> Implements an animation where the label transitions to a floating position above the text field when focused or populated.</li>
+ *     <li><b>Dynamic Alignment and Background:</b> Adjusts text alignment and background dynamically, responding to changes in focus, text content, and control state.</li>
+ *     <li><b>Custom Animation Controls:</b> Provides mechanisms to customize animation behaviors, including enabling/disabling animations and setting animation durations.</li>
+ *     <li><b>Enhanced State Management:</b> Manages and reflects various states (e.g., focused, filled) through visual modifications, promoting an intuitive user interface.</li>
  * </ul>
- * </p>
  *
- * <p>
- * Example usage:
- * <pre>{@code
- * EFXTextField textField = new EFXTextField();
- * textField.setPromptText("Enter your text");
- * textField.setFloatModeInside(true);
- * textField.setFloatAnimationEnabled(true);
- * textField.setLeadingIcon(new ImageView("leading_icon.png"));
- * textField.setTrailingIcon(new ImageView("trailing_icon.png"));
- * textField.setFloatText("Floating Label");
- * textField.setAlwaysFloating(true);
- * }</pre>
- * </p>
+ * <h2>Usage Example:</h2>
+ * This example demonstrates how to apply {@code EFXTextFieldSkin} to an {@code EFXTextField} and configure it for a JavaFX application.
+ * <pre>
+ * {@code
+ * public class MainApplication extends Application {
+ *     @Override
+ *     public void start(Stage primaryStage) {
+ *         EFXTextField textField = new EFXTextField();
+ *         EFXTextFieldSkin textFieldSkin = EFXTextFieldSkin.create(textField);
+ *
+ *         textField.setSkin(textFieldSkin);
+ *         textField.setFloatingText("Enter your name");
+ *         textField.setFloatAnimationEnabled(true);
+ *
+ *         StackPane root = new StackPane();
+ *         root.getChildren().add(textField);
+ *         Scene scene = new Scene(root, 300, 200);
+ *         primaryStage.setTitle("EFXTextFieldSkin Demo");
+ *         primaryStage.setScene(scene);
+ *         primaryStage.show();
+ *     }
+ *
+ *     public static void main(String[] args) {
+ *         launch(args);
+ *     }
+ * }
+ * }
+ * </pre>
  *
  * @author Colin Jokisch
  * @version 1.0.0
- * @see EFXTextField
  * @see EFXTextBaseSkin
+ * @see EFXTextField
  */
-
 public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     protected static final Duration FLOATING_TEXT_ANIMATION_DURATION = Duration.millis(150);
     protected static final String   FLOAT_ANIMATION_KEY              = "floatTextAnimation";
@@ -109,26 +109,48 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
 
     protected static final double scaleFactor = .75;
 
-    protected SimpleObjectProperty<Pos> textFieldAlignmentBase;
-    protected final Scale                     scale                  = Transform.scale(1, 1, 0, 0);
-    protected final Translate                 translate              = Transform.translate(1, 1);
-    protected final EFXAnimationManager       efxAnimationManager    = new EFXAnimationManager();
+    protected       SimpleObjectProperty<Pos> textFieldAlignmentBase;
+    protected final Scale                     scale               = Transform.scale(1, 1, 0, 0);
+    protected final Translate                 translate           = Transform.translate(1, 1);
+    protected final EFXAnimationManager       efxAnimationManager = new EFXAnimationManager();
 
     protected DoubleProperty floatingTargetY;
 
-    protected final Label                   floatingTextLabel = new Label();
+    protected final Label                   floatingTextLabel      = new Label();
     protected       CompletableFuture<Void> floatAnimationFinished = new CompletableFuture<>();
     protected       CompletableFuture<Void> resetAnimationFinished = new CompletableFuture<>();
     protected       EFXBooleanBinding       floatTextLabelVisibleAndModeInside;
 
+    /**
+     * Factory method to create a new instance of {@code EFXTextFieldSkin} for the specified {@code EFXTextField}.
+     *
+     * @param control
+     *         The {@code EFXTextField} control to be skinned.
+     *
+     * @return A newly created instance of {@code EFXTextFieldSkin} associated with the given control.
+     */
     public static EFXTextFieldSkin create(EFXTextField control) {
         return EFXControlSkin.create(EFXTextFieldSkin.class, control);
     }
 
+    /**
+     * Constructs an instance of {@code EFXTextFieldSkin} for the specified {@code EFXTextField} control.
+     *
+     * <p>This constructor initializes the skin with its control context, setting up necessary properties and binding for dynamic behavior.</p>
+     *
+     * @param control
+     *         The {@code EFXTextField} control for which the skin is being created.
+     */
     protected EFXTextFieldSkin(EFXTextField control) {
         super(control);
     }
 
+    /**
+     * Initializes the skin, setting up bindings for property changes, configuring floating label behavior, and preparing animations.
+     *
+     * <p>This method extends {@code super.initialize()} to include custom initialization tasks for {@code EFXTextFieldSkin}, such as configuring the text alignment base, setting up visibility bindings for the
+     * floating label based on the text field's state, and initializing animations for interactive elements.</p>
+     */
     @Override
     protected void initialize() {
         super.initialize();
@@ -173,11 +195,30 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
                              .addFontChangeListener(handleFontChange(control));
     }
 
+    /**
+     * Creates a {@link ChangeListener<Pos>} that handles changes to the text field's alignment.
+     *
+     * <p>This listener updates the base alignment property of the text field whenever the alignment setting changes. This is crucial for ensuring that the text field's content alignment matches the user's
+     * preference or requirements set programmatically at runtime.</p>
+     *
+     * @return A non-null {@link ChangeListener<Pos>} that updates the text field's base alignment property.
+     */
     @NotNull
     private ChangeListener<Pos> handleTextFieldAlignmentChange() {
         return (obs, oldAlignment, newAlignment) -> textFieldAlignmentBase.set(newAlignment);
     }
 
+    /**
+     * Creates a {@link ChangeListener<Boolean>} that reacts to focus changes in an {@link EFXTextField}.
+     *
+     * <p>When the text field gains focus and floating animations are enabled, it triggers an animation to emphasize the floating label. Conversely, when the text field loses focus, it plays a reset animation
+     * if floating animations are enabled. This behavior enhances the user interface by providing visual cues about the text field's state.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control whose focus changes are being monitored.
+     *
+     * @return A non-null {@link ChangeListener<Boolean>} that triggers animations based on the text field's focus state.
+     */
     @NotNull
     private ChangeListener<Boolean> handleTextFieldFocusChange(EFXTextField control) {
         return (observable, oldValue, isFocused) -> {
@@ -189,6 +230,17 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         };
     }
 
+    /**
+     * Produces a {@link ChangeListener<Font>} dedicated to handling font changes within an {@link EFXTextField}.
+     *
+     * <p>This listener updates the font of the floating label to match the new font of the text field itself, maintaining consistency in the user interface. Additionally, it requests a layout update for the
+     * control to ensure proper appearance after the font change.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control whose font changes are to be monitored.
+     *
+     * @return A non-null {@link ChangeListener<Font>} that updates the floating label's font in response to text field font changes.
+     */
     @NotNull
     private ChangeListener<Font> handleTextFieldFontChange(EFXTextField control) {
         return (observable, oldFont, newFont) -> {
@@ -200,7 +252,20 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     }
 
     /**
-     * Sets up the floating text label for the enhanced text field.
+     * Configures the floating text label for the {@link EFXTextField}.
+     *
+     * <p>This method sets up the floating text label's visibility, text binding, and interactions. It applies various configurations to ensure that the floating label behaves correctly according to the
+     * control's state and user interactions.</p>
+     *
+     * <p>
+     * <em>This includes:</em>
+     * <ul>
+     *     <li>Binding the label's visibility and text to the control's properties.</li>
+     *     <li>Applying a background property to the label.</li>
+     *     <li>Configuring click behavior to request focus for the inner text field.</li>
+     *     <li>Listening for changes in the control's float mode and animation enablement to adjust label behavior.</li>
+     * </ul>
+     * </p>
      */
     protected void setupFloatingTextLabel() {
         EFXTextField control    = getSkinnable();
@@ -231,9 +296,20 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
                                   .addInvalidationListener(handleFloatTargetYInvalid(control));
     }
 
+    /**
+     * Returns an {@link InvalidationListener} that adjusts the alignment of the inner text field based on the visibility and mode of the floating label.
+     *
+     * <p>When the floating label is visible and in 'inside' mode, the text field's alignment is adjusted to maintain visual consistency. This listener ensures that the text field's content alignment
+     * dynamically adapts to changes in the floating label's state.</p>
+     *
+     * @param innerField
+     *         The inner {@link TextField} of the control.
+     *
+     * @return A non-null {@link InvalidationListener} for adjusting text field alignment.
+     */
     @NotNull
     private InvalidationListener handleFloatVisibleAndModeInvalid(TextField innerField) {
-        return (obs) -> {
+        return ignored -> {
             if (floatTextLabelVisibleAndModeInside.get()) {
                 textFieldAlignmentBase.set(innerField.getAlignment());
                 Pos baseline = EFXUIUtils.convertToBaseline(innerField.getAlignment());
@@ -245,15 +321,38 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         };
     }
 
+    /**
+     * Generates an {@link EventHandler<MouseEvent>} that requests focus for the inner text field when the floating text label is clicked.
+     *
+     * <p>This event handler enhances the user experience by allowing users to activate the text field by interacting with the floating label, mimicking the behavior of the text field itself.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control.
+     * @param innerField
+     *         The inner {@link TextField} of the control.
+     *
+     * @return A non-null {@link EventHandler<MouseEvent>} that handles clicks on the floating text label.
+     */
     @NotNull
     private EventHandler<MouseEvent> handleFloatingTextClicked(EFXTextField control, TextField innerField) {
-        return e -> {
+        return ignored -> {
             if (control.isFloatAnimationEnabled() && isScaleXOne()) {
                 innerField.requestFocus();
             }
         };
     }
 
+    /**
+     * Generates an {@link ObjectProperty<Background>} that dynamically updates based on the text field's current text mode and float mode.
+     *
+     * <p>This method binds the background property to change based on whether the text field is in filled text mode or if float mode is not set to border. It ensures the background of the floating text label
+     * or any related component adapts to the control's state, enhancing visual consistency.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control for which the background property is being generated.
+     *
+     * @return A non-null {@link ObjectProperty<Background>} that represents the dynamic background property for the control.
+     */
     @NotNull
     private static ObjectProperty<Background> getBackgroundProperty(EFXTextField control) {
         Callable<Boolean> booleanCallable = () -> control.isTextModeFilled() || !control.isFloatModeBorder();
@@ -266,6 +365,17 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         return EFXBindingUtils.bindingToObjectProperty(backgroundBinding);
     }
 
+    /**
+     * Returns a {@link ChangeListener<FloatMode>} that updates the skin's animation state when the float mode of the control changes.
+     *
+     * <p>This listener reacts to changes in the float mode property of the control. It triggers a setup of the animation state and a layout request to ensure that any visual adjustments required due to the
+     * float mode change are applied.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control being observed.
+     *
+     * @return A non-null {@link ChangeListener<FloatMode>} for handling changes in float mode.
+     */
     @NotNull
     private ChangeListener<FloatMode> handleFloatMode(EFXTextField control) {
         return (obs, oldMode, newMode) -> {
@@ -276,6 +386,17 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         };
     }
 
+    /**
+     * Creates a {@link ChangeListener<Boolean>} that updates the animation state based on the float animation enablement property.
+     *
+     * <p>This listener is particularly focused on handling changes to the float animation enabled state when the text field is not focused. It ensures that the animation state is appropriately configured
+     * based on the enablement status, aiding in the dynamic behavior of the float label.</p>
+     *
+     * @param innerField
+     *         The inner {@link TextField} component of the control.
+     *
+     * @return A non-null {@link ChangeListener<Boolean>} for handling changes to the float animation enabled state.
+     */
     @NotNull
     private ChangeListener<Boolean> handleFloatAnimEnabled(TextField innerField) {
         return (obs, oldState, isEnabled) -> {
@@ -285,9 +406,20 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         };
     }
 
+    /**
+     * Produces an {@link InvalidationListener} that is invoked when the target Y position for floating animation is invalidated.
+     *
+     * <p>This listener ensures that animations and their states are correctly set up based on the control's configuration, such as always floating state and float animation enablement. It triggers a re-setup
+     * of animations and their states to adapt to changes in the control's properties.</p>
+     *
+     * @param control
+     *         The {@link EFXTextField} control for which the targets Y position invalidation is handled.
+     *
+     * @return A non-null {@link InvalidationListener} for handling invalidation of the floating target Y position.
+     */
     @NotNull
     private InvalidationListener handleFloatTargetYInvalid(EFXTextField control) {
-        return invalidated -> {
+        return ignored -> {
             if (control.isAlwaysFloating()) {
                 /*
                  * Reset the animation state since the isFloatAnimationEnabled will be false
@@ -312,8 +444,8 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         if (!control.isFloatModeDisabled()) {
             setupFloatTextAnimation();
             setupResetTextAnimation();
-            efxAnimationManager.setOnFinished(FLOAT_ANIMATION_KEY, e -> floatAnimationFinished.complete(null));
-            efxAnimationManager.setOnFinished(RESET_FLOAT_ANIMATION_KEY, e -> resetAnimationFinished.complete(null));
+            efxAnimationManager.setOnFinished(FLOAT_ANIMATION_KEY, ignored -> floatAnimationFinished.complete(null));
+            efxAnimationManager.setOnFinished(RESET_FLOAT_ANIMATION_KEY, ignored -> resetAnimationFinished.complete(null));
         }
     }
 
@@ -332,8 +464,8 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
     /**
      * Sets up the reset text animation for the EFXTextField.
      *
-     * <p>This method creates key frames for resetting the x-scale and x-translation properties, as well as the y-scale and
-     * y-translation properties. It then creates a timeline animation using the created key frames and adds it to the animation manager.</p>
+     * <p>This method creates key frames for resetting the x-scale and x-translation properties, as well as the y-scale and y-translation properties. It then creates a timeline animation using the created key
+     * frames and adds it to the animation manager.</p>
      *
      * <p>This animation is used to reset the text field to its initial state after it has been scaled or translated.</p>
      */

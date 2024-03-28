@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2024 Colin Jokisch
+ * This file is part of EnhancedFX (https://github.com/colindj1120/EnhancedFX).
+ *
+ * EnhancedFX is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * EnhancedFX is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with EnhancedFX.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package io.github.colindj1120.enhancedfx.controls.simplecontrol.efxlabeled.base;
 
 import io.github.colindj1120.enhancedfx.controls.simplecontrol.base.InnerBase;
@@ -13,95 +30,428 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * {@link InnerLabeled} extends the {@link InnerBase} interface to provide a rich set of functionalities for working with properties specific to {@link Labeled} controls in JavaFX.
+ *
+ * <p>This includes capabilities for manipulating text, font, alignment, graphic, and various other properties that influence the appearance and behavior of labeled controls.</p>
+ *
+ * <h2>Capabilities include:</h2>
+ * <ul>
+ *     <li>Text manipulation: changing the text content and its appearance.</li>
+ *     <li>Alignment settings: adjusting text and content alignment within the labeled control.</li>
+ *     <li>Graphic management: setting and retrieving the graphic (icon) displayed alongside the text.</li>
+ *     <li>Font styling: modifying the font type, size, and style used for the text.</li>
+ *     <li>Text decoration: applying underline styling and changing the text fill color.</li>
+ *     <li>Content display customization: altering how the text and graphic are arranged.</li>
+ *     <li>Mnemonic parsing: enabling or disabling mnemonic parsing for the labeled control.</li>
+ *     <li>Text-related properties: adjusting properties such as line spacing, text wrapping, and text overrun behavior.</li>
+ * </ul>
+ *
+ * <p>In addition to these capabilities, {@link InnerLabeled} inherits core functionalities from {@link InnerBase}, such as basic property access and modification methods that are common across different
+ * control types.</p>
+ *
+ * <h2>Usage example:</h2>
+ * <pre>
+ * {@code
+ * // Assuming `myLabeledControl` is an instance of a class implementing InnerLabeled
+ * myLabeledControl.setText("Hello World");
+ * myLabeledControl.setAlignment(Pos.CENTER);
+ * myLabeledControl.setFont(new Font("Arial", 16));
+ * myLabeledControl.setUnderline(true);
+ * myLabeledControl.setTextFill(Color.BLUE);
+ * myLabeledControl.setWrapText(true);
+ * myLabeledControl.setContentDisplay(ContentDisplay.TOP);
+ * myLabeledControl.setGraphic(new ImageView(new Image("/path/to/icon.png")));
+ * }
+ * </pre>
+ *
+ * <p>This detailed customization ability makes {@link InnerLabeled} a powerful tool for developers looking to leverage the full potential of labeled controls in their JavaFX applications, ensuring that the
+ * UI precisely meets their design and functionality requirements.</p>
+ *
+ * @param <T>
+ *         the type of {@link Labeled} control being wrapped and enhanced by this interface
+ *
+ * @author Colin Jokisch
+ * @version 1.0.0
+ * @see Labeled
+ * @see InnerBase
+ */
 public interface InnerLabeled<T extends Labeled> extends InnerBase<T> {
-    default StringProperty textProperty()                           {return getInnerControl().textProperty();}
+    /*
+     * Methods Available:
+     *  - StringProperty textProperty()
+     *  - void setText(String value)
+     *  - String getText()
+     *  - ObjectProperty<Pos> alignmentProperty()
+     *  - void setAlignment(Pos value)
+     *  - Pos getAlignment()
+     *  - ObjectProperty<TextAlignment> textAlignmentProperty()
+     *  - void setTextAlignment(TextAlignment value)
+     *  - TextAlignment getTextAlignment()
+     *  - ObjectProperty<OverrunStyle> textOverrunProperty()
+     *  - void setTextOverrun(OverrunStyle value)
+     *  - OverrunStyle getTextOverrun()
+     *  - StringProperty ellipsisStringProperty()
+     *  - void setEllipsisString(String value)
+     *  - String getEllipsisString()
+     *  - BooleanProperty wrapTextProperty()
+     *  - void setWrapText(boolean value)
+     *  - boolean isWrapText()
+     *  - Orientation getContentBias()
+     *  - ObjectProperty<Font> fontProperty()
+     *  - void setFont(Font value)
+     *  - Font getFont()
+     *  - ObjectProperty<Node> graphicProperty()
+     *  - void setGraphic(Node value)
+     *  - Node getGraphic()
+     *  - BooleanProperty underlineProperty()
+     *  - void setUnderline(boolean value)
+     *  - boolean isUnderline()
+     *  - DoubleProperty lineSpacingProperty()
+     *  - void setLineSpacing(double value)
+     *  - double getLineSpacing()
+     *  - ObjectProperty<ContentDisplay> contentDisplayProperty()
+     *  - void setContentDisplay(ContentDisplay value)
+     *  - ContentDisplay getContentDisplay()
+     *  - ReadOnlyObjectProperty<Insets> labelPaddingProperty()
+     *  - Insets getLabelPadding()
+     *  - DoubleProperty graphicTextGapProperty()
+     *  - void setGraphicTextGap(double value)
+     *  - double getGraphicTextGap()
+     *  - void setTextFill(Paint value)
+     *  - Paint getTextFill()
+     *  - ObjectProperty<Paint> textFillProperty()
+     *  - void setMnemonicParsing(boolean value)
+     *  - boolean isMnemonicParsing()
+     *  - BooleanProperty mnemonicParsingProperty()
+     */
 
-    default void setText(String value)                              {getInnerControl().setText(value);}
+    /**
+     * Gets the text property of the inner control.
+     *
+     * @return the text property of the inner control.
+     */
+    default StringProperty textProperty() {return getInnerControl().textProperty();}
 
-    default String getText()                                        {return getInnerControl().getText();}
+    /**
+     * Sets the text of the inner control.
+     *
+     * @param value
+     *         the new text value to set.
+     */
+    default void setText(String value) {getInnerControl().setText(value);}
 
-    default ObjectProperty<Pos> alignmentProperty()                 {return getInnerControl().alignmentProperty();}
+    /**
+     * Gets the text of the inner control.
+     *
+     * @return the current text of the inner control.
+     */
+    default String getText() {return getInnerControl().getText();}
 
-    default void setAlignment(Pos value)                            {getInnerControl().setAlignment(value);}
+    /**
+     * Gets the alignment property of the inner control.
+     *
+     * @return the alignment property of the inner control.
+     */
+    default ObjectProperty<Pos> alignmentProperty() {return getInnerControl().alignmentProperty();}
 
-    default Pos getAlignment()                                      {return getInnerControl().getAlignment();}
+    /**
+     * Sets the alignment of the inner control.
+     *
+     * @param value
+     *         the new alignment position to set.
+     */
+    default void setAlignment(Pos value) {getInnerControl().setAlignment(value);}
 
-    default ObjectProperty<TextAlignment> textAlignmentProperty()   {return getInnerControl().textAlignmentProperty();}
+    /**
+     * Gets the current alignment of the inner control.
+     *
+     * @return the current alignment of the inner control.
+     */
+    default Pos getAlignment() {return getInnerControl().getAlignment();}
 
-    default void setTextAlignment(TextAlignment value)              {getInnerControl().setTextAlignment(value);}
+    /**
+     * Gets the text alignment property of the inner control.
+     *
+     * @return the text alignment property of the inner control.
+     */
+    default ObjectProperty<TextAlignment> textAlignmentProperty() {return getInnerControl().textAlignmentProperty();}
 
-    default TextAlignment getTextAlignment()                        {return getInnerControl().getTextAlignment();}
+    /**
+     * Sets the text alignment of the inner control.
+     *
+     * @param value
+     *         the new text alignment to set.
+     */
+    default void setTextAlignment(TextAlignment value) {getInnerControl().setTextAlignment(value);}
 
-    default ObjectProperty<OverrunStyle> textOverrunProperty()      {return getInnerControl().textOverrunProperty();}
+    /**
+     * Gets the current text alignment of the inner control.
+     *
+     * @return the current text alignment of the inner control.
+     */
+    default TextAlignment getTextAlignment() {return getInnerControl().getTextAlignment();}
 
-    default void setTextOverrun(OverrunStyle value)                 {getInnerControl().setTextOverrun(value);}
+    /**
+     * Gets the text overrun property of the inner control.
+     *
+     * @return the text overrun property of the inner control.
+     */
+    default ObjectProperty<OverrunStyle> textOverrunProperty() {return getInnerControl().textOverrunProperty();}
 
-    default OverrunStyle getTextOverrun()                           {return getInnerControl().getTextOverrun();}
+    /**
+     * Sets the text overrun style of the inner control.
+     *
+     * @param value
+     *         the new text overrun style to set.
+     */
+    default void setTextOverrun(OverrunStyle value) {getInnerControl().setTextOverrun(value);}
 
-    default StringProperty ellipsisStringProperty()                 {return getInnerControl().ellipsisStringProperty();}
+    /**
+     * Gets the current text overrun style of the inner control.
+     *
+     * @return the current text overrun style of the inner control.
+     */
+    default OverrunStyle getTextOverrun() {return getInnerControl().getTextOverrun();}
 
-    default void setEllipsisString(String value)                    {getInnerControl().setEllipsisString(value);}
+    /**
+     * Gets the ellipsis string property of the inner control.
+     *
+     * @return the ellipsis string property of the inner control.
+     */
+    default StringProperty ellipsisStringProperty() {return getInnerControl().ellipsisStringProperty();}
 
-    default String getEllipsisString()                              {return getInnerControl().getEllipsisString();}
+    /**
+     * Sets the ellipsis string of the inner control.
+     *
+     * @param value
+     *         the new ellipsis string to set.
+     */
+    default void setEllipsisString(String value) {getInnerControl().setEllipsisString(value);}
 
-    default BooleanProperty wrapTextProperty()                      {return getInnerControl().wrapTextProperty();}
+    /**
+     * Gets the current ellipsis string of the inner control.
+     *
+     * @return the current ellipsis string of the inner control.
+     */
+    default String getEllipsisString() {return getInnerControl().getEllipsisString();}
 
-    default void setWrapText(boolean value)                         {getInnerControl().setWrapText(value);}
+    /**
+     * Gets the wrap text property of the inner control.
+     *
+     * @return the wrap text property of the inner control.
+     */
+    default BooleanProperty wrapTextProperty() {return getInnerControl().wrapTextProperty();}
 
-    default boolean isWrapText()                                    {return getInnerControl().isWrapText();}
+    /**
+     * Sets whether the text of the inner control should wrap.
+     *
+     * @param value
+     *         true if the text should wrap; false otherwise.
+     */
+    default void setWrapText(boolean value) {getInnerControl().setWrapText(value);}
 
-    default Orientation getContentBias()                            {return getInnerControl().getContentBias();}
+    /**
+     * Checks if the text of the inner control is wrapped.
+     *
+     * @return true if the text is wrapped; false otherwise.
+     */
+    default boolean isWrapText() {return getInnerControl().isWrapText();}
 
-    default ObjectProperty<Font> fontProperty()                     {return getInnerControl().fontProperty();}
+    /**
+     * Gets the content bias of the inner control.
+     *
+     * @return the content bias of the inner control.
+     */
+    default Orientation getContentBias() {return getInnerControl().getContentBias();}
 
-    default void setFont(Font value)                                {getInnerControl().setFont(value);}
+    /**
+     * Gets the font property of the inner control.
+     *
+     * @return the font property of the inner control.
+     */
+    default ObjectProperty<Font> fontProperty() {return getInnerControl().fontProperty();}
 
-    default Font getFont()                                          {return getInnerControl().getFont();}
+    /**
+     * Sets the font of the inner control.
+     *
+     * @param value
+     *         the new font to set.
+     */
+    default void setFont(Font value) {getInnerControl().setFont(value);}
 
-    default ObjectProperty<Node> graphicProperty()                  {return getInnerControl().graphicProperty();}
+    /**
+     * Gets the current font of the inner control.
+     *
+     * @return the current font of the inner control.
+     */
+    default Font getFont() {return getInnerControl().getFont();}
 
-    default void setGraphic(Node value)                             {getInnerControl().setGraphic(value);}
+    /**
+     * Gets the graphic property of the inner control.
+     *
+     * @return the graphic property of the inner control.
+     */
+    default ObjectProperty<Node> graphicProperty() {return getInnerControl().graphicProperty();}
 
-    default Node getGraphic()                                       {return getInnerControl().getGraphic();}
+    /**
+     * Sets the graphic of the inner control.
+     *
+     * @param value
+     *         the new graphic to set.
+     */
+    default void setGraphic(Node value) {getInnerControl().setGraphic(value);}
 
-    default BooleanProperty underlineProperty()                     {return getInnerControl().underlineProperty();}
+    /**
+     * Gets the graphic of the inner control.
+     *
+     * @return the current graphic of the inner control.
+     */
+    default Node getGraphic() {return getInnerControl().getGraphic();}
 
-    default void setUnderline(boolean value)                        {getInnerControl().setUnderline(value);}
+    /**
+     * Gets the underline property of the inner control.
+     *
+     * @return the underline property of the inner control.
+     */
+    default BooleanProperty underlineProperty() {return getInnerControl().underlineProperty();}
 
-    default boolean isUnderline()                                   {return getInnerControl().isUnderline();}
+    /**
+     * Sets whether the text of the inner control should be underlined.
+     *
+     * @param value
+     *         true if the text should be underlined; false otherwise.
+     */
+    default void setUnderline(boolean value) {getInnerControl().setUnderline(value);}
 
-    default DoubleProperty lineSpacingProperty()                    {return getInnerControl().lineSpacingProperty();}
+    /**
+     * Checks if the text of the inner control is underlined.
+     *
+     * @return true if the text is underlined; false otherwise.
+     */
+    default boolean isUnderline() {return getInnerControl().isUnderline();}
 
-    default void setLineSpacing(double value)                       {getInnerControl().setLineSpacing(value);}
+    /**
+     * Gets the line spacing property of the inner control.
+     *
+     * @return the line spacing property of the inner control.
+     */
+    default DoubleProperty lineSpacingProperty() {return getInnerControl().lineSpacingProperty();}
 
-    default double getLineSpacing()                                 {return getInnerControl().getLineSpacing();}
+    /**
+     * Sets the line spacing of the inner control.
+     *
+     * @param value
+     *         the new line spacing value to set.
+     */
+    default void setLineSpacing(double value) {getInnerControl().setLineSpacing(value);}
 
+    /**
+     * Gets the current line spacing of the inner control.
+     *
+     * @return the current line spacing of the inner control.
+     */
+    default double getLineSpacing() {return getInnerControl().getLineSpacing();}
+
+    /**
+     * Gets the content display property of the inner control.
+     *
+     * @return the content display property of the inner control.
+     */
     default ObjectProperty<ContentDisplay> contentDisplayProperty() {return getInnerControl().contentDisplayProperty();}
 
-    default void setContentDisplay(ContentDisplay value)            {getInnerControl().setContentDisplay(value);}
+    /**
+     * Sets the content display of the inner control.
+     *
+     * @param value
+     *         the new content display setting to set.
+     */
+    default void setContentDisplay(ContentDisplay value) {getInnerControl().setContentDisplay(value);}
 
-    default ContentDisplay getContentDisplay()                      {return getInnerControl().getContentDisplay();}
+    /**
+     * Gets the current content display setting of the inner control.
+     *
+     * @return the current content display setting of the inner control.
+     */
+    default ContentDisplay getContentDisplay() {return getInnerControl().getContentDisplay();}
 
-    default ReadOnlyObjectProperty<Insets> labelPaddingProperty()   {return getInnerControl().labelPaddingProperty();}
+    /**
+     * Gets the label padding property of the inner control.
+     *
+     * @return the label padding property of the inner control, as a read-only property.
+     */
+    default ReadOnlyObjectProperty<Insets> labelPaddingProperty() {return getInnerControl().labelPaddingProperty();}
 
-    default Insets getLabelPadding()                                {return getInnerControl().getLabelPadding();}
+    /**
+     * Gets the current label padding of the inner control.
+     *
+     * @return the current label padding of the inner control.
+     */
+    default Insets getLabelPadding() {return getInnerControl().getLabelPadding();}
 
-    default DoubleProperty graphicTextGapProperty()                 {return getInnerControl().graphicTextGapProperty();}
+    /**
+     * Gets the graphic text gap property of the inner control.
+     *
+     * @return the graphic text gap property of the inner control.
+     */
+    default DoubleProperty graphicTextGapProperty() {return getInnerControl().graphicTextGapProperty();}
 
-    default void setGraphicTextGap(double value)                    {getInnerControl().setGraphicTextGap(value);}
+    /**
+     * Sets the gap between the graphic and text of the inner control.
+     *
+     * @param value
+     *         the new gap size to set.
+     */
+    default void setGraphicTextGap(double value) {getInnerControl().setGraphicTextGap(value);}
 
-    default double getGraphicTextGap()                              {return getInnerControl().getGraphicTextGap();}
+    /**
+     * Gets the current gap between the graphic and text of the inner control.
+     *
+     * @return the current gap size.
+     */
+    default double getGraphicTextGap() {return getInnerControl().getGraphicTextGap();}
 
-    default void setTextFill(Paint value)                           {getInnerControl().setTextFill(value);}
+    /**
+     * Sets the text fill color of the inner control.
+     *
+     * @param value
+     *         the new text fill color to set.
+     */
+    default void setTextFill(Paint value) {getInnerControl().setTextFill(value);}
 
-    default Paint getTextFill()                                     {return getInnerControl().getTextFill();}
+    /**
+     * Gets the current text fill color of the inner control.
+     *
+     * @return the current text fill color.
+     */
+    default Paint getTextFill() {return getInnerControl().getTextFill();}
 
-    default ObjectProperty<Paint> textFillProperty()                {return getInnerControl().textFillProperty();}
+    /**
+     * Gets the text fill property of the inner control.
+     *
+     * @return the text fill property of the inner control.
+     */
+    default ObjectProperty<Paint> textFillProperty() {return getInnerControl().textFillProperty();}
 
-    default void setMnemonicParsing(boolean value)                  {getInnerControl().setMnemonicParsing(value);}
+    /**
+     * Sets whether the inner control should parse mnemonic parsing.
+     *
+     * @param value
+     *         true if mnemonic parsing should be enabled; false otherwise.
+     */
+    default void setMnemonicParsing(boolean value) {getInnerControl().setMnemonicParsing(value);}
 
-    default boolean isMnemonicParsing()                             {return getInnerControl().isMnemonicParsing();}
+    /**
+     * Checks if mnemonic parsing is enabled for the inner control.
+     *
+     * @return true if mnemonic parsing is enabled; false otherwise.
+     */
+    default boolean isMnemonicParsing() {return getInnerControl().isMnemonicParsing();}
 
-    default BooleanProperty mnemonicParsingProperty()               {return getInnerControl().mnemonicParsingProperty();}
-
+    /**
+     * Gets the mnemonic parsing property of the inner control.
+     *
+     * @return the mnemonic parsing property of the inner control.
+     */
+    default BooleanProperty mnemonicParsingProperty() {return getInnerControl().mnemonicParsingProperty();}
 }

@@ -18,15 +18,13 @@
 package io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcontrol.base;
 
 /**
- * Enumerates the possible positions for displaying supporting text relative to a control within the EnhancedFX UI framework. This enumeration allows developers to specify where additional descriptive text
- * should be placed in relation to the main UI element, such as labels or instructions adjacent to input fields.
+ * Enumerates the possible positions for displaying supporting text relative to a control within the EnhancedFX UI framework.
  *
- * <p>
- * The placement of supporting text is critical for creating intuitive and user-friendly interfaces, guiding users effectively and improving the overall usability and accessibility of the application. This enum
- * provides a straightforward way to standardize the positioning of such text across different components.
- * </p>
+ * <p>This enumeration allows developers to specify where the additional descriptive text should be placed in relation to the main UI element, such as labels or instructions adjacent to input fields.</p>
  *
- * <p>
+ * <p>The placement of supporting text is critical for creating intuitive and user-friendly interfaces, guiding users effectively and improving the overall usability and accessibility of the application. This
+ * enum provides a straightforward way to standardize the positioning of such text across different components.</p>
+ *
  * <h2>Positions Defined:</h2>
  * <ul>
  *     <li>{@code TOP} - Places the supporting text above the control. Ideal for contexts where vertical space is available and the supporting text serves as a header or title.</li>
@@ -34,20 +32,16 @@ package io.github.colindj1120.enhancedfx.controls.simplecontrol.efxsupportedcont
  *     <li>{@code LEFT} - Places the supporting text to the left of the control. Suitable for layouts with horizontal space, helping to maintain a compact form factor.</li>
  *     <li>{@code RIGHT} - Places the supporting text to the right of the control. Useful for annotations or brief tips related to the control's functionality.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Utility Methods:</h2>
  * <ul>
  *     <li>{@code toString} - Returns the enum constant's name as declared, ensuring a precise match with the source code declaration.</li>
  *     <li>{@code toLowerCase} - Provides a lowercase version of the enum constant's name, facilitating case-insensitive comparisons and displays.</li>
  *     <li>{@code toTitleCase} - Transforms the enum constant's name into title case for improved readability, particularly suitable for user interfaces and documentation.</li>
  * </ul>
- * </p>
  *
- * <p>
- * Usage of {@code SupportingTextPosition} enhances the flexibility and consistency of layout design, allowing for easy adjustments to the spatial relationship between controls and their descriptive texts.
- * </p>
+ * <p>Usage of {@code SupportingTextPosition} enhances the flexibility and consistency of layout design, allowing for easy adjustments to the spatial relationship between controls and their
+ * descriptive texts.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -66,10 +60,8 @@ public enum SupportingTextPosition {
     /**
      * Returns the name of the enum constant, as declared in its enum declaration.
      *
-     * <p>
-     * Overrides the {@code toString} method to provide a direct string representation of the enum constant, facilitating easier logging and debugging. This representation matches the exact declaration name of
-     * the constant.
-     * </p>
+     * <p>Overrides the {@code toString} method to provide a direct string representation of the enum constant, facilitating easier logging and debugging. This representation matches the exact declaration name
+     * of the constant.</p>
      *
      * @return A {@link String} representing the name of the enum constant.
      */
@@ -81,10 +73,8 @@ public enum SupportingTextPosition {
     /**
      * Converts the name of the enum constant to lowercase.
      *
-     * <p>
-     * This method facilitates scenarios where a case-insensitive representation of the enum constant is required, such as for user-friendly displays or when interfacing with systems that do not recognize case
-     * sensitivity.
-     * </p>
+     * <p>This method facilitates scenarios where a case-insensitive representation of the enum constant is required, such as for user-friendly displays or when interfacing with systems that do not recognize
+     * case sensitivity.</p>
      *
      * @return A {@link String} representing the enum constant's name in lowercase letters.
      */
@@ -95,10 +85,8 @@ public enum SupportingTextPosition {
     /**
      * Converts the name of the enum constant to title case.
      *
-     * <p>
-     * This method is useful for presenting the enum constant in a more human-readable form, particularly in user interfaces or reports. In title case, only the first letter of the enum constant's name is
-     * capitalized, enhancing readability while maintaining its recognizability.
-     * </p>
+     * <p>This method is useful for presenting the enum constant in a more human-readable form, particularly in user interfaces or reports. In title case, only the first letter of the enum constant's name is
+     * capitalized, enhancing readability while maintaining its recognizability.</p>
      *
      * @return A {@link String} representing the enum constant's name in title case, with the first letter capitalized and the rest in lowercase.
      */

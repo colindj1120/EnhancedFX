@@ -27,13 +27,10 @@ import java.util.Objects;
  * Enumerates the CSS stylesheets associated with different UI components within the EnhancedFX framework, facilitating easy access and application of styles to enhance the visual presentation and user
  * experience.
  *
- * <p>
- * The {@code EFXStylesheets} enum centralizes the management of CSS resources, allowing for consistent styling across the application while supporting dynamic theme switching. Each enum constant represents a
- * specific stylesheet for a category of UI components, such as text fields, buttons, and supported controls, ensuring that styles are appropriately segregated and applied.
- * </p>
+ * <p>The {@code EFXStylesheets} enum centralizes the management of CSS resources, allowing for consistent styling across the application while supporting dynamic theme switching. Each enum constant represents
+ * a specific stylesheet for a category of UI components, such as text fields, buttons, and supported controls, ensuring that styles are appropriately segregated and applied.</p>
  *
  * <h2>Stylesheet Paths:</h2>
- * <p>
  * <ul>
  *     <li>{@code ENHANCED_TEXT_BASE} - Path to the stylesheet for base text components.</li>
  *     <li>{@code ENHANCED_TEXT_FIELD} - Path to the stylesheet for enhanced text field components.</li>
@@ -42,10 +39,8 @@ import java.util.Objects;
  *     <li>{@code ENHANCED_TOGGLE_BUTTON} - Path to the stylesheet for toggle button components.</li>
  *     <li>{@code ENHANCED_SUPPORTED_CONTROL} - Path to the stylesheet for the supporting text component.</li>
  * </ul>
- * </p>
  *
  * <h2>Functionality:</h2>
- * <p>
  * <ul>
  *     <li>{@code getStyleName} - Retrieves the name of the style as defined by the enum constant.</li>
  *     <li>{@code getStyleSheet} - Composes and retrieves the full URL to the stylesheet resource for a given theme, ensuring the correct application of themed styles to UI components.</li>
@@ -53,12 +48,9 @@ import java.util.Objects;
  *     <li>{@code toLowerCase} - Returns a lowercase version of the enum constant's name, aiding in case-insensitive operations.</li>
  *     <li>{@code toTitleCase} - Transforms the enum constant's name into title case for improved readability, particularly in user interfaces or documentation.</li>
  * </ul>
- * </p>
  *
- * <p>
- * This enumeration is integral to the EnhancedFX styling mechanism, simplifying the process of applying and managing CSS across different components and themes. By leveraging {@code EFXStylesheets}, developers
- * can ensure a coherent and flexible styling strategy throughout the application.
- * </p>
+ * <p>This enumeration is integral to the EnhancedFX styling mechanism, simplifying the process of applying and managing CSS across different components and themes. By leveraging {@code EFXStylesheets},
+ * developers can ensure a coherent and flexible styling strategy throughout the application.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -103,9 +95,9 @@ public enum EFXStylesheets implements EFXStyle {
      * </p>
      *
      * <p>
-     * The method leverages {@code EFXObjectUtils.checkResourcePathNotNull} to validate the presence of the resource. This validation step ensures that an {@link IllegalArgumentException} is thrown if the resource
-     * cannot be located, preventing the method from returning a null or invalid stylesheet path. As such, when this method returns successfully, the caller is guaranteed to receive a valid, non-null stylesheet
-     * URL.
+     * The method leverages {@code EFXObjectUtils.checkResourcePathNotNull} to validate the presence of the resource. This validation step ensures that an {@link IllegalArgumentException} is thrown if the
+     * resource cannot be located, preventing the method from returning a null or invalid stylesheet path. As such, when this method returns successfully, the caller is guaranteed to receive a valid, non-null
+     * stylesheet URL.
      * </p>
      *
      * <p>
@@ -125,7 +117,8 @@ public enum EFXStylesheets implements EFXStyle {
     public String getStyleSheet(String theme) {
         String path = String.format(stylesheet, theme);
 
-        URL resourceUrl = this.getClass().getResource(path);
+        URL resourceUrl = this.getClass()
+                              .getResource(path);
         EFXObjectUtils.isNotNull(resourceUrl, () -> String.format("Resource for theme '%s' not found. Attempted path: '%s'", theme, path));
 
         // Since checkResourcePathNotNull would throw an exception if the resource doesn't exist,
