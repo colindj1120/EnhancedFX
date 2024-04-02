@@ -29,17 +29,18 @@ import java.util.Arrays;
  * efficient resource use and consistent behavior across the application.
  *
  * <p>The inner {@code Holder} class contains the singleton instances of both {@code DoubleStyleConverter} and its sibling {@code SequenceConverter}, the latter of which is specialized for converting arrays
- * of
- * strings to arrays of {@link Double} objects. This setup allows for both individual double values and sequences of doubles to be handled with the same level of efficiency and consistency.</p>
+ * of strings to arrays of {@link Double} objects. This setup allows for both individual double values and sequences of doubles to be handled with the same level of efficiency and consistency.</p>
  *
  * <h2>Usage Example:</h2>
  * <pre>
  * {@code
- * ParsedValue<String, Double> parsedValue = new ParsedValue<>("12.35", null);
- * Double result = DoubleStyleConverter.getInstance().convert(parsedValue, null);
- * System.out.println("Converted value: " + result); // Outputs: Converted value: 12.35
+ *     ParsedValue<String, Double> parsedValue = new ParsedValue<>("12.35", null);
+ *     Double result = DoubleStyleConverter.getInstance().convert(parsedValue, null);
+ *     System.out.println("Converted value: " + result); // Outputs: Converted value: 12.35
  * }
- * </pre>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
+ * </pre>
+ *
+ * <p>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
  * application of dynamic styles to UI components.</p>
  *
  * @author Colin Jokisch
@@ -115,20 +116,20 @@ public class DoubleStyleConverter extends StyleConverter<String, Double> {
 
     /**
      * {@code SequenceConverter} is a specialized {@link StyleConverter} designed to convert an array of parsed values into an array of {@link Double} objects. This converter is particularly useful for styles
-     * that accept a sequence of doubleing-point numbers as input. Each string in the input array is individually converted to a {@link Double} using the {@link DoubleStyleConverter}. This class follows the
+     * that accept a sequence of doubling numbers as input. Each string in the input array is individually converted to a {@link Double} using the {@link DoubleStyleConverter}. This class follows the
      * singleton pattern to ensure that only one instance is created and used throughout the application.
      *
      * <h2>Usage Example:</h2>
      * <pre>
      * {@code
-     * ParsedValue<ParsedValue<String, Double>[], Double[]> sequenceValue = new ParsedValue<>(
-     *     new ParsedValue[] {
-     *         new ParsedValue<>("10.5", null),
-     *         new ParsedValue<>("20.5", null)
-     *     }, null);
-     * Double[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
-     * System.out.println("Converted values: " + Arrays.toString(results));
-     * // Outputs: Converted values: [10.5, 20.5]
+     *     ParsedValue<ParsedValue<String, Double>[], Double[]> sequenceValue = new ParsedValue<>(
+     *         new ParsedValue[] {
+     *             new ParsedValue<>("10.5", null),
+     *             new ParsedValue<>("20.5", null)
+     *         }, null);
+     *     Double[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
+     *     System.out.println("Converted values: " + Arrays.toString(results));
+     *     // Outputs: Converted values: [10.5, 20.5]
      * }
      * </pre>
      *
@@ -157,7 +158,7 @@ public class DoubleStyleConverter extends StyleConverter<String, Double> {
 
         /**
          * Converts an array of {@link ParsedValue} objects into an array of {@link Double} objects. Each {@link ParsedValue} is individually converted to {@link Double} using {@link DoubleStyleConverter},
-         * ensuring accurate conversion of string representations to doubleing-point values.
+         * ensuring accurate conversion of string representations to doubling values.
          *
          * @param value
          *         The {@link ParsedValue} array containing the strings to be converted along with their expected {@link Double} type.
@@ -170,14 +171,14 @@ public class DoubleStyleConverter extends StyleConverter<String, Double> {
         public Double[] convert(ParsedValue<ParsedValue<String, Double>[], Double[]> value, Font font) {
             return Arrays.stream(value.getValue())
                          .map(parsedValue -> DoubleStyleConverter.getInstance()
-                                                                  .convert(parsedValue, font))
+                                                                 .convert(parsedValue, font))
                          .toArray(Double[]::new);
         }
 
         /**
          * Provides a string representation of this {@code SequenceConverter}.
          *
-         * @return A string indicating the specific role of this converter in handling sequences of doubleing-point numbers.
+         * @return A string indicating the specific role of this converter in handling sequences of doubling numbers.
          */
         @Override
         public String toString() {

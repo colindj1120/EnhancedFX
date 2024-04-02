@@ -21,15 +21,14 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Control;
 
 /**
- * This utility class provides a collection of static methods to create {@link Insets} objects for JavaFX UI components. The class
- * simplifies the process of defining padding for UI components by offering a variety of methods to specify padding on different
- * sides (top, bottom, right, left) individually, in combinations, or uniformly.
+ * This utility class provides a collection of static methods to create {@link Insets} objects for JavaFX UI components.
  *
- * <p>The utility methods cover scenarios including uniform padding across all sides, separate horizontal and vertical padding,
- * and individual padding values for each side. This class aims to enhance
+ * <p>The class simplifies the process of defining padding for UI components by offering a variety of methods to specify padding on different sides (top, bottom, right, left) individually, in combinations, or uniformly.</p>
+ *
+ * <p>The utility methods cover scenarios including uniform padding across all sides, separate horizontal and vertical padding, and individual padding values for each side. This class aims to enhance
  * readability and maintainability of code when setting padding in JavaFX layouts.</p>
  *
- * <p>Methods included:</p>
+ * <h2>Methods included:</h2>
  * <ul>
  *   <li>Uniform padding on all sides</li>
  *   <li>Separate padding values for top, right, bottom, and left sides</li>
@@ -41,17 +40,18 @@ import javafx.scene.control.Control;
  *   <li>Separate methods to return the top, bottom, left and right insets including the borders or a {@link Control}</li>
  * </ul>
  *
- * <p>This class is part of a suite of utility classes in the EnhancedFX package and is designed
- * to be used statically to create {@link Insets} objects wherever needed in the application.</p>
+ * <p>This class is part of a suite of utility classes in the EnhancedFX package and is designed to be used statically to create {@link Insets} objects wherever needed in the application.</p>
  *
- * <p>Example Usage:</p>
+ * <h2>Example Usage:</h2>
  * <pre>
- *   VBox vbox = new VBox();
- *   vbox.setPadding(InsetsUtils.uniform(10)); // sets uniform padding of 10 on all sides
+ * {@code
+ *     VBox vbox = new VBox();
+ *     vbox.setPadding(InsetsUtils.uniform(10)); // sets uniform padding of 10 on all sides
+ * }
  * </pre>
  *
  * @author Colin Jokisch
- * @version 1.0
+ * @version 1.0.0
  * @see Insets
  */
 public class EFXInsetUtils {

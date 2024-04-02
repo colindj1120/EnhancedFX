@@ -29,17 +29,18 @@ import java.util.Arrays;
  * efficient resource use and consistent behavior across the application.
  *
  * <p>The inner {@code Holder} class contains the singleton instances of both {@code IntegerStyleConverter} and its sibling {@code SequenceConverter}, the latter of which is specialized for converting arrays
- * of
- * strings to arrays of {@link Integer} objects. This setup allows for both individual integer values and sequences of integers to be handled with the same level of efficiency and consistency.</p>
+ * of strings to arrays of {@link Integer} objects. This setup allows for both individual integer values and sequences of integers to be handled with the same level of efficiency and consistency.</p>
  *
  * <h2>Usage Example:</h2>
  * <pre>
  * {@code
- * ParsedValue<String, Integer> parsedValue = new ParsedValue<>("12", null);
- * Integer result = IntegerStyleConverter.getInstance().convert(parsedValue, null);
- * System.out.println("Converted value: " + result); // Outputs: Converted value: 12
+ *     ParsedValue<String, Integer> parsedValue = new ParsedValue<>("12", null);
+ *     Integer result = IntegerStyleConverter.getInstance().convert(parsedValue, null);
+ *     System.out.println("Converted value: " + result); // Outputs: Converted value: 12
  * }
- * </pre>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
+ * </pre>
+ *
+ * <p>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
  * application of dynamic styles to UI components.</p>
  *
  * @author Colin Jokisch
@@ -115,20 +116,20 @@ public class IntegerStyleConverter extends StyleConverter<String, Integer> {
 
     /**
      * {@code SequenceConverter} is a specialized {@link StyleConverter} designed to convert an array of parsed values into an array of {@link Integer} objects. This converter is particularly useful for styles
-     * that accept a sequence of integering-point numbers as input. Each string in the input array is individually converted to a {@link Integer} using the {@link IntegerStyleConverter}. This class follows the
+     * that accept a sequence of integer numbers as input. Each string in the input array is individually converted to a {@link Integer} using the {@link IntegerStyleConverter}. This class follows the
      * singleton pattern to ensure that only one instance is created and used throughout the application.
      *
      * <h2>Usage Example:</h2>
      * <pre>
      * {@code
-     * ParsedValue<ParsedValue<String, Integer>[], Integer[]> sequenceValue = new ParsedValue<>(
-     *     new ParsedValue[] {
-     *         new ParsedValue<>("10", null),
-     *         new ParsedValue<>("20", null)
-     *     }, null);
-     * Integer[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
-     * System.out.println("Converted values: " + Arrays.toString(results));
-     * // Outputs: Converted values: [10, 20]
+     *     ParsedValue<ParsedValue<String, Integer>[], Integer[]> sequenceValue = new ParsedValue<>(
+     *         new ParsedValue[] {
+     *             new ParsedValue<>("10", null),
+     *             new ParsedValue<>("20", null)
+     *         }, null);
+     *     Integer[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
+     *     System.out.println("Converted values: " + Arrays.toString(results));
+     *     // Outputs: Converted values: [10, 20]
      * }
      * </pre>
      *
@@ -157,7 +158,7 @@ public class IntegerStyleConverter extends StyleConverter<String, Integer> {
 
         /**
          * Converts an array of {@link ParsedValue} objects into an array of {@link Integer} objects. Each {@link ParsedValue} is individually converted to {@link Integer} using {@link IntegerStyleConverter},
-         * ensuring accurate conversion of string representations to integering-point values.
+         * ensuring accurate conversion of string representations to integer values.
          *
          * @param value
          *         The {@link ParsedValue} array containing the strings to be converted along with their expected {@link Integer} type.
@@ -177,7 +178,7 @@ public class IntegerStyleConverter extends StyleConverter<String, Integer> {
         /**
          * Provides a string representation of this {@code SequenceConverter}.
          *
-         * @return A string indicating the specific role of this converter in handling sequences of integering-point numbers.
+         * @return A string indicating the specific role of this converter in handling sequences of integer numbers.
          */
         @Override
         public String toString() {

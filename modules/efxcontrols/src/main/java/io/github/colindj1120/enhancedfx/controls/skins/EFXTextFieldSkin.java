@@ -362,7 +362,7 @@ public class EFXTextFieldSkin extends EFXTextBaseSkin<EFXTextField> {
         ObjectBinding<Background> backgroundBinding = Bindings.when(isTextModeFilledOrNotFloatModeBorder)
                                                               .then(EFXUIUtils.TRANSPARENT_BACKGROUND_PROPERTY)
                                                               .otherwise(control.backgroundProperty());
-        return EFXBindingUtils.bindingToObjectProperty(backgroundBinding);
+        return EFXObservableUtils.bindingToObjectProperty(backgroundBinding);
     }
 
     /**

@@ -20,31 +20,48 @@ package io.github.colindj1120.enhancedfx.utils.exceptions;
 import java.io.Serial;
 
 /**
- * Represents exceptions that may occur during the application of custom skins to UI components within the EnhancedFX framework. This class extends {@link RuntimeException} to provide a
- * flexible mechanism for reporting and handling errors related to skinning operations, such as applying, loading, or customizing skins.
+ * Extends {@link RuntimeException} to signify issues related to UI skin components in JavaFX applications.
  *
- * <p>
- * The {@code SkinException} can be thrown in various scenarios where skin operations fail due to reasons such as invalid skin configurations, errors in skin resources, or runtime issues in the skin
- * application process. It supports different constructors to cater to various contexts of exception occurrences, allowing developers to specify detailed messages and underlying causes.
- * </p>
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *     <li><b>Skin Component Failure Identification:</b> Specifically tailored to identify issues within UI skin components, helping in isolating the problems within the visual aspects of JavaFX apps.</li>
+ *     <li><b>Enhanced Debugging Context:</b> Offers a way to encapsulate and convey detailed information about skin-related issues, facilitating easier debugging and problem resolution.</li>
+ *     <li><b>Flexible Initialization:</b> Provides several constructors to accommodate various use cases, allowing developers to specify detailed error messages and root causes for skin exceptions.</li>
+ *     <li><b>Serialization Support:</b> Includes serialization capabilities, ensuring that skin exceptions can be serialized for logging or analysis, especially useful in distributed systems.</li>
+ * </ul>
  *
- * <p>
- * Usage Example:
+ * <h2>Usage Example:</h2>
+ * <em>Example demonstrating how to handle a skin exception when applying a custom skin to a JavaFX control fails.</em>
  * <pre>
- * try {
- *     applyCustomSkin(component);
- * } catch (SkinException e) {
- *     log.error("Failed to apply custom skin", e);
+ * {@code
+ *     public void applyCustomSkin(Control control) {
+ *         try {
+ *             Skin<?> customSkin = loadCustomSkin();
+ *             control.setSkin(customSkin);
+ *         } catch (SkinLoadingException e) {
+ *             throw new SkinException("Failed to load custom skin", e);
+ *         }
+ *     }
+ *
+ *     private void handleSkinApplicationFailure(Control control) {
+ *         try {
+ *             applyCustomSkin(control);
+ *         } catch (SkinException e) {
+ *             System.err.println("Error applying custom skin: " + e.getMessage());
+ *             e.printStackTrace();
+ *             // Fallback to default skin
+ *             control.setSkin(new DefaultSkin(control));
+ *         }
+ *     }
  * }
  * </pre>
- * </p>
  *
- * <p>
- * This approach facilitates better error diagnosis and handling, ensuring that skin-related issues can be effectively communicated and managed within the application.
- * </p>
+ * <p>The `SkinException` class is pivotal in identifying and managing issues related to the application of UI skins in JavaFX, enhancing the stability and user experience of graphical applications.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
+ * @see RuntimeException
+ * @see Throwable
  */
 public class SkinException extends RuntimeException {
     @Serial
@@ -80,8 +97,8 @@ public class SkinException extends RuntimeException {
     }
 
     /**
-     * Constructs a new skin exception with the specified cause and a detail message of {@code (cause==null ? null : cause.toString())} (which typically contains the class and detail message of
-     * {@code cause}). This constructor is useful for exceptions that are little more than wrappers for other throwables.
+     * Constructs a new skin exception with the specified cause and a detail message of {@code (cause==null ? null : cause.toString())} (which typically contains the class and detail message of {@code cause}).
+     * This constructor is useful for exceptions that are little more than wrappers for other throwable.
      *
      * @param cause
      *         the cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is permitted, and indicates that the cause is nonexistent or unknown.)

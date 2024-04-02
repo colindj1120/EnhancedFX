@@ -20,21 +20,43 @@ package io.github.colindj1120.enhancedfx.utils.exceptions;
 import java.io.Serial;
 
 /**
- * Represents an exception thrown to signify an invalid type instance encountered during runtime operations.
+ * Extends {@link RuntimeException} to signal incorrect type usage or invalid type casting attempts at runtime.
  *
- * <p>
- * This exception is designed to signal issues where an object does not match the expected type or instance in various contexts, such as during dynamic casting, configuration processes, or when setting up UI
- * components and behaviors in JavaFX applications. It serves as a diagnostic tool to aid in identifying and correcting type-related errors that can affect application stability and functionality.
- * </p>
+ * <h2>Capabilities:</h2>
+ * <ul>
+ *     <li><b>Type Safety Enforcement:</b> Aids in enforcing type safety by providing a mechanism to signal mismatches in expected and actual types.</li>
+ *     <li><b>Detailed Error Reporting:</b> Supports initializing with detailed messages or underlying causes, thereby facilitating easier debugging and error tracing.</li>
+ *     <li><b>Exception Chaining:</b> Allows for exception chaining by including a cause, enhancing error context and aiding in pinpointing the source of type mismatches.</li>
+ *     <li><b>Serializable Exception:</b> Implements serialization support, making it suitable for distributed systems where exceptions might need to be transferred across network boundaries.</li>
+ * </ul>
  *
- * <p>
- * The {@code InvalidInstanceOfException} extends the standard {@link RuntimeException}, allowing it to be used flexibly across the EnhancedFX framework without necessitating explicit handling, while still
- * providing the option for catch-and-handle logic where appropriate.
- * </p>
+ * <h2>Usage Example:</h2>
+ * <em>Demonstrates catching an `InvalidInstanceOfException` when an incorrect type is encountered during a casting operation.</em>
+ * <pre>
+ * {@code
+ *     public <T> T castObject(Object obj, Class<T> clazz) {
+ *         try {
+ *             return clazz.cast(obj);
+ *         } catch (ClassCastException e) {
+ *             throw new InvalidInstanceOfException("Failed to cast object to " + clazz.getSimpleName(), e);
+ *         }
+ *     }
+ *
+ *     try {
+ *         MyCustomClass instance = castObject(someObject, MyCustomClass.class);
+ *     } catch (InvalidInstanceOfException e) {
+ *         System.err.println("Error: " + e.getMessage());
+ *         e.printStackTrace();
+ *     }
+ * }
+ * </pre>
+ *
+ * <p>Utilizing `InvalidInstanceOfException` encourages robust type checking and error handling, ensuring that type misuse is clearly communicated and managed within the application.</p>
  *
  * @author Colin Jokisch
+ * @version 1.0.0
  * @see RuntimeException
- * @since 1.0.0
+ * @see Throwable
  */
 public class InvalidInstanceOfException extends RuntimeException {
     @Serial
@@ -43,10 +65,8 @@ public class InvalidInstanceOfException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidInstanceOfException} without a detailed message or cause.
      *
-     * <p>
-     * This constructor initializes a newly created {@code InvalidInstanceOfException} with no detail message or cause. It provides a generic exception that indicates an invalid type instance was encountered,
-     * but does not specify further details about the error condition.
-     * </p>
+     * <p>This constructor initializes a newly created {@code InvalidInstanceOfException} with no detail message or cause. It provides a generic exception that indicates an invalid type instance was
+     * encountered, but does not specify further details about the error condition.</p>
      */
     public InvalidInstanceOfException() {
         super();
@@ -55,10 +75,8 @@ public class InvalidInstanceOfException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidInstanceOfException} with the specified detail message.
      *
-     * <p>
-     * This constructor initializes the exception with a specific message that describes the invalid instance error. The detail message can help identify the specific scenario in which the error occurred and
-     * facilitate debugging.
-     * </p>
+     * <p>This constructor initializes the exception with a specific message that describes the invalid instance error. The detail message can help identify the specific scenario in which the error occurred and
+     * facilitate debugging.</p>
      *
      * @param message
      *         the detail message. The detail message is saved for later retrieval by the {@link Throwable#getMessage()} method.
@@ -70,10 +88,8 @@ public class InvalidInstanceOfException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidInstanceOfException} with the specified detail message and cause.
      *
-     * <p>
-     * This constructor initializes the exception with both a detailed error message and a {@code Throwable} cause. The cause can be used to capture and relay an underlying exception that led to this exception,
-     * providing a more comprehensive view of the error condition.
-     * </p>
+     * <p>This constructor initializes the exception with both a detailed error message and a {@code Throwable} cause. The cause can be used to capture and relay an underlying exception that led to this
+     * exception, providing a more comprehensive view of the error condition.</p>
      *
      * @param message
      *         the detail message. The detail message is saved for later retrieval by the {@link Throwable#getMessage()} method.
@@ -87,10 +103,8 @@ public class InvalidInstanceOfException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidInstanceOfException} with the specified cause.
      *
-     * <p>
-     * This constructor initializes the exception with a cause but without a detailed message. The cause is a {@code Throwable} that indicates the underlying reason for the exception. This constructor is useful
-     * in scenarios where the exception is a wrapper for another exception.
-     * </p>
+     * <p>This constructor initializes the exception with a cause but without a detailed message. The cause is a {@code Throwable} that indicates the underlying reason for the exception. This constructor is
+     * useful in scenarios where the exception is a wrapper for another exception.</p>
      *
      * @param cause
      *         the cause (which is saved for later retrieval by the {@link Throwable#getCause()} method). A {@code null} value is permitted, and indicates that the cause is nonexistent or unknown.

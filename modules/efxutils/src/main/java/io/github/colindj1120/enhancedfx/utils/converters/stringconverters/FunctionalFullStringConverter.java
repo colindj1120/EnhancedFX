@@ -23,39 +23,55 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Provides a mechanism for creating customizable {@link StringConverter} instances for JavaFX components, facilitating bidirectional conversion between strings and objects of a specified type {@code T}. This
- * interface supports the definition of conversion logic through functional programming constructs, enabling concise and flexible implementations.
+ * Provides a functional interface to simplify the creation of {@link StringConverter} instances with custom conversion logic for JavaFX properties and controls, using lambda expressions or method references.
  *
- * <p>
- * Implementers can define custom logic for converting objects to strings and vice versa, allowing for integration with UI components that require specific formatting or parsing of textual data. Additionally,
- * utility methods within the interface offer predefined converters for common scenarios, including handling null values and custom exceptions.
- * </p>
- *
- * <h2>Usage Examples</h2>
- * <p>
- * {@code FunctionalFullStringConverter} can be used to easily create converters for JavaFX property bindings, table columns, choice boxes, etc., by providing lambda expressions or method references that match
- * the desired conversion behavior.
- * </p>
- *
- * <p>
- * <h2>Utility Methods</h2>
+ * <h2>Capabilities:</h2>
  * <ul>
- *   <li>{@code of(FunctionalToStringConverter<T>, FunctionalFromStringConverter<T>)} Creates a {@link StringConverter} for simple bidirectional conversion.</li>
- *   <li>{@code of(FunctionalToStringConverter<T>, FunctionalFromStringConverter<T>, T)} Extends the simple converter to include a default return value for conversions from string to object, handling null or
- *   empty strings gracefully.</li>
- *   <li>{@code of(FunctionalToStringConverter<T>, FunctionalFromStringConverter<T>, Supplier<X>)} Offers a converter that throws a custom exception for invalid input, allowing for strict error handling
- *   during the conversion process.</li>
+ *     <li><b>Custom Conversion Logic:</b> Enables the definition of bidirectional conversion logic between objects of type {@code T} and strings, allowing for custom textual representation and parsing
+ *     strategies for UI elements.</li>
+ *     <li><b>Flexible Error Handling:</b> Supports specifying custom runtime exceptions for handling conversion errors, facilitating robust error management in UI applications.</li>
+ *     <li><b>Default Values:</b> Allows specifying default return values for conversions, enhancing usability by providing fallback options for invalid inputs.</li>
+ *     <li><b>Functional Interface:</b> Leverages functional programming concepts, enabling concise and readable code by using lambda expressions or method references.</li>
  * </ul>
- * </p>
  *
- * <p>
- * This interface promotes the use of functional programming in JavaFX application development,
- * simplifying the creation of converters that are both compact and expressive.
- * </p>
+ * <h2>Usage Examples:</h2>
+ *
+ * <h3>Create a {@code StringConverter} for a {@code LocalDate} property  in a {@code DatePicker} control, with custom parsing and formatting logic</h3>
+ * <pre>
+ * {@code
+ *     DatePicker datePicker = new DatePicker();
+ *     StringConverter<LocalDate> converter = FunctionalFullStringConverter.of(
+ *         localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE), // Custom toString logic
+ *         string -> LocalDate.parse(string, DateTimeFormatter.ISO_LOCAL_DATE), // Custom fromString logic
+ *         LocalDate.now() // Default value for invalid input
+ *     );
+ *     datePicker.setConverter(converter);
+ * }
+ * </pre>
+ *
+ * <h3>Custom Error Handling:</h3>
+ * <em>Example showing how to throw a custom exception for invalid conversions.</em>
+ * <pre>
+ * {@code
+ *     StringConverter<Integer> converter = FunctionalFullStringConverter.of(
+ *         Object::toString, // Use Object's toString method for conversion to string
+ *         Integer::valueOf, // Use Integer's valueOf method for conversion from string
+ *         () -> new IllegalArgumentException("Invalid input for conversion.") // Custom exception supplier
+ *     );
+ * }
+ * </pre>
+ *
+ * <p>This interface and its static methods offer a flexible and powerful way to define {@code StringConverter}s for use in JavaFX property bindings and UI controls, enhancing the application's interactivity
+ * and user experience.</p>
+ *
+ * @param <T>
+ *         the type parameter for the objects being converted to and from strings
  *
  * @author Colin Jokisch
  * @version 1.0.0
  * @see StringConverter
+ * @see FunctionalToStringConverter
+ * @see FunctionalFromStringConverter
  */
 @FunctionalInterface
 public interface FunctionalFullStringConverter<T> {

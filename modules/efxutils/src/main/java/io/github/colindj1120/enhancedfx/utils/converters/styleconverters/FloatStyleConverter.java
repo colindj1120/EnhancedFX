@@ -34,11 +34,13 @@ import java.util.Arrays;
  * <h2>Usage Example:</h2>
  * <pre>
  * {@code
- * ParsedValue<String, Float> parsedValue = new ParsedValue<>("12.34", null);
- * Float result = FloatStyleConverter.getInstance().convert(parsedValue, null);
- * System.out.println("Converted value: " + result); // Outputs: Converted value: 12.34
- * }
- * </pre>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
+ *     ParsedValue<String, Float> parsedValue = new ParsedValue<>("12.34", null);
+ *     Float result = FloatStyleConverter.getInstance().convert(parsedValue, null);
+ *     System.out.println("Converted value: " + result); // Outputs: Converted value: 12.34
+ *     }
+ * </pre>
+ *
+ * <p>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
  * application of dynamic styles to UI components.</p>
  *
  * @author Colin Jokisch
@@ -120,14 +122,14 @@ public class FloatStyleConverter extends StyleConverter<String, Float> {
      * <h2>Usage Example:</h2>
      * <pre>
      * {@code
-     * ParsedValue<ParsedValue<String, Float>[], Float[]> sequenceValue = new ParsedValue<>(
-     *     new ParsedValue[] {
-     *         new ParsedValue<>("10.5", null),
-     *         new ParsedValue<>("20.5", null)
-     *     }, null);
-     * Float[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
-     * System.out.println("Converted values: " + Arrays.toString(results));
-     * // Outputs: Converted values: [10.5, 20.5]
+     *     ParsedValue<ParsedValue<String, Float>[], Float[]> sequenceValue = new ParsedValue<>(
+     *         new ParsedValue[] {
+     *             new ParsedValue<>("10.5", null),
+     *             new ParsedValue<>("20.5", null)
+     *         }, null);
+     *     Float[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
+     *     System.out.println("Converted values: " + Arrays.toString(results));
+     *     // Outputs: Converted values: [10.5, 20.5]
      * }
      * </pre>
      *

@@ -24,22 +24,23 @@ import javafx.scene.text.Font;
 import java.util.Arrays;
 
 /**
- * The {@code LongStyleConverter} class extends {@link StyleConverter} and is designed to convert string representations of numbers into their {@link Long} equivalents. This conversion is essential for
- * CSS-like styling in JavaFX where numeric values are often represented as strings. This class implements the singleton pattern to ensure that only a single instance of the converter is ever created, promoting
+ * The {@code LongStyleConverter} class extends {@link StyleConverter} and is designed to convert string representations of numbers into their {@link Long} equivalents. This conversion is essential for CSS-like
+ * styling in JavaFX where numeric values are often represented as strings. This class implements the singleton pattern to ensure that only a single instance of the converter is ever created, promoting
  * efficient resource use and consistent behavior across the application.
  *
  * <p>The inner {@code Holder} class contains the singleton instances of both {@code LongStyleConverter} and its sibling {@code SequenceConverter}, the latter of which is specialized for converting arrays
- * of
- * strings to arrays of {@link Long} objects. This setup allows for both individual long values and sequences of longs to be handled with the same level of efficiency and consistency.</p>
+ * of strings to arrays of {@link Long} objects. This setup allows for both individual long values and sequences of longs to be handled with the same level of efficiency and consistency.</p>
  *
  * <h2>Usage Example:</h2>
  * <pre>
- * {@code
- * ParsedValue<String, Long> parsedValue = new ParsedValue<>("12", null);
- * Long result = LongStyleConverter.getInstance().convert(parsedValue, null);
- * System.out.println("Converted value: " + result); // Outputs: Converted value: 12
- * }
- * </pre>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
+ *     {@code
+ *     ParsedValue<String, Long> parsedValue = new ParsedValue<>("12", null);
+ *     Long result = LongStyleConverter.getInstance().convert(parsedValue, null);
+ *     System.out.println("Converted value: " + result); // Outputs: Converted value: 12
+ *     }
+ * </pre>
+ *
+ * <p>This class is particularly useful in the context of JavaFX styling, where it can be used to parse and convert string-based style specifications into their numerical counterparts, thereby facilitating the
  * application of dynamic styles to UI components.</p>
  *
  * @author Colin Jokisch
@@ -50,8 +51,8 @@ import java.util.Arrays;
  */
 public class LongStyleConverter extends StyleConverter<String, Long> {
     /**
-     * This class serves as a converter to transform string representations of numbers into their {@link Long} equivalents for style values. It is implemented as a singleton to ensure only one instance of
-     * this converter exists.
+     * This class serves as a converter to transform string representations of numbers into their {@link Long} equivalents for style values. It is implemented as a singleton to ensure only one instance of this
+     * converter exists.
      */
     private static class Holder {
         /**
@@ -115,20 +116,20 @@ public class LongStyleConverter extends StyleConverter<String, Long> {
 
     /**
      * {@code SequenceConverter} is a specialized {@link StyleConverter} designed to convert an array of parsed values into an array of {@link Long} objects. This converter is particularly useful for styles
-     * that accept a sequence of longing-point numbers as input. Each string in the input array is individually converted to a {@link Long} using the {@link LongStyleConverter}. This class follows the
-     * singleton pattern to ensure that only one instance is created and used throughout the application.
+     * that accept a sequence of longing numbers as input. Each string in the input array is individually converted to a {@link Long} using the {@link LongStyleConverter}. This class follows the singleton
+     * pattern to ensure that only one instance is created and used throughout the application.
      *
      * <h2>Usage Example:</h2>
      * <pre>
      * {@code
-     * ParsedValue<ParsedValue<String, Long>[], Long[]> sequenceValue = new ParsedValue<>(
-     *     new ParsedValue[] {
-     *         new ParsedValue<>("10", null),
-     *         new ParsedValue<>("20", null)
-     *     }, null);
-     * Long[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
-     * System.out.println("Converted values: " + Arrays.toString(results));
-     * // Outputs: Converted values: [10, 20]
+     *     ParsedValue<ParsedValue<String, Long>[], Long[]> sequenceValue = new ParsedValue<>(
+     *         new ParsedValue[] {
+     *             new ParsedValue<>("10", null),
+     *             new ParsedValue<>("20", null)
+     *         }, null);
+     *     Long[] results = SequenceConverter.getInstance().convert(sequenceValue, null);
+     *     System.out.println("Converted values: " + Arrays.toString(results));
+     *     // Outputs: Converted values: [10, 20]
      * }
      * </pre>
      *
@@ -156,8 +157,8 @@ public class LongStyleConverter extends StyleConverter<String, Long> {
         }
 
         /**
-         * Converts an array of {@link ParsedValue} objects into an array of {@link Long} objects. Each {@link ParsedValue} is individually converted to {@link Long} using {@link LongStyleConverter},
-         * ensuring accurate conversion of string representations to longing-point values.
+         * Converts an array of {@link ParsedValue} objects into an array of {@link Long} objects. Each {@link ParsedValue} is individually converted to {@link Long} using {@link LongStyleConverter}, ensuring
+         * accurate conversion of string representations to longing values.
          *
          * @param value
          *         The {@link ParsedValue} array containing the strings to be converted along with their expected {@link Long} type.
@@ -170,14 +171,14 @@ public class LongStyleConverter extends StyleConverter<String, Long> {
         public Long[] convert(ParsedValue<ParsedValue<String, Long>[], Long[]> value, Font font) {
             return Arrays.stream(value.getValue())
                          .map(parsedValue -> LongStyleConverter.getInstance()
-                                                                 .convert(parsedValue, font))
+                                                               .convert(parsedValue, font))
                          .toArray(Long[]::new);
         }
 
         /**
          * Provides a string representation of this {@code SequenceConverter}.
          *
-         * @return A string indicating the specific role of this converter in handling sequences of longing-point numbers.
+         * @return A string indicating the specific role of this converter in handling sequences of longing numbers.
          */
         @Override
         public String toString() {

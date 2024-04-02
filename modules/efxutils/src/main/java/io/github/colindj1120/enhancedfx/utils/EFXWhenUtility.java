@@ -28,33 +28,31 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * {@code EFXWhenUtility} is a flexible utility class designed to facilitate the creation of dynamic and complex conditional bindings in JavaFX applications. It encapsulates the logic of binding
- * observable values based on a series of boolean conditions, offering a fluent and readable API. This class significantly simplifies the process of setting up conditional bindings, thus enhancing
- * code readability and maintainability.
+ * {@code EFXWhenUtility} is a flexible utility class designed to facilitate the creation of dynamic and complex conditional bindings in JavaFX applications.
  *
- * <p>Key Features:</p>
+ * <p>It encapsulates the logic of binding observable values based on a series of boolean conditions, offering a fluent and readable API. This class significantly simplifies the process of setting up
+ * conditional bindings, thus enhancing code readability and maintainability.</p>
+ *
+ * <h2>Key Features:</h2>
  * <ul>
- *   <li><b>Fluent API:</b> Provides a fluent interface for defining conditional bindings, allowing for
- *       easy chaining of multiple conditions and values.</li>
- *   <li><b>Support for Various Binding Types:</b> Capable of creating {@link ObjectBinding},
- *       {@link DoubleBinding}, {@link StringBinding}, and {@link BooleanBinding}, making it versatile
- *       for different data types and use cases.</li>
- *   <li><b>Customizable Fallback Values:</b> Offers the ability to specify default values or observable
- *       values to be used when none of the conditions are satisfied.</li>
- *   <li><b>Dynamic Value Computation:</b> Ensures the values are dynamically computed based on the
- *       current state of conditions, providing up-to-date results.</li>
+ *   <li><b>Fluent API:</b> Provides a fluent interface for defining conditional bindings, allowing for easy chaining of multiple conditions and values.</li>
+ *   <li><b>Support for Various Binding Types:</b> Capable of creating {@link ObjectBinding}, {@link DoubleBinding}, {@link StringBinding}, and {@link BooleanBinding}, making it versatile for different data
+ *       types and use cases.</li>
+ *   <li><b>Customizable Fallback Values:</b> Offers the ability to specify default values or observable values to be used when none of the conditions are satisfied.</li>
+ *   <li><b>Dynamic Value Computation:</b> Ensures the values are dynamically computed based on the current state of conditions, providing up-to-date results.</li>
  * </ul>
  *
- * <p>Usage:</p>
- * <pre>{@code
- * EFXWhenUtility.when(someCondition, someValue)
- *            .andWhen(anotherCondition, anotherValue)
- *            .otherwise(fallbackValue)
- *            .asObjectBinding();
- * }</pre>
+ * <h2>Usage:</h2>
+ * <pre>
+ * {@code
+ *     EFXWhenUtility.when(someCondition, someValue)
+ *                   .andWhen(anotherCondition, anotherValue)
+ *                   .otherwise(fallbackValue)
+ *                   .asObjectBinding();
+ * }
+ * </pre>
  *
- * <p>This class is particularly useful for JavaFX applications where UI elements need to react to changes
- * in state or context, governed by complex conditional logic. It abstracts the underlying complexities
+ * <p>This class is particularly useful for JavaFX applications where UI elements need to react to changes in state or context, governed by complex conditional logic. It abstracts the underlying complexities
  * of JavaFX bindings, offering a cleaner and more expressive way to handle conditional logic in UI development.</p>
  *
  * @param <T>
@@ -62,7 +60,13 @@ import java.util.function.Supplier;
  *
  * @author Colin Jokisch
  * @version 1.5.0
- * @see javafx.beans.binding
+ * @see ObjectBinding
+ * @see DoubleBinding
+ * @see FloatBinding
+ * @see IntegerBinding
+ * @see LongBinding
+ * @see StringBinding
+ * @see BooleanBinding
  */
 public class EFXWhenUtility<T> {
     private final List<ConditionValueBindingPair<T>>     conditionValuePairs;
@@ -70,8 +74,10 @@ public class EFXWhenUtility<T> {
     private       Optional<Supplier<ObservableValue<T>>> otherwiseValueSupplier = Optional.empty();
 
     /**
-     * Private constructor for {@code EFXWhenUtility}. It initializes the list of condition-value binding pairs. This constructor is private because the {@code EFXWhenUtility} class uses a static factory
-     * method for instantiation to provide a fluent API for the users.
+     * Private constructor for {@code EFXWhenUtility}.
+     *
+     * <p>It initializes the list of condition-value binding pairs. This constructor is private because the {@code EFXWhenUtility} class uses a static factory method for instantiation to provide a fluent API
+     * for the users.</p>
      */
     private EFXWhenUtility() {
         conditionValuePairs = new ArrayList<>();
@@ -96,8 +102,7 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Adds another condition-value pair to this {@code EFXWhenUtility} instance. This method allows chaining multiple conditions. If the condition is true, the corresponding value is used in the
-     * binding.
+     * Adds another condition-value pair to this {@code EFXWhenUtility} instance. This method allows chaining multiple conditions. If the condition is true, the corresponding value is used in the binding.
      *
      * @param condition
      *         The additional condition as an {@link ObservableValue} of {@link Boolean}.
@@ -115,12 +120,16 @@ public class EFXWhenUtility<T> {
      * Specifies a default value to be used if none of the conditions in the {@link EFXWhenUtility} instance are met. This method sets a static value as the fallback option. The value is wrapped within a
      * {@link ReadOnlyObjectWrapper} to create an {@link ObservableValue}.
      *
-     * <p>Example Usage:</p>
+     * <p>
+     * <em>Example Usage:</em>
      * <pre>
-     * EFXWhenUtility.when(condition, value)
-     *            .otherwise(defaultValue)
-     *            .asObjectBinding();
+     * {@code
+     *     EFXWhenUtility.when(condition, value)
+     *                   .otherwise(defaultValue)
+     *                   .asObjectBinding();
+     * }
      * </pre>
+     * </p>
      *
      * @param value
      *         The default value to be used if all conditions are false.
@@ -133,15 +142,20 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Similar to the {@link #otherwise(Object)} method, but allows providing a dynamic {@link ObservableValue} as the default fallback. This is useful when the default value is not static and needs
-     * to be computed or can change over time.
+     * Similar to the {@link #otherwise(Object)} method, but allows providing a dynamic {@link ObservableValue} as the default fallback.
      *
-     * <p>Example Usage:</p>
+     * <p>This is useful when the default value is not static and needs to be computed or can change over time.</p>
+     *
+     * <p>
+     * <em>Example Usage:</em>
      * <pre>
-     * EFXWhenUtility.when(condition, value)
-     *            .otherwise(dynamicObservableValue)
-     *            .asObjectBinding();
+     * {@code
+     *     EFXWhenUtility.when(condition, value)
+     *                   .otherwise(dynamicObservableValue)
+     *                   .asObjectBinding();
+     * }
      * </pre>
+     * </p>
      *
      * @param value
      *         The default {@link ObservableValue} to be used if all conditions are false.
@@ -154,8 +168,10 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Creates an {@link ObjectBinding} based on the specified conditions and values. If a condition is true, the corresponding value is returned. If no conditions are met, null is returned. This
-     * method is a convenience wrapper around {@link #getObjectBinding(Object)} with a null default value.
+     * Creates an {@link ObjectBinding} based on the specified conditions and values.
+     *
+     * <p>If a condition is true, the corresponding value is returned. If no conditions are met, null is returned. This method is a convenience wrapper around {@link #getObjectBinding(Object)} with a null
+     * default value.</p>
      *
      * @return An {@link ObjectBinding} that computes its value based on the specified conditions.
      */
@@ -176,8 +192,9 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * A private helper method that creates an {@link ObjectBinding}. This method binds to each condition and value pair and dynamically computes the value based on the first true condition. If no
-     * conditions are true, a specified default value is returned.
+     * A private helper method that creates an {@link ObjectBinding}.
+     *
+     * <p>This method binds to each condition and value pair and dynamically computes the value based on the first true condition. If no conditions are true, a specified default value is returned.</p>
      *
      * @param nullValue
      *         The value to return when no conditions are met.
@@ -222,8 +239,10 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Creates a {@link DoubleBinding} based on the specified conditions and values. If a condition is true and the corresponding value is a number, its double value is returned. Otherwise,
-     * {@link Double#NaN} is returned. This method is a convenience wrapper around {@link #getDoubleBinding(double)} with Double.NaN as the default value.
+     * Creates a {@link DoubleBinding} based on the specified conditions and values.
+     *
+     * <p>If a condition is true and the corresponding value is a number, its double value is returned. Otherwise, {@link Double#NaN} is returned. This method is a convenience wrapper around
+     * {@link #getDoubleBinding(double)} with Double.NaN as the default value.</p>
      *
      * @return A {@link DoubleBinding} that computes its value based on the specified conditions.
      */
@@ -244,8 +263,10 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * A private helper method that creates a {@link DoubleBinding}. This method binds to a base {@link ObjectBinding} and computes a double value based on the first true condition's value. If the
-     * value is not a number or no conditions are met, a specified default value is returned.
+     * A private helper method that creates a {@link DoubleBinding}.
+     *
+     * <p>This method binds to a base {@link ObjectBinding} and computes a double value based on the first true condition's value. If the value is not a number or no conditions are met, a specified default
+     * value is returned.</p>
      *
      * @param nullValue
      *         The value to return when the binding's value is not a number or no conditions are met.
@@ -271,8 +292,10 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Creates a {@link StringBinding} based on the specified conditions and values. The binding evaluates the conditions and returns the {@code toString()} representation of the corresponding value
-     * for the first true condition. If no conditions are met, an empty string is returned.
+     * Creates a {@link StringBinding} based on the specified conditions and values.
+     *
+     * <p>The binding evaluates the conditions and returns the {@code toString()} representation of the corresponding value for the first true condition. If no conditions are met, an empty string is
+     * returned.</p>
      *
      * @return A {@link StringBinding} representing the string value of the first true condition's value.
      */
@@ -309,8 +332,9 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * Creates a {@link BooleanBinding} based on the specified conditions. The binding evaluates the conditions and returns true if the value of the first true condition is {@link Boolean#TRUE},
-     * otherwise false.
+     * Creates a {@link BooleanBinding} based on the specified conditions.
+     *
+     * <p>The binding evaluates the conditions and returns true if the value of the first true condition is {@link Boolean#TRUE}, otherwise false.</p>
      *
      * @return A {@link BooleanBinding} that evaluates to true if the first true condition's value is Boolean.TRUE.
      */
@@ -356,8 +380,9 @@ public class EFXWhenUtility<T> {
     }
 
     /**
-     * A record that pairs an {@link ObservableValue} representing a condition with an {@link ObservableValue} representing the value to be used if the condition is true. This record is used
-     * internally in the {@link EFXWhenUtility} class to manage condition-value bindings.
+     * A record that pairs an {@link ObservableValue} representing a condition with an {@link ObservableValue} representing the value to be used if the condition is true.
+     *
+     * <p>This record is used internally in the {@link EFXWhenUtility} class to manage condition-value bindings.</p>
      *
      * @param <T>
      *         The type of value associated with the condition.

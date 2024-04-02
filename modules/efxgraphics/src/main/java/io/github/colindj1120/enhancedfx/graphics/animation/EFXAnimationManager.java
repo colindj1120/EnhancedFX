@@ -38,7 +38,7 @@ import java.util.function.Function;
  * The EFXAnimationManager class is designed to centralize and simplify the management of multiple JavaFX animations. It provides functionalities to add, remove, play, pause, stop, and control various
  * properties of animations.
  *
- * <p>Key features include:</p>
+ * <h2>Key features include:</h2>
  * <ul>
  *     <li>Adding and removing animations using unique keys.</li>
  *     <li>Controlling individual animations (play, pause, stop, jump to a time or cue point, set rate, etc.).</li>
@@ -48,29 +48,80 @@ import java.util.function.Function;
  *     <li>Managing cue points for synchronization purposes.</li>
  * </ul>
  *
- * <p>This manager is particularly useful in complex UIs where multiple animations need coordinated control and monitoring.
- * It abstracts the low-level details of handling each animation and provides a unified interface to work with animations collectively or individually.</p>
+ * <p>This manager is particularly useful in complex UIs where multiple animations need coordinated control and monitoring. It abstracts the low-level details of handling each animation and provides a
+ * unified interface to work with animations collectively or individually.</p>
  *
- * <p>Usage Example:</p>
+ * <h2>Usage Example:</h2>
  * <pre>
+ * {@code
  *     EFXAnimationManager manager = new EFXAnimationManager();
  *     manager.addAnimation("fadeIn", fadeInAnimation);
  *     manager.addAnimation("slide", slideAnimation);
  *     manager.playAll();
+ * }
  * </pre>
  *
- * <p>It's important to note that the manager uses a LinkedHashMap internally to maintain the order of animations as they are added.
- * This can be useful for operations that depend on the order of animations.</p>
+ * <p>It's important to note that the manager uses a LinkedHashMap internally to maintain the order of animations as they are added. This can be useful for operations that depend on the order of animations.</p>
  *
  * <p>Each method is designed to be self-explanatory and straightforward to use, enhancing the readability and maintainability of code dealing with animations.</p>
  *
  * @author Colin Jokisch
- * @version 1.0
+ * @version 1.0.0
+ * @see Animation
  */
 @SuppressWarnings("UnusedReturnValue")
 public class EFXAnimationManager {
     private static final String                 INVALID_ANIMATION_KEY = "Animation with key '%s' does not exist in the animation manager";
     private final        Map<String, Animation> animations;
+
+    /*
+     * Methods Available:
+     *  - boolean containsAnimation(String key)
+     *  - Map<String, Animation> getAnimations()
+     *  - void clearAnimations()
+     *  - void addAnimation(String key, Animation animation)
+     *  - Optional<Animation> removeAnimation(String key)
+     *  - Optional<Animation> getAnimation(String key)
+     *  - void playAnimation(String key)
+     *  - void playFrom(String key, Duration time)
+     *  - void playFrom(String key, String cuePoint)
+     *  - void playFromStart(String key)
+     *  - void playAll()
+     *  - void playAllFromStart()
+     *  - void pauseAnimation(String key)
+     *  - void pauseAll()
+     *  - void stopAnimation(String key)
+     *  - void stopAll()
+     *  - void jumpTo(String key, Duration time)
+     *  - void jumpTo(String key, String cuePoint)
+     *  - void resetAnimation(String key)
+     *  - boolean isAnimationPlaying(String key)
+     *  - boolean isAnimationStopped(String key)
+     *  - boolean isAnimationPaused(String key)
+     *  - void setAnimationRate(String key, double rate)
+     *  - void setAllAnimationRate(double rate)
+     *  - ReadOnlyDoubleProperty getAnimationRateProperty(String key)
+     *  - Duration getAnimationDuration(String key)
+     *  - ReadOnlyObjectProperty<Duration> getAnimationDurationProperty(String key)
+     *  - Duration getAnimationCurrentTime(String key)
+     *  - ReadOnlyObjectProperty<Duration> getAnimationCurrentTimeProperty(String key)
+     *  - int getAnimationCycleCount(String key)
+     *  - void setAnimationCycleCount(String key, int count)
+     *  - ReadOnlyIntegerProperty getAnimationCycleCountProperty(String key)
+     *  - Duration getAnimationDelay(String key)
+     *  - void setAnimationDelay(String key, Duration delay)
+     *  - ObjectProperty<Duration> getAnimationDelayProperty(String key)
+     *  - Animation.Status getAnimationStatus(String key)
+     *  - ReadOnlyObjectProperty<Animation.Status> getAnimationStatusProperty(String key)
+     *  - void setAnimationAutoReverse(String key, boolean autoReverse)
+     *  - boolean isAnimationAutoReversing(String key)
+     *  - void setOnFinished(String key, EventHandler<ActionEvent> onFinishedHandler)
+     *  - Optional<EventHandler<ActionEvent>> getOnFinished(String key)
+     *  - void addCuePoint(String key, String cuePointName, Duration time)
+     *  - Duration getCuePoint(String key, String cuePointName)
+     *  - void removeCuePoint(String key, String cuePointName)
+     *  - ObservableMap<String, Duration> getAllCuePoints(String key)
+     */
 
     /**
      * Constructs an EFXAnimationManager.
@@ -100,6 +151,9 @@ public class EFXAnimationManager {
         return Collections.unmodifiableMap(animations);
     }
 
+    /**
+     * Clears all animations in the animations' list.
+     */
     public void clearAnimations() {
         animations.clear();
     }

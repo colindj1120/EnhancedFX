@@ -26,36 +26,31 @@ import java.util.function.Supplier;
  * Provides a mechanism for defining custom {@code toString} conversion logic for JavaFX UI components, enabling the conversion of objects to strings in a concise and flexible manner. This interface is
  * particularly useful for integrating custom object representations into JavaFX components, such as ListView, ComboBox, or any other control requiring a specific string format.
  *
- * <p>
- * The {@code FunctionalToStringConverter} interface simplifies the creation of {@link StringConverter} instances by allowing developers to specify how objects of type {@code T} should be represented as
- * strings. It supports scenarios where a straightforward string representation is required, as well as more complex cases where handling null objects or incorporating custom exception handling is necessary.
- * </p>
+ * <p>The {@code FunctionalToStringConverter} interface simplifies the creation of {@link StringConverter} instances by allowing developers to specify how objects of type {@code T} should be represented as
+ * strings. It supports scenarios where a straightforward string representation is required, as well as more complex cases where handling null objects or incorporating custom exception handling is
+ * necessary.</p>
  *
- * <p>
  * <h2>Core Features:</h2>
  * <ul>
  *     <li>Simple lambda expression or method reference-based conversion definition.</li>
  *     <li>Optional handling for null objects, either by returning a default string or throwing a custom exception.</li>
  *     <li>Integration ease with JavaFX property and UI component models.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Examples:</h2>
  * {@code FunctionalToStringConverter} can be used in various JavaFX application development scenarios where custom string representations are needed:
  * <pre>
  * {@code
- *  // Convert Person objects to string using their names
- *  StringConverter<Person> personNameConverter = FunctionalToStringConverter.of(Person::getName);
+ *      // Convert Person objects to string using their names
+ *      StringConverter<Person> personNameConverter = FunctionalToStringConverter.of(Person::getName);
  *
- *  // Convert LocalDate objects to string with custom formatting and null handling
- *  StringConverter<LocalDate> localDateConverter = FunctionalToStringConverter.of(date -> date.format(DateTimeFormatter.ISO_LOCAL_DATE), "No date provided");
+ *      // Convert LocalDate objects to string with custom formatting and null handling
+ *      StringConverter<LocalDate> localDateConverter = FunctionalToStringConverter.of(date -> date.format(DateTimeFormatter.ISO_LOCAL_DATE), "No date provided");
  *
- *  // Convert Integer objects to hexadecimal string representation, throwing an exception for null values
- *  StringConverter<Integer> hexConverter = FunctionalToStringConverter.of(Integer::toHexString, () -> new IllegalArgumentException("Cannot convert null to hex string"));
+ *      // Convert Integer objects to hexadecimal string representation, throwing an exception for null values
+ *      StringConverter<Integer> hexConverter = FunctionalToStringConverter.of(Integer::toHexString, () -> new IllegalArgumentException("Cannot convert null to hex string"));
  * }
  * </pre>
- * </p>
  *
  * <p>This interface empowers developers to implement dynamic and context-sensitive string representations for objects in JavaFX applications, enhancing the UI's interactivity and user experience.</p>
  *

@@ -17,37 +17,33 @@
  */
 package io.github.colindj1120.enhancedfx.utils.consumers;
 
+import java.util.function.Consumer;
+
 /**
- * Represents a functional interface that accepts four arguments and performs an operation without returning any result. This interface is akin to the {@link java.util.function.Consumer} interface but is
- * designed for scenarios requiring the simultaneous handling of four parameters. It is ideal for complex operations that necessitate multiple inputs, thereby enabling more elaborate data processing or actions
- * within a single method call.
+ * Represents a functional interface that accepts four arguments and performs an operation without returning any result. This interface is akin to the {@link Consumer} interface but is designed for scenarios
+ * requiring the simultaneous handling of four parameters. It is ideal for complex operations that necessitate multiple inputs, thereby enabling more elaborate data processing or actions within a single method
+ * call.
  *
- * <p>
- * The {@code QuadConsumer} is particularly useful in contexts requiring the orchestration of multiple operations, complex data manipulation, batch processing, or when actions on entities involve several
+ * <p>The {@code QuadConsumer} is particularly useful in contexts requiring the orchestration of multiple operations, complex data manipulation, batch processing, or when actions on entities involve several
  * distinct pieces of data. This functional interface encourages cleaner and more modular code by abstracting operations into discrete, functionally descriptive components. Although it inherently does not
- * support method chaining given its nature of not returning a result, it can be used to foster readability and maintainability in code where complex operations are common.
- * </p>
+ * support method chaining given its nature of not returning a result, it can be used to foster readability and maintainability in code where complex operations are common.</p>
  *
- * <p>
- * Implementations of this interface are expected to exhibit side-effects, as the interface's primary purpose is to perform operations based on the input arguments without the need for returning a value. It is
- * particularly suited for operations such as logging, data manipulation without direct output, or other procedural actions.
- * </p>
+ * <p>Implementations of this interface are expected to exhibit side-effects, as the interface's primary purpose is to perform operations based on the input arguments without the need for returning a value. It
+ * is particularly suited for operations such as logging, data manipulation without direct output, or other procedural actions.</p>
  *
- * <p>
- * Example usage might include applying a set of operations on a tuple of four elements, such as updating records in a database, performing calculations and side effects without needing the results, or
- * conducting multi-step validations.
- * </p>
+ * <p>Example usage might include applying a set of operations on a tuple of four elements, such as updating records in a database, performing calculations and side effects without needing the results, or
+ * conducting multi-step validations.</p>
  *
- * <p>
- * <em>Example:</em>
- * <pre>{@code
- * QuadConsumer<String, Integer, Double, Boolean> logData = (name, age, salary, isActive) -> {
- *     System.out.println("Processing data for " + name + " with age " + age + ", salary " + salary + ", active: " + isActive);
- *     // Further processing here
- * };
- * logData.accept("John Doe", 30, 55000.0, true);
- * }</pre>
- * </p>
+ * <h2>Example:</h2>
+ * <pre>
+ * {@code
+ *     QuadConsumer<String, Integer, Double, Boolean> logData = (name, age, salary, isActive) -> {
+ *         System.out.println("Processing data for " + name + " with age " + age + ", salary " + salary + ", active: " + isActive);
+ *         // Further processing here
+ *     };
+ *     logData.accept("John Doe", 30, 55000.0, true);
+ * }
+ * </pre>
  *
  * @param <T>
  *         the type of the first argument to the operation
@@ -59,8 +55,7 @@ package io.github.colindj1120.enhancedfx.utils.consumers;
  *         the type of the fourth argument to the operation
  *
  * @author Colin Jokisch
- * @version 1.0
- * @since 1.0
+ * @version 1.0.0
  */
 @FunctionalInterface
 public interface QuadConsumer<T, U, V, S> {

@@ -32,14 +32,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Provides utility methods for calculating the dimensions of {@link Node} objects within JavaFX applications, and other
- * node-related operations.
+ * Provides utility methods for calculating the dimensions of {@link Node} objects within JavaFX applications, and other node-related operations.
  *
- * <p>
- * This class includes functionalities to calculate both width and height of {@link Node} instances, taking into account possible
- * offsets and default values in cases where actual dimensions cannot be directly obtained. It facilitates operations that require
- * precise control over the visual layout and appearance of UI components before they are rendered on the scene.
- * </p>
+ * <p>This class includes functionalities to calculate both width and height of {@link Node} instances, taking into account possible offsets and default values in cases where actual dimensions cannot be
+ * directly obtained. It facilitates operations that require precise control over the visual layout and appearance of UI components before they are rendered on the scene.</p>
  *
  * <h2>Key features include:</h2>
  * <ul>
@@ -49,27 +45,23 @@ import java.util.function.Supplier;
  *   <li>Checking whether a {@link PseudoClass} is active or not</li>
  * </ul>
  *
- * <p>This class is designed to support scenarios where node dimensions need to be known prior to rendering, such as in
- * layout calculations
- * or when dynamically adjusting the size or position of components based on their content or container. It also aids in
- * handling UI components
- * that require initialization actions to be deferred until they are attached to a scene or have a fully initialized skin.</p>
+ * <p>This class is designed to support scenarios where node dimensions need to be known prior to rendering, such as in layout calculations or when dynamically adjusting the size or position of components
+ * based on their content or container. It also aids in handling UI components that require initialization actions to be deferred until they are attached to a scene or have a fully initialized skin.</p>
  *
- * <p>Method overloads provide flexibility in usage, allowing for default dimension values to be specified and offsets to be
- * applied, accommodating
- * a wide range of layout and design requirements.</p>
+ * <p>Method overloads provide flexibility in usage, allowing for default dimension values to be specified and offsets to be applied, accommodating a wide range of layout and design requirements.</p>
  *
- * <p>Note: This is a static utility class, and thus it cannot be instantiated. All methods are accessible directly via the
- * class name.</p>
+ * <p>Note: This is a static utility class, and thus it cannot be instantiated. All methods are accessible directly via the class name.</p>
  *
  * <h2>Usage examples:</h2>
- * <pre>{@code
- * double width = EFXNodeUtils.getNodeWidth(myNode, 10.0); // Calculate width with offset
- * double height = EFXNodeUtils.getNodeHeight(myNode); // Calculate height without offset
- * EFXNodeUtils.waitForScene(myNode, () -> {
- *     // Action to perform once myNode is part of a scene
- * }, true);
- * }</pre>
+ * <pre>
+ * {@code
+ *     double width = EFXNodeUtils.getNodeWidth(myNode, 10.0); // Calculate width with offset
+ *     double height = EFXNodeUtils.getNodeHeight(myNode); // Calculate height without offset
+ *     EFXNodeUtils.waitForScene(myNode, () -> {
+ *         // Action to perform once myNode is part of a scene
+ *     }, true);
+ * }
+ * </pre>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -84,13 +76,15 @@ public class EFXNodeUtils {
      */
     private EFXNodeUtils() {}
 
+    //region Get Node Height Functions
+    //*****************************************************************
+    // Get Node Height Functions
+    //*****************************************************************
+
     /**
      * Calculates the height of a given {@link Node} with an additional height offset.
      *
-     * <p>
-     * If the node's actual height cannot be determined (e.g., it is not yet displayed on a scene), a specified default value is
-     * returned.
-     * </p>
+     * <p>If the node's actual height cannot be determined (e.g., it is not yet displayed on a scene), a specified default value is returned.</p>
      *
      * @param node
      *         The {@link Node} whose height is to be calculated.
@@ -107,8 +101,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the height of a given {@link Node}, returning a specified default value if the node's actual
-     * height cannot be determined.
+     * Overloaded method to calculate the height of a given {@link Node}, returning a specified default value if the node's actual height cannot be determined.
      *
      * @param defaultValue
      *         The default value to return if the node's height cannot be determined.
@@ -122,8 +115,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the height of a given {@link Node} with an additional height offset. If the node's actual
-     * height cannot be determined, zero is returned as the default value.
+     * Overloaded method to calculate the height of a given {@link Node} with an additional height offset. If the node's actual height cannot be determined, zero is returned as the default value.
      *
      * @param node
      *         The {@link Node} whose height is to be calculated.
@@ -137,8 +129,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the height of a given {@link Node}. If the node's actual height cannot be determined, zero
-     * is returned as the default value.
+     * Overloaded method to calculate the height of a given {@link Node}. If the node's actual height cannot be determined, zero is returned as the default value.
      *
      * @param node
      *         The {@link Node} whose height is to be calculated.
@@ -149,9 +140,17 @@ public class EFXNodeUtils {
         return getNodeHeight(node, 0.0, 0.0);
     }
 
+    //endregion Get Node Height Functions
+
+    //region Get Node Width Functions
+    //*****************************************************************
+    // Get Node Width Functions
+    //*****************************************************************
+
     /**
-     * Calculates the width of a given {@link Node} with an additional width offset. If the node's actual width cannot be
-     * determined (e.g., it is not yet displayed on a scene), a specified default value is returned.
+     * Calculates the width of a given {@link Node} with an additional width offset.
+     *
+     * <p>If the node's actual width cannot be determined (e.g., it is not yet displayed on a scene), a specified default value is returned.</p>
      *
      * @param node
      *         The {@link Node} whose width is to be calculated.
@@ -167,8 +166,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the width of a given {@link Node}, returning a specified default value if the node's actual
-     * width cannot be determined.
+     * Overloaded method to calculate the width of a given {@link Node}, returning a specified default value if the node's actual width cannot be determined.
      *
      * @param defaultValue
      *         The default value to return if the node's width cannot be determined.
@@ -182,8 +180,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the width of a given {@link Node} with an additional width offset. If the node's actual
-     * width cannot be determined, zero is returned as the default value.
+     * Overloaded method to calculate the width of a given {@link Node} with an additional width offset. If the node's actual width cannot be determined, zero is returned as the default value.
      *
      * @param node
      *         The {@link Node} whose width is to be calculated.
@@ -197,8 +194,7 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Overloaded method to calculate the width of a given {@link Node}. If the Node's actual width cannot be determined, zero is
-     * returned as the default value.
+     * Overloaded method to calculate the width of a given {@link Node}. If the Node's actual width cannot be determined, zero is returned as the default value.
      *
      * @param node
      *         The {@link Node} whose width is to be calculated.
@@ -208,6 +204,13 @@ public class EFXNodeUtils {
     public static double getNodeWidth(Node node) {
         return getNodeWidth(node, 0.0, 0.0);
     }
+
+    //endregion Get Node Width Functions
+
+    //region Alignment Functions
+    //*****************************************************************
+    // Alignment Functions
+    //*****************************************************************
 
     /**
      * Checks whether the given alignment is right alignment.
@@ -248,11 +251,18 @@ public class EFXNodeUtils {
                alignment == Pos.TOP_CENTER;
     }
 
+    //endregion Alignment Functions
+
+    //region Wait For Functions
+    //*****************************************************************
+    // Wait For Functions
+    //*****************************************************************
+
     /**
-     * Waits for the skin of a {@link Control} to be initialized before executing a specified action. If the skin is already
-     * initialized, the action is executed immediately. Otherwise, a listener is added to the control's skin property to defer the
-     * action until the skin is initialized. Optionally, this listener can be removed after its first invocation to prevent the
-     * action from being executed multiple times.
+     * Waits for the skin of a {@link Control} to be initialized before executing a specified action.
+     *
+     * <p>If the skin is already initialized, the action is executed immediately. Otherwise, a listener is added to the control's skin property to defer the action until the skin is initialized. Optionally,
+     * this listener can be removed after its first invocation to prevent the action from being executed multiple times.</p>
      *
      * @param control
      *         The {@link Control} whose skin initialization is to be awaited.
@@ -266,10 +276,10 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Waits for a {@link Node} to be attached to a {@link Scene} before executing a specified action. If the node is already part
-     * of a scene, the action is executed immediately. Otherwise, a listener is added to the node's scene property to defer the
-     * action until the node is added to a scene. Optionally, this listener can be removed after its first invocation to prevent
-     * the action from being executed multiple times.
+     * Waits for a {@link Node} to be attached to a {@link Scene} before executing a specified action.
+     *
+     * <p>If the node is already part of a scene, the action is executed immediately. Otherwise, a listener is added to the node's scene property to defer the action until the node is added to a scene.
+     * Optionally, this listener can be removed after its first invocation to prevent the action from being executed multiple times.</p>
      *
      * @param node
      *         The {@link Node} whose attachment to a scene is to be awaited.
@@ -283,10 +293,10 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Waits for a specified property to have a non-null value before executing a given action. If the property's value is already
-     * non-null, the action is executed immediately. Otherwise, a listener is added to the property to defer the action until the
-     * property's value becomes non-null. Optionally, this listener can be removed after its first invocation to ensure the action
-     * is executed only once, even if the property's value changes multiple times.
+     * Waits for a specified property to have a non-null value before executing a given action.
+     *
+     * <p>If the property's value is already non-null, the action is executed immediately. Otherwise, a listener is added to the property to defer the action until the property's value becomes non-null.
+     * Optionally, this listener can be removed after its first invocation to ensure the action is executed only once, even if the property's value changes multiple times.</p>
      *
      * @param <T>
      *         The type of the property's value.
@@ -313,6 +323,13 @@ public class EFXNodeUtils {
                 }));
     }
 
+    //endregion Wait For Functions
+
+    //region PseudoClass Functions
+    //*****************************************************************
+    // PseudoClass Functions
+    //*****************************************************************
+
     /**
      * Determines if the specified pseudo class is active on the given control.
      *
@@ -328,6 +345,8 @@ public class EFXNodeUtils {
                       .contains(pseudoClass);
     }
 
+    //endregion PseudoClass Functions
+
     //region Private Functions
     //*****************************************************************
     // Private Functions
@@ -341,8 +360,7 @@ public class EFXNodeUtils {
      * @param offset
      *         The offset to add to the node's preferred height.
      *
-     * @return A {@link Function} that, when applied to a {@link Scene}, returns the preferred height of the node plus the
-     *         offset.
+     * @return A {@link Function} that, when applied to a {@link Scene}, returns the preferred height of the node plus the offset.
      */
     private static Function<Scene, Double> mapToHeight(Node node, double offset) {
         return scene -> node.prefHeight(-1) + offset;
@@ -363,12 +381,9 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Creates a {@link Supplier} that, when called, adds a {@link Node} to a temporary scene to calculate its actual height with
-     * an additional offset.
+     * Creates a {@link Supplier} that, when called, adds a {@link Node} to a temporary scene to calculate its actual height with an additional offset.
      *
-     * <p>
-     * This is useful for getting the actual rendered height of a node that is not yet part of a scene.
-     * </p>
+     * <p>This is useful for getting the actual rendered height of a node that is not yet part of a scene.</p>
      *
      * @param node
      *         The {@link Node} to be added to a temporary scene.
@@ -385,8 +400,9 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Creates a {@link Supplier} that, when called, adds a {@link Node} to a temporary scene to calculate its actual width with
-     * an additional offset. This is useful for getting the actual rendered width of a node that is not yet part of a scene.
+     * Creates a {@link Supplier} that, when called, adds a {@link Node} to a temporary scene to calculate its actual width with an additional offset.
+     *
+     * <p>This is useful for getting the actual rendered width of a node that is not yet part of a scene.</p>
      *
      * @param node
      *         The {@link Node} to be added to a temporary scene.
@@ -403,9 +419,10 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Retrieves the measurement (either width or height) of a {@link Node}, taking into account its current scene. If the node is
-     * not part of a scene, it temporarily adds the node to a scene to calculate the measurement. This method combines both direct
-     * measurement and a fallback strategy to ensure a value is always returned.
+     * Retrieves the measurement (either width or height) of a {@link Node}, taking into account its current scene.
+     *
+     * <p>If the node is not part of a scene, it temporarily adds the node to a scene to calculate the measurement. This method combines both direct measurement and a fallback strategy to ensure a value is
+     * always returned.</p>
      *
      * @param node
      *         The {@link Node} whose measurement is to be calculated.
@@ -416,8 +433,7 @@ public class EFXNodeUtils {
      * @param defaultValue
      *         The default value to return if no measurement can be calculated.
      *
-     * @return The calculated measurement (width or height) of the node, or the default value if the measurement cannot be
-     *         determined.
+     * @return The calculated measurement (width or height) of the node, or the default value if the measurement cannot be determined.
      */
     private static double getNodeMeasurement(Node node, Function<Scene, Double> measurementFunction,
                                              Supplier<Optional<Double>> afterAddingToSceneFunc, double defaultValue) {
@@ -429,9 +445,9 @@ public class EFXNodeUtils {
     }
 
     /**
-     * Temporarily adds a {@link Node} to a new {@link Scene} to allow CSS and layout passes to be applied. This method is used
-     * internally to calculate actual rendered dimensions of a node that is not yet part of a scene. After applying CSS and
-     * layout, the node is removed from the temporary scene.
+     * Temporarily adds a {@link Node} to a new {@link Scene} to allow CSS and layout passes to be applied.
+     *
+     * <p>This method is used internally to calculate actual rendered dimensions of a node that is not yet part of a scene. After applying CSS and layout, the node is removed from the temporary scene.</p>
      *
      * @param node
      *         The {@link Node} to be temporarily added to a new scene.

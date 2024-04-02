@@ -30,7 +30,7 @@ import java.util.Optional;
  * A specialized {@link StyleConverter} that converts CSS string representations into {@link Interpolator} objects for JavaFX. This converter facilitates the use of both predefined and custom interpolators
  * directly from CSS, enabling sophisticated animation effects within JavaFX applications.
  *
- * <p><strong>Supported Interpolators:</strong></p>
+ * <h2>Supported Interpolators:</h2>
  * <ul>
  *     <li><em>Predefined Interpolators</em>: EASE_BOTH, EASE_IN, EASE_OUT, LINEAR</li>
  *     <li><em>Spline Interpolator</em>: Defined by four control points as SPLINE(mX1, mY1, mX2, mY2).</li>
@@ -42,22 +42,24 @@ import java.util.Optional;
  * <p><strong>Usage:</strong> To use this converter, define CSS properties with the appropriate syntax for the desired interpolator. This class parses the string representations and instantiates
  * the corresponding {@link Interpolator} objects.</p>
  *
- * <p><strong>Examples:</strong></p>
+ * <h2>Examples:</h2>
  * <pre>
- * .ease-animation {
- *     -fx-interpolator: "EASE_BOTH";
- * }
+ * {@code
+ *     .ease-animation {
+ *         -fx-interpolator: "EASE_BOTH";
+ *     }
  *
- * .spline-animation {
- *     -fx-interpolator: "SPLINE(0.25, 0.1, 0.75, 0.9)";
- * }
+ *     .spline-animation {
+ *         -fx-interpolator: "SPLINE(0.25, 0.1, 0.75, 0.9)";
+ *     }
  *
- * .tangent-animation {
- *     -fx-interpolator: "TANGENT(500, 1.5)";
- * }
+ *     .tangent-animation {
+ *         -fx-interpolator: "TANGENT(500, 1.5)";
+ *     }
  *
- * .complex-tangent-animation {
- *     -fx-interpolator: "TANGENT(300, 1.2, 500, 0.8)";
+ *     .complex-tangent-animation {
+ *         -fx-interpolator: "TANGENT(300, 1.2, 500, 0.8)";
+ *     }
  * }
  * </pre>
  *
@@ -88,15 +90,11 @@ public class InterpolatorStyleConverter extends StyleConverter<String, Interpola
     /**
      * Private constructor to ensure a single instance of the {@code InterpolatorStyleConverter}.
      *
-     * <p>
-     * This constructor is part of the singleton design pattern implementation for the {@code InterpolatorStyleConverter}. It prevents direct instantiation from outside the class, ensuring that only one
+     * <p>This constructor is part of the singleton design pattern implementation for the {@code InterpolatorStyleConverter}. It prevents direct instantiation from outside the class, ensuring that only one
      * instance of {@code InterpolatorStyleConverter} is created and accessible globally through a static method provided by the class. This approach is used to manage a central point of access to the converter
-     * functionalities while ensuring that the overhead of multiple instances is avoided.
-     * </p>
+     * functionalities while ensuring that the overhead of multiple instances is avoided.</p>
      *
-     * <p>
-     * Use {@link InterpolatorStyleConverter#getInstance()} to access the single instance of this class.
-     * </p>
+     * <p>Use {@link InterpolatorStyleConverter#getInstance()} to access the single instance of this class.</p>
      */
     private InterpolatorStyleConverter() {}
 
@@ -159,9 +157,11 @@ public class InterpolatorStyleConverter extends StyleConverter<String, Interpola
      * Parses a TANGENT interpolator from a string representation. Supports both two-parameter (duration, rate) and four-parameter (inDuration, inRate, outDuration, outRate) formats.
      *
      * <pre>
-     * Example usage in CSS:
+     * <em>Example usage in CSS:</em>
+     * {@code
      *      -fx-interpolator: "TANGENT(500, 1.5)";
      *      -fx-interpolator: "TANGENT(200, 1.0, 300, 1.5)";
+     * }
      * </pre>
      *
      * @param string
@@ -180,8 +180,10 @@ public class InterpolatorStyleConverter extends StyleConverter<String, Interpola
      * Parses predefined interpolators (EASE_BOTH, EASE_IN, EASE_OUT, LINEAR) from a string representation.
      *
      * <pre>
-     * Example usage in CSS:
+     * <em>Example usage in CSS:</em>
+     * {@code
      *      -fx-interpolator: "EASE_BOTH";
+     * }
      * </pre>
      *
      * @param string

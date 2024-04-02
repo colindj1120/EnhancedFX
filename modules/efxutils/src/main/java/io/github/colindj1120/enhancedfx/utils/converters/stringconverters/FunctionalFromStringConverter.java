@@ -28,36 +28,32 @@ import java.util.function.Supplier;
  * Facilitates the creation of customizable {@link StringConverter} instances for converting strings to objects of type {@code T}. This interface is intended to streamline the development of JavaFX applications
  * by providing a concise and flexible means to define how textual data entered into UI components is converted into domain-specific objects.
  *
- * <p>
- * The {@code FunctionalFromStringConverter} interface supports not only straightforward conversions but also allows for handling null or empty input strings by either providing a default value or throwing a
- * custom exception. This capability ensures robust and user-friendly error handling and data validation within JavaFX UI components.
- * </p>
+ * <p>The {@code FunctionalFromStringConverter} interface supports not only straightforward conversions but also allows for handling null or empty input strings by either providing a default value or throwing a
+ * custom exception. This capability ensures robust and user-friendly error handling and data validation within JavaFX UI components.</p>
  *
- * <p>
  * <h2>Key Features:</h2>
  * <ul>
  *     <li>Easy definition of conversion logic using lambda expressions or method references.</li>
  *     <li>Support for default values or custom exceptions when dealing with null or empty input strings.</li>
  *     <li>Seamless integration with JavaFX property and UI component models.</li>
  * </ul>
- * </p>
  *
- * <p>
  * <h2>Usage Examples:</h2>
  * {@code FunctionalFromStringConverter} can be effectively used in various JavaFX application scenarios:
- * <pre>{@code
- * // Converting string to LocalDate with a default value
- * StringConverter<LocalDate> localDateConverter = FunctionalFromStringConverter.of(LocalDate::parse, LocalDate.now());
+ * <pre>
+ * {@code
+ *     // Converting string to LocalDate with a default value
+ *     StringConverter<LocalDate> localDateConverter = FunctionalFromStringConverter.of(LocalDate::parse, LocalDate.now());
  *
- * // Converting string to Integer and throwing a custom exception for invalid input
- * StringConverter<Integer> integerConverter = FunctionalFromStringConverter.of(Integer::valueOf, () -> new NumberFormatException("Invalid integer input"));
- * }</pre>
- * </p>
+ *     // Converting string to Integer and throwing a custom exception for invalid input
+ *     StringConverter<Integer> integerConverter = FunctionalFromStringConverter.of(Integer::valueOf, () -> new NumberFormatException("Invalid integer input"));
+ * }
+ * </pre>
  *
  * <p>By employing {@code FunctionalFromStringConverter}, developers can implement data parsing and conversion logic in a declarative manner, enhancing code readability and maintainability.</p>
  *
  * @author Colin Jokisch
- * @version 1.0
+ * @version 1.0.0
  * @see StringConverter
  * @see DefaultStringConverter
  * @see IntegerStringConverter

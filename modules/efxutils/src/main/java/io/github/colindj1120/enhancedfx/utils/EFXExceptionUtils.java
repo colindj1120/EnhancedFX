@@ -23,8 +23,8 @@ import javafx.scene.Node;
 /**
  * The {@code EFXExceptionUtils} class provides utility functions related to exception handling within the EnhancedFX framework.
  *
- * <p>It offers specialized methods for generating and managing exceptions, particularly focusing on scenarios where invalid instance types are encountered. This class is part of the EnhancedFX utility package,
- * aimed at aiding developers in creating more robust and error-resistant JavaFX applications.</p>
+ * <p>It offers specialized methods for generating and managing exceptions, particularly focusing on scenarios where invalid instance types are encountered. This class is part of the EnhancedFX utility
+ * package, aimed at aiding developers in creating more robust and error-resistant JavaFX applications.</p>
  *
  * <h2>Key Features</h2>
  * <ul>
@@ -34,14 +34,16 @@ import javafx.scene.Node;
  * </ul>
  *
  * <h2>Usage Example</h2>
- * Here's how you might use {@code EFXExceptionUtils} to generate an {@code InvalidInstanceOfException} when a node is not of an expected type:
- * <pre>{@code
- * public void checkNodeType(Node node) {
- *     if (!(node instanceof DesiredType)) {
- *         throw EFXExceptionUtils.getInvalidInstanceOfException(node, DesiredType.class, this.getClass(), "checkNodeType");
+ * <em>Here's how you might use {@code EFXExceptionUtils} to generate an {@code InvalidInstanceOfException} when a node is not of an expected type:</em>
+ * <pre>
+ * {@code
+ *     public void checkNodeType(Node node) {
+ *         if (!(node instanceof DesiredType)) {
+ *             throw EFXExceptionUtils.getInvalidInstanceOfException(node, DesiredType.class, this.getClass(), "checkNodeType");
+ *         }
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * <p>This example demonstrates how to use {@code EFXExceptionUtils} to generate and throw a specific exception when a node does not match the desired type. It aids in maintaining type safety and providing
  * clear error messages within EnhancedFX-based applications.</p>
@@ -54,13 +56,47 @@ public class EFXExceptionUtils {
     /**
      * Private constructor to prevent instantiation of the {@code EFXExceptionUtils} class.
      *
-     * <p>
-     * This utility class is designed to provide static methods and should not be instantiated or extended. The private constructor enforces this design pattern by prohibiting instantiation of
-     * {@code EFXExceptionUtils}.
-     * </p>
+     * <p>This utility class is designed to provide static methods and should not be instantiated or extended. The private constructor enforces this design pattern by prohibiting instantiation of
+     * {@code EFXExceptionUtils}.</p>
      */
     private EFXExceptionUtils() {}
 
+    /**
+     * Generates an {@link InvalidInstanceOfException} tailored to indicate that a given node is not an instance of a specified type within a specific class and method context.
+     *
+     * <p>This method is particularly useful for validating node types dynamically in scenarios where specific node types are expected or required. It constructs a detailed error message that includes the
+     * problematic node, the expected type, and the location (class and method) where the issue occurred, providing a clear diagnostic context.</p>
+     *
+     * <h2>Usage Example:</h2>
+     * <em>Example usage in a method that expects a specific type of node:</em>
+     * <pre>
+     * {@code
+     *     public void processNode(Node node) {
+     *         if (!(node instanceof CustomNode)) {
+     *             throw getInvalidInstanceOfException(node, CustomNode.class, this.getClass(), "processNode");
+     *         }
+     *         // Proceed with processing node as CustomNode
+     *     }
+     * }
+     * </pre>
+     *
+     * <p>In this example, {@code processNode} expects {@code node} to be an instance of {@code CustomNode}. If {@code node} is not of the expected type, the method generates and throws an
+     * {@link InvalidInstanceOfException}, providing a clear explanation of the issue.</p>
+     *
+     * @param node
+     *         The {@link Node} that is being checked for type compatibility.
+     * @param instanceType
+     *         The {@link Class} object representing the expected type of the node.
+     * @param implementingClass
+     *         The {@link Class} object representing the class where the type check is being performed.
+     * @param methodName
+     *         The name of the method within the {@code implementingClass} where the type check failed.
+     *
+     * @return An instance of {@link InvalidInstanceOfException} with a message detailing the type mismatch, intended for throwing to signal an error condition.
+     *
+     * @throws InvalidInstanceOfException
+     *         if the node is not an instance of the expected type. The exception is returned rather than thrown directly to give callers flexibility in how they handle the error condition.
+     */
     public static InvalidInstanceOfException getInvalidInstanceOfException(Node node, Class<?> instanceType, Class<?> implementingClass, String methodName) throws InvalidInstanceOfException {
         String errorMessage = String.format("Node:{%s} is not an instance of %s in {Class: %s, Method: %s}", node.toString(), instanceType.getSimpleName(), implementingClass.getSimpleName(), methodName);
         return new InvalidInstanceOfException(errorMessage);

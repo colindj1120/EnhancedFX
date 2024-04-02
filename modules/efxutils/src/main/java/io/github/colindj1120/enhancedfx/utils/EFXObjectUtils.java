@@ -31,28 +31,28 @@ import java.util.function.Supplier;
  * ensuring the existence of classpath resources. Designed for direct static import, it allows for concise and readable validation code throughout an application.
  *
  * <h2>Capabilities</h2>
- * <p>
  * <ul>
  *   <li><b>Null Checks</b>: Offers methods to assert the non-nullity of references, either returning a boolean result or throwing an exception with a custom message for null references.</li>
+ *   <li><b>Instance Checks</b>: Offers methods to check if an object is an instance of a class and cast it to that class.</li>
  *   <li><b>String Validation</b>: Provides methods to check if a string is not null and not empty, supporting both boolean results and exception throwing with custom messages for invalid strings.</li>
  *   <li><b>Resource Existence Verification</b>: Includes methods to verify the existence of a resource within the application's classpath, throwing an exception with a custom message if the resource is not
- *   found.</li>
+ *       found.</li>
+ *   <li><b>Execute Based On</b>: Offers methods to execute some code via a consumer or runnable dependent on the type of check performed.</li>
  * </ul>
- * </p>
  *
  * <h2>Example Usage</h2>
- * <p>
- * <pre>{@code
- * // Check for non-null object with a custom error message
- * EFXObjectUtils.checkNotNull(user, () -> "User object must not be null.");
+ * <pre>
+ * {@code
+ *     // Check for non-null object with a custom error message
+ *     EFXObjectUtils.checkNotNull(user, () -> "User object must not be null.");
  *
- * // Validate that a configuration string is not null or empty
- * boolean isValidConfig = EFXObjectUtils.isNotNullOrEmpty(configValue, () -> "Configuration value cannot be empty.");
+ *     // Validate that a configuration string is not null or empty
+ *     boolean isValidConfig = EFXObjectUtils.isNotNullOrEmpty(configValue, () -> "Configuration value cannot be empty.");
  *
- * // Assert the existence of a classpath resource
- * EFXObjectUtils.checkResourcePathNotNull("config/settings.xml", () -> "Settings configuration file is missing.");
- * }</pre>
- * </>
+ *     // Assert the existence of a classpath resource
+ *     EFXObjectUtils.checkResourcePathNotNull("config/settings.xml", () -> "Settings configuration file is missing.");
+ * }
+ * </pre>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -64,10 +64,8 @@ public class EFXObjectUtils {
     /**
      * Private constructor to prevent instantiation of the {@code EFXObjectUtils} class.
      *
-     * <p>
-     * This utility class is designed to provide static methods and should not be instantiated or extended. The private constructor enforces this design pattern by prohibiting instantiation of
-     * {@code EFXObjectUtils}.
-     * </p>
+     * <p>This utility class is designed to provide static methods and should not be instantiated or extended. The private constructor enforces this design pattern by prohibiting instantiation of
+     * {@code EFXObjectUtils}.</p>
      */
     private EFXObjectUtils() {}
 
@@ -150,6 +148,46 @@ public class EFXObjectUtils {
     // Instance Checks
     //*****************************************************************
 
+    /**
+     * Ensures an object is an instance of a specified class and then casts it to that class type, providing a customizable error message upon failure.
+     *
+     * <p>This generic method performs a runtime check to verify that a given object is an instance of a specified class. If the object is of the appropriate type, it is safely cast to that type and returned.
+     * Otherwise, an {@link InvalidInstanceOfException} is thrown with a custom message obtained from the provided {@link Supplier<String>}.</p>
+     *
+     * <h2>Usage Example:</h2>
+     * <em>Using {@code checkInstanceOfAndCast} to safely cast an object and handle type mismatches with a custom message:</em>
+     * <pre>
+     * {@code
+     *     Object myObject = getAnObjectFromSomewhere();
+     *     try {
+     *         MyExpectedType castedObject = checkInstanceOfAndCast(myObject, MyExpectedType.class, () -> "Custom error message: Object is not of type MyExpectedType.");
+     *         // Use castedObject here...
+     *     } catch (InvalidInstanceOfException e) {
+     *         // Handle the exception...
+     *         System.err.println(e.getMessage());
+     *     }
+     * }
+     * </pre>
+     *
+     * <p>This method streamlines the process of performing dynamic type checks and casting, with the added benefit of allowing for custom error handling via {@code messageSupplier}. It is especially useful in
+     * scenarios where the type of an object is uncertain, and specific actions are contingent upon the object being of a particular type.</p>
+     *
+     * @param <T>
+     *         The target type to which the object is to be cast.
+     * @param <U>
+     *         The actual type of the object being checked and cast.
+     * @param obj
+     *         The object to check and cast.
+     * @param clazz
+     *         The {@link Class} object representing the target type {@code T}.
+     * @param messageSupplier
+     *         A {@link Supplier} of {@link String} that provides a custom error message in case the object cannot be cast to the specified class.
+     *
+     * @return The object cast to the target type {@code T} if the type check succeeds.
+     *
+     * @throws InvalidInstanceOfException
+     *         if the object is not an instance of the specified class. The exception contains a custom error message provided by {@code messageSupplier}.
+     */
     public static <T, U> T checkInstanceOfAndCast(U obj, Class<T> clazz, Supplier<String> messageSupplier) throws InvalidInstanceOfException {
         if (clazz.isInstance(obj)) {
             return clazz.cast(obj);
@@ -312,6 +350,100 @@ public class EFXObjectUtils {
                 .ifPresentOrElse(onResult, onNull);
     }
 
-    //endregion Execute Based On
+    /**
+     * Executes one of two given {@link Runnable} actions based on the value of a {@link Boolean} flag.
+     *
+     * <p>This utility method provides a simple mechanism to choose between two actions at runtime, enhancing code readability and reducing the need for conditional branching in client code.</p>
+     *
+     * @param isTrue
+     *         the flag determining which action to execute; if {@code true}, {@code onTrue} is executed, otherwise, {@code onFalse} is executed
+     * @param onTrue
+     *         the {@link Runnable} action to be executed if {@code isTrue} is {@code true}
+     * @param onFalse
+     *         the {@link Runnable} action to be executed if {@code isTrue} is {@code false}
+     */
+    public static void executeBasedOnBoolean(Boolean isTrue, Runnable onTrue, Runnable onFalse) {
+        if (isTrue) {
+            onTrue.run();
+        } else {
+            onFalse.run();
+        }
+    }
 
+    /**
+     * Executes one of two actions based on a {@link Boolean} flag, where the action to be executed if {@code isTrue} is {@code true} accepts an input of type {@code T}.
+     *
+     * <p>If {@code isTrue} is {@code false}, a parameterless {@link Runnable} action is executed. This variation allows for conditional logic that requires an input to be processed only under certain
+     * conditions.</p>
+     *
+     * @param <T>
+     *         the type of the input accepted by the {@code onTrue} action
+     * @param isTrue
+     *         the flag determining which action to execute
+     * @param input
+     *         the input to be processed by {@code onTrue} if {@code isTrue} is {@code true}
+     * @param onTrue
+     *         the {@link Consumer} action to be executed if {@code isTrue} is {@code true}, accepting {@code input} as its argument
+     * @param onFalse
+     *         the {@link Runnable} action to be executed if {@code isTrue} is {@code false}
+     */
+    public static <T> void executedBasedOnBoolean(Boolean isTrue, T input, Consumer<T> onTrue, Runnable onFalse) {
+        if (isTrue) {
+            onTrue.accept(input);
+        } else {
+            onFalse.run();
+        }
+    }
+
+    /**
+     * Executes one of two actions based on a {@link Boolean} flag, where the action to be executed if {@code isTrue} is {@code false} accepts an input of type {@code T}.
+     *
+     * <p>If {@code isTrue} is {@code true}, a parameterless {@link Runnable} action is executed. This method provides flexibility for conditional execution where the alternative action requires processing an
+     * input.</p>
+     *
+     * @param <T>
+     *         the type of the input accepted by the {@code onFalse} action
+     * @param isTrue
+     *         the flag determining which action to execute
+     * @param input
+     *         the input to be processed by {@code onFalse} if {@code isTrue} is {@code false}
+     * @param onTrue
+     *         the {@link Runnable} action to be executed if {@code isTrue} is {@code true}
+     * @param onFalse
+     *         the {@link Consumer} action to be executed if {@code isTrue} is {@code false}, accepting {@code input} as its argument
+     */
+    public static <T> void executedBasedOnBoolean(Boolean isTrue, T input, Runnable onTrue, Consumer<T> onFalse) {
+        if (isTrue) {
+            onTrue.run();
+        } else {
+            onFalse.accept(input);
+        }
+    }
+
+    /**
+     * Executes one of two {@link Consumer} actions based on a {@link Boolean} flag, where both actions accept an input of type {@code T}.
+     *
+     * <p>This method enables conditional logic that manipulates the given input in different ways, depending on the value of {@code isTrue}. It simplifies client code by encapsulating conditional action
+     * selection.</p>
+     *
+     * @param <T>
+     *         the type of the input accepted by both {@code onTrue} and {@code onFalse}
+     * @param isTrue
+     *         the flag determining which action to execute
+     * @param input
+     *         the input to be processed by the selected action
+     * @param onTrue
+     *         the {@link Consumer} action to be executed if {@code isTrue} is {@code true}, accepting {@code input} as its argument
+     * @param onFalse
+     *         the {@link Consumer} action to be executed if {@code isTrue} is {@code false}, accepting {@code input} as its argument
+     */
+    public static <T> void executedBasedOnBoolean(Boolean isTrue, T input, Consumer<T> onTrue, Consumer<T> onFalse) {
+        if (isTrue) {
+            onTrue.accept(input);
+        } else {
+            onFalse.accept(input);
+        }
+    }
+
+    //endregion Execute Based On
 }

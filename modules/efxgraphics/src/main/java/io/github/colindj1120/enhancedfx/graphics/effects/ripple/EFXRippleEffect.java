@@ -90,30 +90,36 @@ import static io.github.colindj1120.enhancedfx.graphics.effects.base.EFXRippleDe
  * <h2>Usage Examples</h2>
  *
  * <h3>Basic Application</h3>
- * <pre>{@code
- * Region button = new Region();
- * EFXRippleEffect.applyTo(button);
- * // Optionally, customize the effect further
- * button.getStyleClass().add("my-custom-button");
- * }</pre>
+ * <pre>
+ * {@code
+ *     Region button = new Region();
+ *     EFXRippleEffect.applyTo(button);
+ *     // Optionally, customize the effect further
+ *     button.getStyleClass().add("my-custom-button");
+ * }
+ * </pre>
  *
  * <h3>Customization through Code</h3>
- * <pre>{@code
- * EFXRippleEffect rippleEffect = EFXRippleEffect.create(button);
- * rippleEffect.setRippleColor(Color.BLUE);
- * rippleEffect.setRippleDuration(Duration.millis(300));
- * rippleEffect.setRippleInterpolator(Interpolator.EASE_OUT);
- * }</pre>
+ * <pre>
+ * {@code
+ *     EFXRippleEffect rippleEffect = EFXRippleEffect.create(button);
+ *     rippleEffect.setRippleColor(Color.BLUE);
+ *     rippleEffect.setRippleDuration(Duration.millis(300));
+ *     rippleEffect.setRippleInterpolator(Interpolator.EASE_OUT);
+ * }
+ * </pre>
  *
  * <h3>Styling with CSS</h3>
  * The ripple effect's properties can be styled using CSS, offering an alternative to programmatic customization.
- * <pre>{@code
- * .my-custom-button {
- *     -efx-ripple-color: #3498db;
- *     -efx-ripple-duration: 300ms;
- *     -efx-ripple-interpolator: ease-out;
+ * <pre>
+ *  {@code
+ *     .my-custom-button {
+ *         -efx-ripple-color: #3498db;
+ *         -efx-ripple-duration: 300ms;
+ *         -efx-ripple-interpolator: ease-out;
+ *     }
  * }
- * }</pre>
+ * </pre>
  *
  * @author Colin Jokisch
  * @version 1.0.0

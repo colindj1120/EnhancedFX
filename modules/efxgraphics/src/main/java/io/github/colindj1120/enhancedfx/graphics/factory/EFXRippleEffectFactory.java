@@ -32,29 +32,26 @@ import javafx.util.Duration;
 import java.util.Optional;
 
 /**
- * A factory for creating {@link EFXRippleEffect} instances with customized settings. This factory allows for the chaining of setter methods to configure a {@code EFXRippleEffect} with specific properties
- * such as shape, color, duration, interpolator, and various states before building the final effect. It supports setting up both ripple and drop shadow effects with extensive customization options,
- * adhering to Material Design principles.
+ * A factory for creating {@link EFXRippleEffect} instances with customized settings.
  *
- * <p>
- * The factory design pattern is utilized to encapsulate the complexity of constructing a {@code EFXRippleEffect} instance. It ensures that the {@code EFXRippleEffect} is correctly initialized with all the
- * necessary parameters before use.
- * </p>
+ * <p>This factory allows for the chaining of setter methods to configure a {@code EFXRippleEffect} with specific properties such as shape, color, duration, interpolator, and various states before building the
+ * final effect. It supports setting up both ripple and drop shadow effects with extensive customization options, adhering to Material Design principles.</p>
  *
- * <p>
- * The factory will throw a {@link RippleEffectException} if any of the passed in inputs are null or if when build is called and target node is null
- * </p>
+ * <p>The factory design pattern is utilized to encapsulate the complexity of constructing a {@code EFXRippleEffect} instance. It ensures that the {@code EFXRippleEffect} is correctly initialized with all the
+ * necessary parameters before use.</p>
  *
- * <p>
- * Usage example:
+ * <p>The factory will throw a {@link RippleEffectException} if any of the passed in inputs are null or if when build is called and target node is null.</p>
+ *
+ * <h2>Usage example:</h2>
  * <pre>
- * EFXRippleEffect rippleEffect = new EFXRippleEffectFactory()
- *     .targetNode(myRegion)
- *     .rippleColor(Color.BLUE)
- *     .rippleDuration(Duration.millis(300))
- *     .build();
+ * {@code
+ *     EFXRippleEffect rippleEffect = new EFXRippleEffectFactory()
+ *         .targetNode(myRegion)
+ *         .rippleColor(Color.BLUE)
+ *         .rippleDuration(Duration.millis(300))
+ *         .build();
+ * }
  * </pre>
- * </p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -65,29 +62,43 @@ public class EFXRippleEffectFactory {
     private Region             targetNode         = null; //required field
     private EFXState           rippleEFXState     = EFXRippleDefaults.DEFAULT_RIPPLE_EFX_STATE;
     private EFXRippleShape     efxRippleShape     = EFXRippleDefaults.DEFAULT_RIPPLE_SHAPE;
-    private EFXRippleShape rippleClipShape = EFXRippleDefaults.DEFAULT_RIPPLE_CLIP_SHAPE;
-    private Color          rippleColor     = EFXRippleDefaults.DEFAULT_RIPPLE_COLOR;
-    private Duration        rippleDuration     = EFXRippleDefaults.DEFAULT_RIPPLE_DURATION;
+    private EFXRippleShape     rippleClipShape    = EFXRippleDefaults.DEFAULT_RIPPLE_CLIP_SHAPE;
+    private Color              rippleColor        = EFXRippleDefaults.DEFAULT_RIPPLE_COLOR;
+    private Duration           rippleDuration     = EFXRippleDefaults.DEFAULT_RIPPLE_DURATION;
     private Interpolator       rippleInterpolator = EFXRippleDefaults.DEFAULT_RIPPLE_INTERPOLATOR;
     private EFXState           rippleFillEFXState = EFXRippleDefaults.DEFAULT_RIPPLE_FILL_EFX_STATE;
     private double             rippleRadius       = EFXRippleDefaults.DEFAULT_RIPPLE_RADIUS;
-    private Color           rippleStrokeColor  = EFXRippleDefaults.DEFAULT_RIPPLE_STROKE_COLOR;
+    private Color              rippleStrokeColor  = EFXRippleDefaults.DEFAULT_RIPPLE_STROKE_COLOR;
     private double             rippleStrokeWidth  = EFXRippleDefaults.DEFAULT_RIPPLE_STROKE_WIDTH;
     private EFXRippleDirection efxRippleDirection = EFXRippleDefaults.DEFAULT_RIPPLE_DIRECTION;
     private EFXState           rippleFadeEFXState = EFXRippleDefaults.DEFAULT_RIPPLE_FADE_EFX_STATE;
     private BlurType           dropShadowBlurType = EFXRippleDefaults.DEFAULT_DROPSHADOW_BLUR_TYPE;
-    private Color           dropShadowColor    = EFXRippleDefaults.DEFAULT_DROPSHADOW_COLOR;
-    private double          dropShadowRadius   = EFXRippleDefaults.DEFAULT_DROPSHADOW_RADIUS;
-    private double          dropShadowSpread   = EFXRippleDefaults.DEFAULT_DROPSHADOW_SPREAD;
-    private double          dropShadowOffsetX  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_X;
+    private Color              dropShadowColor    = EFXRippleDefaults.DEFAULT_DROPSHADOW_COLOR;
+    private double             dropShadowRadius   = EFXRippleDefaults.DEFAULT_DROPSHADOW_RADIUS;
+    private double             dropShadowSpread   = EFXRippleDefaults.DEFAULT_DROPSHADOW_SPREAD;
+    private double             dropShadowOffsetX  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_X;
     private double             dropShadowOffsetY  = EFXRippleDefaults.DEFAULT_DROPSHADOW_OFFSET_Y;
     private EFXState           dropShadowEFXState = EFXRippleDefaults.DEFAULT_DROPSHADOW_EFX_STATE;
 
+    /**
+     * Constructs a new EFXRippleEffectFactory with the given targetNode.
+     *
+     * @param targetNode
+     *         the Region node to apply the ripple effect to
+     */
     private EFXRippleEffectFactory(Region targetNode) {
         checkInput(targetNode, "Target Node");
         this.targetNode = targetNode;
     }
 
+    /**
+     * Creates an EFXRippleEffectFactory instance with the given target node.
+     *
+     * @param targetNode
+     *         the region to apply the ripple effect to
+     *
+     * @return the newly created EFXRippleEffectFactory instance
+     */
     public static EFXRippleEffectFactory create(Region targetNode) {
         return new EFXRippleEffectFactory(targetNode);
     }
@@ -127,8 +138,9 @@ public class EFXRippleEffectFactory {
     }
 
     /**
-     * Sets the shape of the ripple clip for the EFXRippleEffectFactory. The ripple clip shape is used to define the shape of the graphical ripple that appears in response to user interactions, such as
-     * mouse clicks or touches, on a UI component.
+     * Sets the shape of the ripple clip for the EFXRippleEffectFactory.
+     *
+     * <p>The ripple clip shape is used to define the shape of the graphical ripple that appears in response to user interactions, such as mouse clicks or touches, on a UI component.</p>
      *
      * @param rippleClipShape
      *         the shape of the ripple clip
@@ -264,8 +276,9 @@ public class EFXRippleEffectFactory {
     }
 
     /**
-     * Sets the direction of the ripple effect in animations or UI interactions. This method is used to specify whether the ripple effect should move inward towards the center of the UI element or
-     * outward from the center.
+     * Sets the direction of the ripple effect in animations or UI interactions.
+     *
+     * <p>This method is used to specify whether the ripple effect should move inward towards the center of the UI element or outward from the center.</p>
      *
      * @param efxRippleDirection
      *         the direction of the ripple effect
@@ -437,32 +450,28 @@ public class EFXRippleEffectFactory {
     }
 
     /**
-     * Builds and returns a {@link EFXRippleEffect} instance based on the configured properties. This method leverages {@link java.util.Optional} to ensure that the target node is not null, encapsulating
-     * the construction of {@code EFXRippleEffect} within a functional paradigm.
-     * <p>
-     * If the target node is not specified (i.e., {@code null}), this method throws a {@link RippleEffectException} to indicate the failure to create a {@code EFXRippleEffect} due to the absence of a
-     * required parameter.
+     * Builds and returns a {@link EFXRippleEffect} instance based on the configured properties.
      *
-     * <p>
-     * The method uses a fluent API design, setting various properties on the {@code EFXRippleEffect} instance such as state, shape, color, duration, and more, based on the previously configured values
-     * in the factory. This approach ensures that the {@code EFXRippleEffect} is fully prepared and customized before being returned for use.
-     * </p>
+     * <p>This method leverages {@link Optional} to ensure that the target node is not null, encapsulating the construction of {@code EFXRippleEffect} within a functional paradigm.</p>
      *
-     * <p>
-     * This method applies a series of configurations to the {@code EFXRippleEffect}, including visual characteristics like color and shape, temporal properties such as duration and interpolator, as well
-     * as more complex features like drop shadow and background handling. It provides a comprehensive setup for creating a {@code EFXRippleEffect} that is tailored to the specific needs of the
-     * application.
-     * </p>
+     * <p>If the target node is not specified (i.e., {@code null}), this method throws a {@link RippleEffectException} to indicate the failure to create a {@code EFXRippleEffect} due to the absence of a
+     * required parameter.</p>
      *
-     * <p>
-     * Example usage:
+     * <p>The method uses a fluent API design, setting various properties on the {@code EFXRippleEffect} instance such as state, shape, color, duration, and more, based on the previously configured values in
+     * the factory. This approach ensures that the {@code EFXRippleEffect} is fully prepared and customized before being returned for use.</p>
+     *
+     * <p>This method applies a series of configurations to the {@code EFXRippleEffect}, including visual characteristics like color and shape, temporal properties such as duration and interpolator, as well as
+     * more complex features like drop shadow and background handling. It provides a comprehensive setup for creating a {@code EFXRippleEffect} that is tailored to the specific needs of the application.</p>
+     *
+     * <h2>Example usage:</h2>
      * <pre>
-     * EFXRippleEffect rippleEffect = new EFXRippleEffectFactory()
-     *     .targetNode(myNode)
-     *     .rippleColor(Color.BLUE)
-     *     .build();
+     * {@code
+     *     EFXRippleEffect rippleEffect = new EFXRippleEffectFactory()
+     *         .targetNode(myNode)
+     *         .rippleColor(Color.BLUE)
+     *         .build();
+     * }
      * </pre>
-     * </p>
      *
      * @return A fully configured {@link EFXRippleEffect} instance ready for use.
      *

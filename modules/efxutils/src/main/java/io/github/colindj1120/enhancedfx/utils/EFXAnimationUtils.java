@@ -30,10 +30,11 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * The EFXAnimationUtils class is a collection of static utility methods designed to facilitate the creation and management of JavaFX animations. This class serves as a toolkit for common
- * animation-related tasks, enabling developers to construct, modify, and control animations with greater ease and flexibility.
+ * The EFXAnimationUtils class is a collection of static utility methods designed to facilitate the creation and management of JavaFX animations.
  *
- * <p>Key functionalities include:</p>
+ * <p>This class serves as a toolkit for common animation-related tasks, enabling developers to construct, modify, and control animations with greater ease and flexibility.</p>
+ *
+ * <h2>Key functionalities include:</h2>
  * <ul>
  *     <li>Creating various types of {@link Timeline} animations, with support for custom frame rates and keyframes.</li>
  *     <li>Generating {@link KeyValue} instances, which are fundamental to defining animation states.</li>
@@ -46,14 +47,16 @@ import java.util.Optional;
  *
  * <p>As a utility class, EFXAnimationUtils cannot be instantiated; it is designed to be used directly through its static methods.</p>
  *
- * <p>Usage Example:</p>
+ * <h2>Usage Example:</h2>
  * <pre>
+ * {@code
  *     // Creating a simple linear animation
  *     Timeline timeline = EFXAnimationUtils.createAnimation();
  *     KeyValue keyValue = EFXAnimationUtils.createKeyValue(someProperty, newValue);
  *     KeyFrame keyFrame = EFXAnimationUtils.createKeyFrame(Duration.seconds(1), keyValue);
  *     timeline.getKeyFrames().add(keyFrame);
  *     timeline.play();
+ * }
  * </pre>
  *
  * <p>This class enhances code readability and maintainability by abstracting complex animation setup details, allowing developers to focus on crafting their desired animation effects.</p>
@@ -72,8 +75,7 @@ public final class EFXAnimationUtils {
     private EFXAnimationUtils() {}
 
     /**
-     * Creates a basic Timeline animation without any keyframes. This is useful as a starting point for dynamically adding keyframes later or for simple animations that don't require specific
-     * keyframes.
+     * Creates a basic Timeline animation without any keyframes. This is useful as a starting point for dynamically adding keyframes later or for simple animations that don't require specific keyframes.
      *
      * @return A new instance of the Timeline class.
      */
@@ -82,11 +84,11 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a Timeline animation with the given target frame rate. The frame rate determines how often the animation updates per second. A higher frame rate can make the animation appear smoother
-     * but may require more processing power.
+     * Creates a Timeline animation with the given target frame rate.
      *
-     * <p>Use a higher frame rate for complex animations where smoothness is crucial. A lower frame rate
-     * might be more suitable for simpler or slower animations, conserving resources.</p>
+     * <p>The frame rate determines how often the animation updates per second. A higher frame rate can make the animation appear smoother but may require more processing power.</p>
+     *
+     * <p>Use a higher frame rate for complex animations where smoothness is crucial. A lower frame rate might be more suitable for simpler or slower animations, conserving resources.</p>
      *
      * @param targetFrameRate
      *         The frame rate at which the animation should run, in frames per second.
@@ -98,8 +100,9 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a Timeline animation composed of the given keyframes. Use this method when you have predefined keyframes for your animation. Each keyframe defines a specific state at a specific time
-     * during the animation.
+     * Creates a Timeline animation composed of the given keyframes.
+     *
+     * <p>Use this method when you have predefined keyframes for your animation. Each keyframe defines a specific state at a specific time during the animation.</p>
      *
      * @param keyframes
      *         The keyframes to include in the animation.
@@ -111,11 +114,11 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a Timeline animation from the given keyframes at a target frame rate. The frame rate determines how often * the animation updates per second. A higher frame rate can make the animation
-     * appear smoother but may require more processing power.
+     * Creates a Timeline animation from the given keyframes at a target frame rate.
      *
-     * <p>Use a higher frame rate for complex animations where smoothness is crucial. A lower frame rate * might be more suitable for
-     * simpler or slower animations, conserving resources.</p>
+     * <p>The frame rate determines how often * the animation updates per second. A higher frame rate can make the animation appear smoother but may require more processing power.</p>
+     *
+     * <p>Use a higher frame rate for complex animations where smoothness is crucial. A lower frame rate * might be more suitable for simpler or slower animations, conserving resources.</p>
      *
      * @param targetFrameRate
      *         The frame rate at which the animation should run.
@@ -129,11 +132,12 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a KeyValue with a specified target value and interpolator. KeyValue is a key concept in defining animations in JavaFX. It specifies the target object and the end value of a property
-     * when a KeyFrame is reached.
+     * Creates a KeyValue with a specified target value and interpolator.
      *
-     * <p>The target is a WritableValue, typically representing a property of a UI element (like the
-     * opacity of a node or the position of a shape). This method simplifies the process of creating KeyValues for animations.</p>
+     * <p>KeyValue is a key concept in defining animations in JavaFX. It specifies the target object and the end value of a property when a KeyFrame is reached.</p>
+     *
+     * <p>The target is a WritableValue, typically representing a property of a UI element (like the opacity of a node or the position of a shape). This method simplifies the process of creating KeyValues for
+     * animations.</p>
      *
      * @param target
      *         The property to be animated (e.g., the opacity property of a node).
@@ -246,11 +250,12 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Returns the discrete interpolator. This interpolator causes the animation to jump to the end value instantly at the end of the animation. It does not provide a smooth transition but rather an
-     * abrupt change from the start value to the end value.
+     * Returns the discrete interpolator.
      *
-     * <p>This is particularly useful for animations where a smooth transition is not required, or for
-     * triggering an instantaneous change at a specific point in the timeline.</p>
+     * <p>This interpolator causes the animation to jump to the end value instantly at the end of the animation. It does not provide a smooth transition but rather an abrupt change from the start value to the
+     * end value.</p>
+     *
+     * <p>This is particularly useful for animations where a smooth transition is not required, or for triggering an instantaneous change at a specific point in the timeline.</p>
      *
      * @return The discrete interpolator.
      */
@@ -259,11 +264,11 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Returns a linear interpolator. This interpolator provides a constant rate of change, making the animation progress at a steady pace from start to end. It creates a linear transition between
-     * keyframes.
+     * Returns a linear interpolator.
      *
-     * <p>Linear interpolation is useful when a uniform rate of change is desired throughout the animation,
-     * without any acceleration or deceleration effects.</p>
+     * <p>This interpolator provides a constant rate of change, making the animation progress at a steady pace from start to end. It creates a linear transition between keyframes.</p>
+     *
+     * <p>Linear interpolation is useful when a uniform rate of change is desired throughout the animation, without any acceleration or deceleration effects.</p>
      *
      * @return The linear interpolator.
      */
@@ -272,11 +277,11 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Returns an ease-in interpolator. This interpolator causes the animation to start slowly and then accelerate as it progresses. It provides a gradual start, creating a smooth and soft beginning
-     * to the animation.
+     * Returns an ease-in interpolator.
      *
-     * <p>Use this interpolator when you want to create a more natural and less abrupt start to an
-     * animation, as it simulates the gradual build-up of speed.</p>
+     * <p>This interpolator causes the animation to start slowly and then accelerate as it progresses. It provides a gradual start, creating a smooth and soft beginning to the animation.</p>
+     *
+     * <p>Use this interpolator when you want to create a more natural and less abrupt start to an animation, as it simulates the gradual build-up of speed.</p>
      *
      * @return An instance of the Interpolator class with ease-in interpolation.
      */
@@ -285,11 +290,11 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Returns the ease-out interpolator. This interpolator causes the animation to start at a faster pace and then decelerate towards the end. It provides a smooth slowing down effect as the
-     * animation completes.
+     * Returns the ease-out interpolator.
      *
-     * <p>Ideal for animations where a gentle and gradual stop is desired, simulating a natural
-     * deceleration like objects coming to rest.</p>
+     * <p>This interpolator causes the animation to start at a faster pace and then decelerate towards the end. It provides a smooth slowing down effect as the animation completes.</p>
+     *
+     * <p>Ideal for animations where a gentle and gradual stop is desired, simulating a natural deceleration like objects coming to rest.</p>
      *
      * @return The ease-out interpolator.
      */
@@ -298,11 +303,12 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Returns an instance of the Interpolator class that provides both ease-in and ease-out effects. This interpolator causes the animation to start slowly, accelerate in the middle, and then slow
-     * down again towards the end.
+     * Returns an instance of the Interpolator class that provides both ease-in and ease-out effects.
      *
-     * <p>This type of interpolation is very common and natural-looking, as it simulates the way
-     * many physical objects move in the real world. It's particularly useful for animations aiming for a smooth and organic feel.</p>
+     * <p>This interpolator causes the animation to start slowly, accelerate in the middle, and then slow down again towards the end.</p>
+     *
+     * <p>This type of interpolation is very common and natural-looking, as it simulates the way many physical objects move in the real world. It's particularly useful for animations aiming for a smooth and
+     * organic feel.</p>
      *
      * @return An Interpolator instance with both ease-in and ease-out effects.
      */
@@ -311,15 +317,15 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a spline interpolator based on cubic Bézier curve control points. This interpolator allows for custom easing effects in animations by defining how the animation progresses between
-     * keyframes.
+     * Creates a spline interpolator based on cubic Bézier curve control points.
      *
-     * <p>The control points define the shape of a cubic Bezier curve, which determines the rate of change of the animation.
-     * The first point (t1, v1) and the second point (t2, v2) are control points for the curve, influencing the acceleration and deceleration of the interpolated values.</p>
+     * <p>This interpolator allows for custom easing effects in animations by defining how the animation progresses between keyframes.</p>
      *
-     * <p>Typically, 't' values are time fractions (ranging from 0 to 1) and 'v' values are the corresponding values at
-     * those fractions. For example, (0.25, 0.1) as the first control point means at 25% of the animation duration, the animated value should be at 10% of its way between the start and end
-     * values.</p>
+     * <p>The control points define the shape of a cubic Bezier curve, which determines the rate of change of the animation. The first point (t1, v1) and the second point (t2, v2) are control points for the
+     * curve, influencing the acceleration and deceleration of the interpolated values.</p>
+     *
+     * <p>Typically, 't' values are time fractions (ranging from 0 to 1) and 'v' values are the corresponding values at those fractions. For example, (0.25, 0.1) as the first control point means at 25% of the
+     * animation duration, the animated value should be at 10% of its way between the start and end values.</p>
      *
      * @param t1
      *         The time fraction of the first control point (typically between 0 and 1).
@@ -337,14 +343,14 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a tangent interpolator based on a single control point. This interpolator is useful for creating custom easing effects, especially for animations requiring a specific rate of change at
-     * a particular moment.
+     * Creates a tangent interpolator based on a single control point.
      *
-     * <p>The control point (t, v) defines the slope of the tangent at that point on the interpolation curve.
-     * The 't' value is the time fraction, and 'v' is the value of the slope at that time. A higher 'v' value results in a steeper slope, indicating a faster change.</p>
+     * <p>This interpolator is useful for creating custom easing effects, especially for animations requiring a specific rate of change at a particular moment.</p>
      *
-     * <p>This method is particularly useful for animations that need to start or end at a specific rate of change,
-     * rather than easing in or out.</p>
+     * <p>The control point (t, v) defines the slope of the tangent at that point on the interpolation curve. The 't' value is the time fraction, and 'v' is the value of the slope at that time. A higher 'v'
+     * value results in a steeper slope, indicating a faster change.</p>
+     *
+     * <p>This method is particularly useful for animations that need to start or end at a specific rate of change, rather than easing in or out.</p>
      *
      * @param t
      *         The duration fraction for the control point (typically between 0 and 1).
@@ -358,14 +364,14 @@ public final class EFXAnimationUtils {
     }
 
     /**
-     * Creates a tangent interpolator between two points, allowing for more precise control over the animation's rate of change. This interpolator is ideal for animations requiring a specific rate of
-     * change between two moments in time.
+     * Creates a tangent interpolator between two points, allowing for more precise control over the animation's rate of change.
      *
-     * <p>Each control point (t1, v1) and (t2, v2) defines the slope of the tangent at specific points on the
-     * interpolation curve. The 't' values are time fractions, and 'v' values are the slopes at those times. Higher 'v' values result in steeper slopes, indicating faster changes.</p>
+     * <p>This interpolator is ideal for animations requiring a specific rate of change between two moments in time.</p>
      *
-     * <p>This method is useful for animations that need a specific acceleration or deceleration pattern between
-     * two points in time.</p>
+     * <p>Each control point (t1, v1) and (t2, v2) defines the slope of the tangent at specific points on the interpolation curve. The 't' values are time fractions, and 'v' values are the slopes at those
+     * times. Higher 'v' values result in steeper slopes, indicating faster changes.</p>
+     *
+     * <p>This method is useful for animations that need a specific acceleration or deceleration pattern between two points in time.</p>
      *
      * @param t1
      *         The duration fraction for the first control point (typically between 0 and 1).

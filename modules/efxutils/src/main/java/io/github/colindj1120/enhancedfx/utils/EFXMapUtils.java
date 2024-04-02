@@ -23,38 +23,33 @@ import java.util.Map;
 /**
  * Utility class providing methods to easily create mutable and immutable instances of {@link Map.Entry}.
  *
- * <p>
- * {@code EFXMapUtils} is designed to enhance the readability and maintainability of code that manipulates map entries. By abstracting the instantiation of {@link Map.Entry} objects, it allows for clearer
- * expression of intent when creating or manipulating key-value pairs, whether they need to be mutable for subsequent modifications or immutable for read-only use.
- * </p>
+ * <p>{@code EFXMapUtils} is designed to enhance the readability and maintainability of code that manipulates map entries. By abstracting the instantiation of {@link Map.Entry} objects, it allows for clearer
+ * expression of intent when creating or manipulating key-value pairs, whether they need to be mutable for subsequent modifications or immutable for read-only use.</p>
  *
  * <h2>Capabilities:</h2>
- * <p>
  * <ul>
  *   <li><strong>Mutable Entries:</strong> Create modifiable map entries that can be updated after creation.</li>
  *   <li><strong>Immutable Entries:</strong> Create read-only map entries that are constant after creation, ideal for situations where data integrity is paramount.</li>
  * </ul>
- * </p>
  *
  * <h2>Usage Examples:</h2>
- * <p>
- * Creating a mutable entry:
- * <pre>{@code
- * Map.Entry<String, Integer> mutableEntry = EFXMapUtils.simpleEntry("apple", 10);
- * mutableEntry.setValue(20); // The value can be changed
- * }</pre>
- * </p>
  *
- * <p>
- * Creating an immutable entry:
- * <pre>{@code
- * Map.Entry<String, Integer> immutableEntry = EFXMapUtils.simpleImmutableEntry("banana", 15);v// Attempting to change the value would result in an UnsupportedOperationException
- * }</pre>
- * </p>
+ * <h3>Creating a mutable entry:</h3>
+ * <pre>
+ * {@code
+ *     Map.Entry<String, Integer> mutableEntry = EFXMapUtils.simpleEntry("apple", 10);
+ *     mutableEntry.setValue(20); // The value can be changed
+ * }
+ * </pre>
  *
- * <p>
- * These utility methods are especially useful when working with Java streams or when entries need to be created outside the context of a map, simplifying the construction and manipulation of map data.
- * </p>
+ * <h3>Creating an immutable entry:</h3>
+ * <pre>
+ * {@code
+ *     Map.Entry<String, Integer> immutableEntry = EFXMapUtils.simpleImmutableEntry("banana", 15);v// Attempting to change the value would result in an UnsupportedOperationException
+ * }
+ * </pre>
+ *
+ * <p>These utility methods are especially useful when working with Java streams or when entries need to be created outside the context of a map, simplifying the construction and manipulation of map data.</p>
  *
  * @author Colin Jokisch
  * @version 1.0.0
@@ -64,20 +59,16 @@ public class EFXMapUtils {
     /**
      * Private constructor to prevent instantiation of this utility class.
      *
-     * <p>
-     * The {@code EFXMapUtils} class is a collection of static utility methods for creating {@link Map.Entry} instances both mutable and immutable. Since it is not meant to be instantiated, the constructor is made
-     * private. This design pattern ensures that the class usage is limited to accessing its static methods without creating an object instance of {@code EFXMapUtils}.
-     * </p>
+     * <p>The {@code EFXMapUtils} class is a collection of static utility methods for creating {@link Map.Entry} instances both mutable and immutable. Since it is not meant to be instantiated, the constructor
+     * is made private. This design pattern ensures that the class usage is limited to accessing its static methods without creating an object instance of {@code EFXMapUtils}.</p>
      */
     private EFXMapUtils() {}
 
     /**
      * Creates a mutable {@link Map.Entry} representing a key-value pair.
      *
-     * <p>
-     * This method simplifies the creation of map entries that can later be modified if necessary. It is particularly useful when a temporary or modifiable entry is needed, without the requirement for it to be
-     * part of a map data structure.
-     * </p>
+     * <p>This method simplifies the creation of map entries that can later be modified if necessary. It is particularly useful when a temporary or modifiable entry is needed, without the requirement for it to
+     * be part of a map data structure.</p>
      *
      * @param <K>
      *         The type of the map entry's key.
@@ -97,10 +88,8 @@ public class EFXMapUtils {
     /**
      * Creates an immutable {@link Map.Entry} representing a key-value pair.
      *
-     * <p>
-     * This method is used to generate an entry that cannot be modified after creation, ensuring the integrity of the key-value pair. It is ideal for creating constant or read-only entries, providing a
-     * guarantee that the entry's data will remain constant over its lifetime.
-     * </p>
+     * <p>This method is used to generate an entry that cannot be modified after creation, ensuring the integrity of the key-value pair. It is ideal for creating constant or read-only entries, providing a
+     * guarantee that the entry's data will remain constant over its lifetime.</p>
      *
      * @param <K>
      *         The type of the map entry's key.
@@ -114,6 +103,6 @@ public class EFXMapUtils {
      * @return An immutable {@link Map.Entry} instance containing the provided key and value.
      */
     public static <K, V> Map.Entry<K, V> simpleImmutableEntry(K key, V value) {
-        return new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 }
